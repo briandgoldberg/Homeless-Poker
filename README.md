@@ -6,7 +6,7 @@ In many countries, it is illegal for a central entity to sponsor or organize gam
 MVP
 - User chooses amount of Ethereum needed to enter the tournament.
 - Users send tokens to the smart contract.  They must send the right amount.
-- Users tell the smart contract the game is over and enter the winners  (We are still thinking through the simpliest possible flow / UI for this, please send any ideas)
+- Users submit 1st, 2nd, 3rd, 4th, etc. winners (based on the number of prizes) by selecting their public key
 - Funds are distributed to the winners
 
 Determining Prizes

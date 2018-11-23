@@ -15,7 +15,7 @@ Determining Prizes
 - 2^NumPrizes  /  PrizeMath X Prize Pool = 1st place
 - 2^NumPrizes-1  /  PrizeMath X Prize Pool = 2nd place...
 
-
+Team
 - Solidity lead: einaralex
 - Javascript Lead: TBD
 - Eventually, we would like the project to support more features and blockchains.  Contact briandgoldberg@gmail.com with any ideas!

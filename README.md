@@ -1,4 +1,4 @@
-# Trustless-Poker
+# Homeless-Poker
 No need for a house!  Manage poker tournament entry fees and winnings on a blockchain without a central entity.
 
 In many countries, it is illegal for a central entity to sponsor or organize gambling.  This project enables groups of any size to gather, play poker, and distribute the winnings without having to trust or pay a middleman.  

@@ -14,3 +14,7 @@ Determining Prizes
 - Caculate 2^0 + 2^1 + 2^3..... + 2^NumPrizes = PrizeMath
 - 2^NumPrizes  /  PrizeMath X Prize Pool = 1st place
 - 2^NumPrizes-1  /  PrizeMath X Prize Pool = 2nd place...
+
+
+Solidity lead: einaralex
+Javascript Lead: TBD

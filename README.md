@@ -16,6 +16,6 @@ Determining Prizes
 - 2^NumPrizes-1  /  PrizeMath X Prize Pool = 2nd place...
 
 
-Solidity lead: einaralex
-Javascript Lead: TBD
-Stellar / Other Blockchains / other ideas: contact briandgoldberg@gmail.com
+- Solidity lead: einaralex
+- Javascript Lead: TBD
+- Stellar / Other Blockchains / other ideas: contact briandgoldberg@gmail.com

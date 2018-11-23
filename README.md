@@ -18,3 +18,4 @@ Determining Prizes
 
 Solidity lead: einaralex
 Javascript Lead: TBD
+Stellar / Other Blockchains / other ideas: contact briandgoldberg@gmail.com

@@ -4,15 +4,15 @@ pragma solidity >=0.4.0 <0.6.0;
 
 contract PokerTournament {
     
-    address[] playerAddresses;
-    
     struct Player {
-        address account;
+        address wallet;
+        uint nickname;
     }
     
     int buyIn = 0;
-    int prizePool;
+    int prizePool = 0;
     address depositeeAddress;
+    address[] registeredPlayers;
     
     mapping(address => Player) players;
     
@@ -22,7 +22,7 @@ contract PokerTournament {
     
     function setBuyIn(int amount) public {
         // todo: only admin can set buy-in
-        require(amount >= 0, "The buy-in amount has to be a positive.");
+        require(amount >= 0, "The buy-in amount has to be positive.");
         buyIn = amount;
     }
     function getBuyIn() public view returns (int) {
@@ -31,17 +31,18 @@ contract PokerTournament {
     
     // payable -> can send Ether to contract
     function deposit() public payable {
-        // todo: check if account has buyIn amount
-        require(players[depositeeAddress].account == address(0), "A player can only deposit once.");
-        players[depositeeAddress].account = depositeeAddress;
-        playerAddresses.push(depositeeAddress);
+        // todo: check if address has buyIn amount
+        require(players[depositeeAddress].wallet == address(0), "A player can only deposit once.");
+
+        players[depositeeAddress].wallet = depositeeAddress;
+        registeredPlayers.push(depositeeAddress);
         
         prizePool += buyIn;
 
     }
     
     function getPlayerCount() public view returns (uint) {
-        return playerAddresses.length;
+        return registeredPlayers.length;
     }
     
     function getPrizePool() public view returns (int) {

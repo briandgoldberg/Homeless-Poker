@@ -1,0 +1,17 @@
+{
+  "name": "homeless-poker",
+  "version": "0.0.1",
+  "description": "Poker without a house.",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "truffle test"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "jest": "^23.6.0"
+  }
+}

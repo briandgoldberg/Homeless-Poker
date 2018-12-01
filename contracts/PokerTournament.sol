@@ -11,13 +11,11 @@ contract PokerTournament {
     
     int     buyIn;
     int     prizePool;
-    address public depositeeAddress;
     address[] registeredPlayers;
     
     mapping(address => Player) players;
     
     constructor() public {
-        depositeeAddress = msg.sender;
     }
     
     function setBuyIn(int amount) public {
@@ -32,7 +30,7 @@ contract PokerTournament {
 
     // payable -> can send Ether to contract
     function deposit (int amount) public payable {
-        //address depositeeAddress = msg.sender;
+        address depositeeAddress = msg.sender;
         uint    depositeeFunds = msg.sender.balance;
         
         require(depositeeFunds > uint(amount), "Depositee has to afford the transfer");
@@ -50,8 +48,8 @@ contract PokerTournament {
         prizePool += buyIn;
     }
     
-    function getPlayerCount() public view returns (uint) {
-        return registeredPlayers.length;
+    function getPlayerCount() public view returns (int) {
+        return int (registeredPlayers.length);
     }
     
     function getPrizePool() public view returns (int) {

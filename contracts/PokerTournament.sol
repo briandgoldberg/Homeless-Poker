@@ -18,8 +18,7 @@ contract PokerTournament {
     constructor() public {
     }
     
-    function setBuyIn(int amount) public {
-        // first deposit sets the buy-in?
+    function setBuyIn(int amount) private {
         require(amount >= 0, "The buy-in amount has to be positive.");
         buyIn = amount;
     }

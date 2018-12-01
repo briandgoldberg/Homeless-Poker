@@ -27,7 +27,7 @@ contract('PokerTournament', async accounts => {
   })
   describe('interaction', () => { 
     it('should return correct buy-in', async () => {
-      await pokerTournament.setBuyIn(100);
+      await pokerTournament.deposit(100);
       assert.equal(await pokerTournament.getBuyIn(), 100);
     });
 

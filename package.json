@@ -13,7 +13,8 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "eth-gas-reporter": "^0.1.12"
+    "eth-gas-reporter": "^0.1.12",
+    "truffle-assertions": "^0.6.3"
   },
   "dependencies": {
     "truffle": "^5.0.0-beta.1"

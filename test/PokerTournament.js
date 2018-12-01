@@ -1,45 +1,56 @@
 const PokerTournament = artifacts.require('./PokerTournament.sol');
+const truffleAssert = require('truffle-assertions');
 
 contract('PokerTournament', async accounts => {
   
-  let pokerTournament;
-  
-
+  let pokerTournament, firstAccount, secondAccount;
 
   beforeEach(async () => {
-    pokerTournament = await PokerTournament.new();
+    firstAccount = accounts[0];
+    secondAccount = accounts[1]
+
+    pokerTournament = await PokerTournament.new({from: firstAccount});
+
+    firstAccount.balance = 10;
+    secondAccount.balance = 10;
+    firstAccount.value = 10;
+    secondAccount.value = 10;
   });
 
   describe('initialization', () => {
   
-    it('all get functions should be initialized as 0', async () => {
+    it('all get-functions should be initialized as 0', async () => {
       assert.equal(await pokerTournament.getBuyIn(), 0);
       assert.equal(await pokerTournament.getPlayerCount(), 0);
       assert.equal(await pokerTournament.getPrizePool(), 0)
     });
-    it('all get functions should be initialized as 0', async () => {
-      assert.equal(await pokerTournament.depositeeAddress.call(), accounts[0]);
-    });
   })
-  describe('interaction', () => {
- 
-    it('should return buy-in as 100', async () => {
+  describe('interaction', () => { 
+    it('should return correct buy-in', async () => {
       await pokerTournament.setBuyIn(100);
       assert.equal(await pokerTournament.getBuyIn(), 100);
     });
-    it('should return correct player count as 1', async () => {
-      accounts[0].value = 10;
-      await pokerTournament.deposit(1);
-      assert.equal(await pokerTournament.getPlayerCount(), 1);
+
+    it('should return correct player count', async () => {
+      await pokerTournament.deposit(1, {from: firstAccount});
+      await pokerTournament.deposit(1, {from: secondAccount});
+      assert.equal(await pokerTournament.getPlayerCount(), 2);
     });
   })
 
-  describe.skip('limitations', async () => {
-
-    // todo: fix
-    it('should ignore the second deposit from the same address', async () => {
-      await pokerTournament.deposit(); 
-      assert.throws(async () => { await pokerTournament.deposit() }, Error, "Error thrown");
+  describe('limitations', async () => {
+    it('should throw an error if the same address tries to deposit again', async () => {
+      await pokerTournament.deposit(9); 
+      await truffleAssert.reverts(
+        pokerTournament.deposit(9),
+        "A player can only deposit once." 
+      );
+    });
+    it.skip('should throw an error if depositee cant afford the buy-in', async () => {
+      await truffleAssert.reverts(
+        pokerTournament.deposit(123, {from: firstAccount}),
+        "Depositee has to afford the transfer" 
+      );
     });
   })
 

@@ -4,54 +4,53 @@ pragma solidity >=0.4.0 <0.6.0;
 
 contract PokerTournament {
     
-    struct Player {
-        address wallet;
-        uint nickname;
-    }
-    
-    int     buyIn;
-    int     prizePool;
+    uint     buyIn;
+    uint     prizePool;
     address[] registeredPlayers;
     
-    mapping(address => Player) players;
+    mapping(address => uint) players;
     
     constructor() public {
     }
     
-    function setBuyIn(int amount) private {
+    function setBuyIn(uint amount) private {
         require(amount >= 0, "The buy-in amount has to be positive.");
         buyIn = amount;
     }
 
     function getBuyIn() public view returns (int) {
-        return buyIn;
+        return int(buyIn);
     }
 
     // payable -> can send Ether to contract
-    function deposit (int amount) public payable {
+    function deposit () public payable {
         address depositeeAddress = msg.sender;
-        uint    depositeeFunds = msg.sender.balance;
-        
-        require(depositeeFunds > uint(amount), "Depositee has to afford the transfer");
-        require(players[depositeeAddress].wallet == address(0), "A player can only deposit once.");
+        uint depositeeFunds = msg.value;
+
+        require(players[depositeeAddress] == uint(0), "A player can only deposit once.");
 
         /* First depositee controls the buy-in amount */
         if (getPlayerCount() == 0) {
-            setBuyIn(amount);
+            setBuyIn(depositeeFunds);
         }
-        require(amount == getBuyIn(), "Deposit amount has to match the buy-in amount");
-
-        players[depositeeAddress].wallet = depositeeAddress;
+        else {
+            require(depositeeFunds == uint(getBuyIn()), "Deposit amount has to match the buy-in amount");
+        }
         registeredPlayers.push(depositeeAddress);
-        
-        prizePool += buyIn;
+
+        players[depositeeAddress] += msg.value;
+
+        addToPrizePool(depositeeFunds);
     }
-    
+
     function getPlayerCount() public view returns (int) {
         return int (registeredPlayers.length);
     }
-    
-    function getPrizePool() public view returns (int) {
+
+    function addToPrizePool(uint amount) private returns (uint){
+        return prizePool += amount;
+    }
+    function getPrizePool() public view returns (uint) {
         return prizePool;
     }
 }

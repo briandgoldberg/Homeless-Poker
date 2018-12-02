@@ -7,14 +7,12 @@ contract('PokerTournament', async accounts => {
 
   beforeEach(async () => {
     firstAccount = accounts[0];
-    secondAccount = accounts[1]
+    secondAccount = accounts[1];
 
-    pokerTournament = await PokerTournament.new({from: firstAccount});
+    pokerTournament = await PokerTournament.new({ from: firstAccount });
 
     firstAccount.balance = 10;
     secondAccount.balance = 10;
-    firstAccount.value = 10;
-    secondAccount.value = 10;
   });
 
   describe('initialization', () => {
@@ -27,29 +25,23 @@ contract('PokerTournament', async accounts => {
   })
   describe('interaction', () => { 
     it('should return correct buy-in', async () => {
-      await pokerTournament.deposit(100);
-      assert.equal(await pokerTournament.getBuyIn(), 100);
+      await pokerTournament.deposit({ value: 10 } );
+      assert.equal(await pokerTournament.getBuyIn(), 10);
     });
 
     it('should return correct player count', async () => {
-      await pokerTournament.deposit(1, {from: firstAccount});
-      await pokerTournament.deposit(1, {from: secondAccount});
+      await pokerTournament.deposit({from: firstAccount, value: 10 });
+      await pokerTournament.deposit({from: secondAccount, value: 10 });
       assert.equal(await pokerTournament.getPlayerCount(), 2);
     });
   })
 
   describe('limitations', async () => {
     it('should throw an error if the same address tries to deposit again', async () => {
-      await pokerTournament.deposit(9); 
+      await pokerTournament.deposit({ value: 10 } );
       await truffleAssert.reverts(
-        pokerTournament.deposit(9),
-        "A player can only deposit once." 
-      );
-    });
-    it.skip('should throw an error if depositee cant afford the buy-in', async () => {
-      await truffleAssert.reverts(
-        pokerTournament.deposit(123, {from: firstAccount}),
-        "Depositee has to afford the transfer" 
+        pokerTournament.deposit({ value: 10 }),
+        "A player can only deposit once."
       );
     });
   })

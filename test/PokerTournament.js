@@ -29,6 +29,12 @@ contract('PokerTournament', async accounts => {
       assert.equal(await pokerTournament.getBuyIn(), 10);
     });
 
+    it('should return correct prize pool', async () => {
+      await pokerTournament.deposit({from: firstAccount, value: 10 });
+      await pokerTournament.deposit({from: secondAccount, value: 10 });
+      assert.equal(await pokerTournament.getPrizePool(), 20);
+    });
+
     it('should return correct player count', async () => {
       await pokerTournament.deposit({from: firstAccount, value: 10 });
       await pokerTournament.deposit({from: secondAccount, value: 10 });

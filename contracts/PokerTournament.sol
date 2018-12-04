@@ -38,7 +38,7 @@ contract PokerTournament {
         }
         registeredPlayers.push(depositeeAddress);
 
-        players[depositeeAddress] += msg.value;
+        players[depositeeAddress] += depositeeFunds;
 
         addToPrizePool(depositeeFunds);
     }
@@ -50,8 +50,9 @@ contract PokerTournament {
     function addToPrizePool(uint amount) private returns (uint){
         return prizePool += amount;
     }
-    function getPrizePool() public view returns (uint) {
-        return prizePool;
+
+    function getPrizePool() public view returns (int) {
+        return int(prizePool);
     }
 }
 

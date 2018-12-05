@@ -17,5 +17,5 @@ Determining Prizes
 
 Team
 - Solidity lead: einaralex
-- Javascript Lead: TBD
+- Javascript Lead: kristjanmik
 - Eventually, we would like the project to support more features and blockchains.  Contact briandgoldberg@gmail.com with any ideas!

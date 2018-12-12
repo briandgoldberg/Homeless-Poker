@@ -40,6 +40,13 @@ contract('PokerTournament', async accounts => {
       await pokerTournament.deposit({from: secondAccount, value: 10 });
       assert.equal(await pokerTournament.getPlayerCount(), 2);
     });
+
+    it('should return correct amount of players that has voted', async () => {
+      await pokerTournament.deposit({from: firstAccount, value: 10 });
+      //console.log(pokerTournament.players(this))
+    await pokerTournament.voteForWinner([`${firstAccount}`, `${secondAccount}`], {from: firstAccount})
+      assert.equal(await pokerTournament.getPlayersVotedCount(), 1);
+    });
   })
 
   describe('limitations', async () => {

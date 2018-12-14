@@ -49,8 +49,8 @@ contract PokerTournament {
     // player sends in a listOfWinners array arrange from first to last place
     function voteForWinner(address[] memory listOfWinners) public {
     
-        /// require: playersVoted[msg.sender] == address(0)
-        /// require: amount of addresses in listOfWinners to be 20% of total amount players
+        require: playersVoted[msg.sender] == address(0); //untested
+        require(listOfWinners.length == getPotiumSize(), "The amount of addresses has to match the potium size"); //untested
     
         // mapping a players ballot (kjörseðill) to his address
         ballot[msg.sender] = listOfWinners; 
@@ -60,11 +60,30 @@ contract PokerTournament {
 
         /* solhint-disable no-empty-blocks */
         if (allPlayersHaveVoted()) {
+            //TODO: check if all votes match
+            
             //TODO: calculate and send to winners
+            for(uint place = 0; place < listOfWinners.length; i++){
+                handOutRewards(listOfWinners[place], place);
+            }
         }
         /* solhint-enable no-empty-blocks */
     }
 
+    function handOutRewards(address playerAccount, int place) public view returns {
+        uint prizeMath = getPrizeCalculation();
+        uint prize = 2**(getPotiumSize()-place) / prizeMath * prizePool();
+
+        // TODO: deposit prize to playerAccount
+    }
+
+    function getPrizeCalculation() public view returns (uint) {
+        uint prizeBreakdown;
+        for (uint exponent = 0; exponent < getPotiumSize(); exponent++){
+            prizeBreakdown += 2**exponent
+        }
+        return prizeBreakdown;
+    }
     function getPlayerBallot() public view returns (address[] memory) {
         return ballot[msg.sender];
     }

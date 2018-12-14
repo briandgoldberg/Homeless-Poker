@@ -7,13 +7,15 @@
     "doc": "docs"
   },
   "scripts": {
-    "test": "truffle test",
+    "lint": "yarn solhint contracts/PokerTournament.sol",
+    "test": "yarn lint && truffle test",
     "compile": "truffle compile"
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
     "eth-gas-reporter": "^0.1.12",
+    "solhint": "^1.4.1",
     "truffle-assertions": "^0.6.3"
   },
   "dependencies": {

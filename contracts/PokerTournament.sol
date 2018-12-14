@@ -3,7 +3,6 @@ pragma solidity 0.4.25;
 // https://github.com/MeadowSuite/Meadow/wiki/Using-the-VSCode-Solidity-Debugger
 
 contract PokerTournament {
-    // TODO: make variables public, solidity automaticly create get functions.
     uint public buyIn;
     uint public prizePool;
     address[] private playersRegistered;
@@ -12,7 +11,12 @@ contract PokerTournament {
     mapping(address => uint) private playerBalance;
     mapping(address => address[]) private ballot;
 
-    // TODO: constructor that accepts tournament instance ID
+    /* solhint-disable no-empty-blocks */
+    constructor() public {
+        // TODO: Initiate tournament instance ID
+    }
+    /* solhint-enable no-empty-blocks */
+
     function deposit() public payable {
 
         address depositeeAddress = msg.sender;
@@ -54,9 +58,11 @@ contract PokerTournament {
         // maintain an iterable record for who has voted
         playersVoted.push(msg.sender);
 
+        /* solhint-disable no-empty-blocks */
         if (allPlayersHaveVoted()) {
             //TODO: calculate and send to winners
         }
+        /* solhint-enable no-empty-blocks */
     }
 
     function getPlayerBallot() public view returns (address[] memory) {
@@ -65,6 +71,11 @@ contract PokerTournament {
   
     function getPlayersVotedCount() public view returns (int) {
         return int(playersVoted.length);
+    }
+
+    // 20% of all players get rewards
+    function getPotiumSize() public view returns (uint) {
+        return playersRegistered.length / 5;
     }
 
     function allPlayersHaveVoted() private view returns (bool) {

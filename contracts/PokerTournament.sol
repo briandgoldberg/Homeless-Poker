@@ -1,49 +1,35 @@
-pragma solidity >=0.4.10 <0.6.0;
+pragma solidity 0.4.25;
 
 // https://github.com/MeadowSuite/Meadow/wiki/Using-the-VSCode-Solidity-Debugger
 
 contract PokerTournament {
-    
     // TODO: make variables public, solidity automaticly create get functions.
-    uint     buyIn;
-    uint     prizePool;
-    address payable[] registeredPlayers;
-    address[] playersVoted;
-    
-    
-    mapping(address => uint) playerBalance;
-    mapping(address => address[]) ballot;
-    
-    constructor() public {
-        // TODO: accept tournament instance ID
-    }
-    
-    function setBuyIn(uint amount) private {
-        require(amount >= 0, "The buy-in amount has to be positive.");
-        buyIn = amount;
-    }
+    uint public buyIn;
+    uint public prizePool;
+    address[] private playersRegistered;
+    address[] private playersVoted;
 
-    function getBuyIn() public view returns (int) {
-        return int(buyIn);
-    }
+    mapping(address => uint) private playerBalance;
+    mapping(address => address[]) private ballot;
 
-    // payable -> can send Ether to contract
-    function deposit () public payable {
-        address payable depositeeAddress = msg.sender;
+    // TODO: constructor that accepts tournament instance ID
+    function deposit() public payable {
+
+        address depositeeAddress = msg.sender;
         uint depositeeFunds = msg.value;
 
         require(depositeeAddress.balance > depositeeFunds, "Player has to affford the buy-in");
         require(playerBalance[depositeeAddress] == uint(0), "A player can only deposit once.");
 
         /* First depositee controls the buy-in amount */
-        if (getPlayerCount() == 0) {
+        if (playersRegistered.length == 0) {
             setBuyIn(depositeeFunds);
         }
         else {
-            require(depositeeFunds == uint(getBuyIn()), "Deposit amount has to match the buy-in amount");
+            require(depositeeFunds == uint(buyIn), "Deposit amount has to match the buy-in amount");
         }
         // hold a record over registered players
-        registeredPlayers.push(depositeeAddress);
+        playersRegistered.push(depositeeAddress);
         
         // holds a record of balance tied to an address, possibly not needed
         playerBalance[depositeeAddress] += depositeeFunds;
@@ -52,30 +38,25 @@ contract PokerTournament {
     }
 
     function getPlayerCount() public view returns (int) {
-        return int (registeredPlayers.length);
-    }
-
-    function addToPrizePool(uint amount) private returns (uint){
-        return prizePool += amount;
-    }
-
-    function getPrizePool() public view returns (int) {
-        return int(prizePool);
+        return int(playersRegistered.length);
     }
 
     // First iteration will trust that every player votes correctly:
-
     // player sends in a listOfWinners array arrange from first to last place
-    function voteForWinner(address[] memory listOfWinners) public  {
+    function voteForWinner(address[] memory listOfWinners) public {
     
-        /// require: ballot[msg.sender] == address[](0)??
-        /// require: amount of addresses in listOfWinners to be 20% total amount players
+        /// require: playersVoted[msg.sender] == address(0)
+        /// require: amount of addresses in listOfWinners to be 20% of total amount players
     
         // mapping a players ballot (kjörseðill) to his address
         ballot[msg.sender] = listOfWinners; 
     
         // maintain an iterable record for who has voted
         playersVoted.push(msg.sender);
+
+        if (allPlayersHaveVoted()) {
+            //TODO: calculate and send to winners
+        }
     }
 
     function getPlayerBallot() public view returns (address[] memory) {
@@ -85,6 +66,20 @@ contract PokerTournament {
     function getPlayersVotedCount() public view returns (int) {
         return int(playersVoted.length);
     }
+
+    function allPlayersHaveVoted() private view returns (bool) {
+        return (playersRegistered.length == playersVoted.length) ? true : false;
+    }
+
+    function setBuyIn(uint amount) private {
+        require(amount >= 0, "The buy-in amount has to be positive.");
+        buyIn = amount;
+    }
+
+    function addToPrizePool(uint amount) private returns (uint) {
+        return prizePool += amount;
+    }
+
 
     /*
     function handOutRewards(address payable firstPlace) public returns (uint) {

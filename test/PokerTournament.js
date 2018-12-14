@@ -18,21 +18,21 @@ contract('PokerTournament', async accounts => {
   describe('initialization', () => {
   
     it('all get-functions should be initialized as 0', async () => {
-      assert.equal(await pokerTournament.getBuyIn(), 0);
+      assert.equal(await pokerTournament.buyIn(), 0);
       assert.equal(await pokerTournament.getPlayerCount(), 0);
-      assert.equal(await pokerTournament.getPrizePool(), 0)
+      assert.equal(await pokerTournament.prizePool(), 0)
     });
   })
   describe('interaction', () => { 
     it('should return correct buy-in', async () => {
       await pokerTournament.deposit({ value: 10 } );
-      assert.equal(await pokerTournament.getBuyIn(), 10);
+      assert.equal(await pokerTournament.buyIn(), 10);
     });
 
     it('should return correct prize pool', async () => {
       await pokerTournament.deposit({from: firstAccount, value: 10 });
       await pokerTournament.deposit({from: secondAccount, value: 10 });
-      assert.equal(await pokerTournament.getPrizePool(), 20);
+      assert.equal(await pokerTournament.prizePool(), 20);
     });
 
     it('should return correct player count', async () => {

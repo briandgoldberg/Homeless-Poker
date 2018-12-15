@@ -9,6 +9,7 @@
   "scripts": {
     "lint": "yarn solhint contracts/PokerTournament.sol",
     "test": "yarn lint && truffle test",
+    "test:dev": "truffle test",
     "compile": "truffle compile"
   },
   "author": "",

@@ -1,4 +1,4 @@
-pragma solidity 0.5.0;
+pragma solidity ^0.4.25;
 
 // https://github.com/MeadowSuite/Meadow/wiki/Using-the-VSCode-Solidity-Debugger
 
@@ -9,16 +9,21 @@ contract PokerTournament {
     address[] private playersVoted;
 
     mapping(address => uint) private playerBalance;
-    mapping(address => address[]) private ballot;
+    mapping(address  => address[]) private ballot;
+    
+    event LogDep (address sender, uint amount, uint balance);
+    event LogHandout (uint potiumSize, uint prizeCalculation);
+    event LogVoting (uint prizePool, bool hasEverybodyVoted);
+    event LogTest (uint contractBalance);
 
     /* solhint-disable no-empty-blocks */
-    constructor() public {
+    constructor() public payable {
         // TODO: Initiate tournament instance ID
     }
     /* solhint-enable no-empty-blocks */
 
     function deposit() public payable {
-
+        emit LogDep(msg.sender, msg.value, msg.sender.balance); 
         address depositeeAddress = msg.sender;
         uint depositeeFunds = msg.value;
 
@@ -38,7 +43,7 @@ contract PokerTournament {
         // holds a record of balance tied to an address, possibly not needed
         playerBalance[depositeeAddress] += depositeeFunds;
 
-        addToPrizePool(depositeeFunds);
+        prizePool += depositeeFunds;
     }
 
     function getPlayerCount() public view returns (int) {
@@ -47,14 +52,14 @@ contract PokerTournament {
 
     // First iteration will trust that every player votes correctly:
     // player sends in a listOfWinners array arrange from first to last place
-    function voteForWinner(address[] memory listOfWinners) public {
-    
-        //require(playersVoted[msg.sender] == address(0); //untested
+    function voteForWinner(address[] memory listOfWinners) public payable {
+        emit LogVoting(prizePool, allPlayersHaveVoted());
+        // Some issues here
         require(
             listOfWinners.length == getPotiumSize(),
             "The amount of addresses has to match the potium size"
         ); //untested
-    
+
         // mapping a players ballot (kjörseðill) to his address
         ballot[msg.sender] = listOfWinners; 
     
@@ -66,27 +71,50 @@ contract PokerTournament {
             //TODO: check if all votes match
             
             for(uint place = 0; place < listOfWinners.length; place++) {
-                handOutRewards(listOfWinners[place], place);
+                handOutReward(listOfWinners[place], place);
             }
         }
         /* solhint-enable no-empty-blocks */
     }
-
-    function handOutRewards(address playerAccount, uint place) public view {
+    function calculatePrize(uint place) public view returns (uint) {
+        uint potiumSize = getPotiumSize();
         uint prizeMath = getPrizeCalculation();
-        uint prize = 2**(getPotiumSize()-place) / prizeMath * prizePool;
 
-        // TODO: deposit prize to playerAccount
+        require(potiumSize >= place + 1);
+        require(prizeMath > 0);
+        
+        return 2**(potiumSize - (place + 1)) / prizeMath * prizePool;
+    }
+
+    function handOutReward(address playerAccount, uint place) public payable {
+        emit LogHandout(getPotiumSize(), getPrizeCalculation());
+        
+        
+        require(playerBalance[playerAccount] != uint(0), "Player has to be registered.");
+
+        uint prize = calculatePrize(place); 
+
+        require(address(this).balance >= prize, "Contract does not have enough credit");
+        
+        uint balanceBeforeTransfer = playerAccount.balance;
+        prizePool = prizePool - prize;
+        playerAccount.transfer(prize);
+        require(playerAccount.balance + prize >= balanceBeforeTransfer, "amount was transferred");
+    }
+
+    function getContractBalance() public view returns (uint) {
+        return address(this).balance;
     }
 
     function getPrizeCalculation() public view returns (uint) {
-        uint prizeBreakdown;
+        uint prizeMath;
 
         for (uint exponent = 0; exponent < getPotiumSize(); exponent++) {
-            prizeBreakdown += 2**exponent;
+            prizeMath += 2**exponent;
         }
-        return prizeBreakdown;
+        return prizeMath;
     }
+
     function getPlayerBallot() public view returns (address[] memory) {
         return ballot[msg.sender];
     }
@@ -97,6 +125,9 @@ contract PokerTournament {
 
     /* 20% of all players get rewards */
     function getPotiumSize() public view returns (uint) {
+        if (playersRegistered.length < 5) {
+            return 1;
+        }
         return playersRegistered.length / 5;
     }
 
@@ -109,25 +140,8 @@ contract PokerTournament {
         buyIn = amount;
     }
 
-    function addToPrizePool(uint amount) private returns (uint) {
-        return prizePool += amount;
+    function getPrizePool() public view returns (int) {
+        return int(prizePool);
     }
-
-
-    /*
-    function handOutRewards(address payable firstPlace) public returns (uint) {
-        require(playerBalance[firstPlace] != uint(0), "Player has to be registered.");
-
-        uint prizeMath = 2**0 + 2**1 + 2**2 + 2**3;
-        uint firstPlacePrize = 2**3 / prizeMath * 20;
-
-        uint accountBalance = firstPlace.balance;
-        firstPlace.transfer(10);
-        require(firstPlace.balance+10 >= accountBalance, "amount was transferred");
-
-        return uint(firstPlace.balance);
-    }
-    */
-
 }
 

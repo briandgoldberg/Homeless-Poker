@@ -28,5 +28,10 @@ module.exports = {
       currency: 'USD',
       showTimeSpent: true
     }
-  }
+  },
+  compilers: {
+    solc: {
+      version: '^0.4.25'
+    }
+ }
 };

@@ -12,9 +12,12 @@ contract PokerTournament {
     mapping(address  => address[]) private ballot;
     
     event LogDep (address sender, uint amount, uint balance);
-    event LogHandout (uint potiumSize, uint prizeCalculation);
+    event LogHandout (uint potiumSize, uint prizeCalculation, uint place );
+    event LogHandout2 (uint prize, uint prizePool);
     event LogVoting (uint prizePool, bool hasEverybodyVoted);
     event LogTest (uint contractBalance);
+    event LogPrize (uint prize);
+    event LogCalc (uint prizePool, uint i, uint prizeMath);
 
     /* solhint-disable no-empty-blocks */
     constructor() public payable {
@@ -51,14 +54,13 @@ contract PokerTournament {
     }
 
     // First iteration will trust that every player votes correctly:
-    // player sends in a listOfWinners array arrange from first to last place
+    // player sends in a listOfWinners array arranged from first to last place
     function voteForWinner(address[] memory listOfWinners) public payable {
         emit LogVoting(prizePool, allPlayersHaveVoted());
-        // Some issues here
         require(
             listOfWinners.length == getPotiumSize(),
-            "The amount of addresses has to match the potium size"
-        ); //untested
+            "The amount of addresses in player ballot has to match the potium size"
+        );
 
         // mapping a players ballot (kjörseðill) to his address
         ballot[msg.sender] = listOfWinners; 
@@ -66,40 +68,37 @@ contract PokerTournament {
         // maintain an iterable record for who has voted
         playersVoted.push(msg.sender);
 
-        /* solhint-disable no-empty-blocks */
         if (allPlayersHaveVoted()) {
             //TODO: check if all votes match
-            
-            for(uint place = 0; place < listOfWinners.length; place++) {
-                handOutReward(listOfWinners[place], place);
+            for(uint i = 0; i < getPotiumSize(); i++) {
+                handOutReward(listOfWinners[i], i);
             }
+            
+            // TODO: Reset everything, not just the prizepool
+            prizePool = 0;
         }
-        /* solhint-enable no-empty-blocks */
     }
     function calculatePrize(uint place) public view returns (uint) {
         uint potiumSize = getPotiumSize();
         uint prizeMath = getPrizeCalculation();
 
-        require(potiumSize >= place + 1);
+        require(potiumSize >= place);
         require(prizeMath > 0);
-        
-        return 2**(potiumSize - (place + 1)) / prizeMath * prizePool;
+
+        return prizePool * 2**(potiumSize - place) / prizeMath;
     }
 
     function handOutReward(address playerAccount, uint place) public payable {
-        emit LogHandout(getPotiumSize(), getPrizeCalculation());
-        
-        
+        emit LogHandout(getPotiumSize(), getPrizeCalculation(), place);
+
         require(playerBalance[playerAccount] != uint(0), "Player has to be registered.");
 
         uint prize = calculatePrize(place); 
 
+        emit LogHandout2(prize, prizePool);
         require(address(this).balance >= prize, "Contract does not have enough credit");
         
-        uint balanceBeforeTransfer = playerAccount.balance;
-        prizePool = prizePool - prize;
         playerAccount.transfer(prize);
-        require(playerAccount.balance + prize >= balanceBeforeTransfer, "amount was transferred");
     }
 
     function getContractBalance() public view returns (uint) {
@@ -109,7 +108,7 @@ contract PokerTournament {
     function getPrizeCalculation() public view returns (uint) {
         uint prizeMath;
 
-        for (uint exponent = 0; exponent < getPotiumSize(); exponent++) {
+        for (uint exponent = 1; exponent <= getPotiumSize(); exponent++) {
             prizeMath += 2**exponent;
         }
         return prizeMath;
@@ -138,10 +137,6 @@ contract PokerTournament {
     function setBuyIn(uint amount) private {
         require(amount >= 0, "The buy-in amount has to be positive.");
         buyIn = amount;
-    }
-
-    function getPrizePool() public view returns (int) {
-        return int(prizePool);
     }
 }
 

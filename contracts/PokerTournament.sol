@@ -11,7 +11,7 @@ contract PokerTournament {
     mapping(address => uint) private playerBalance;
     mapping(address  => address[]) private ballot;
     
-    event LogDep (address sender, uint amount, uint balance);
+    event LogDeposit (address sender, uint amount, uint balance);
     event LogHandout (uint potiumSize, uint prizeCalculation, uint place );
     event LogHandout2 (uint prize, uint prizePool);
     event LogVoting (uint prizePool, bool hasEverybodyVoted);
@@ -26,7 +26,7 @@ contract PokerTournament {
     /* solhint-enable no-empty-blocks */
 
     function deposit() public payable {
-        emit LogDep(msg.sender, msg.value, msg.sender.balance); 
+        emit LogDeposit(msg.sender, msg.value, msg.sender.balance); 
         address depositeeAddress = msg.sender;
         uint depositeeFunds = msg.value;
 

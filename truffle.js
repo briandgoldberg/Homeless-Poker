@@ -15,13 +15,17 @@
 // See <http://truffleframework.com/docs/advanced/configuration>
 // to customize your Truffle configuration!
 module.exports = {
-  /*networks: {
+  networks: {
+    "develop": {
+      accounts: 10,
+      defaultEtherBalance: 1,
+    },
     development: {
       host: "127.0.0.1",
-      port: 8545,
+      port: 9545,
       network_id: "*" // Match any network id
     }
-  }*/
+  },
   mocha: {
     reporter: 'eth-gas-reporter',
     reporterOptions : {
@@ -31,7 +35,7 @@ module.exports = {
   },
   compilers: {
     solc: {
-      version: '^0.4.25'
+      version: '0.4.25'
     }
  }
 };

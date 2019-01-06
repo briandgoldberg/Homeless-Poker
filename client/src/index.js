@@ -1,4 +1,4 @@
-var PokerTournamentContract = require("../build/contracts/PokerTournament.json")
+var PokerTournamentContract = require("../../build/contracts/PokerTournament.json")
 var Web3 = require('web3');
 let web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:9545"));
 

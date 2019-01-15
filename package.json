@@ -7,17 +7,20 @@
     "doc": "docs"
   },
   "scripts": {
-    "lint": "yarn solhint contracts/PokerTournament.sol",
-    "test": "yarn lint && truffle test",
-    "test:dev": "truffle test",
     "compile": "truffle compile",
-    "rpc": "truffle develop",
+    "lint": "yarn solhint contracts/PokerTournament.sol",
     "migrate": "truffle migrate",
-    "start": "node client/src/index.js"
+    "rpc": "truffle develop",
+    "start": "babel-node client/src/index.js",
+    "test": "yarn lint && truffle test",
+    "test:dev": "truffle test"
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@babel/core": "^7.2.2",
+    "@babel/node": "^7.2.2",
+    "@babel/preset-env": "^7.2.3",
     "eth-gas-reporter": "^0.1.12",
     "solhint": "^1.4.1",
     "truffle-assertions": "^0.6.3",

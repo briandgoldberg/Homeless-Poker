@@ -31,6 +31,8 @@ Start the test network
 Compile the contract
 `yarn compile`
 
-Migrate the contract to the test network
+Migrate the contract to the test network (RPC has to be running)
 `yarn migrate`
 
+Start the client
+`yarn start`

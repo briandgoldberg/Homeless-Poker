@@ -30,7 +30,6 @@ contract PokerTournament {
         address depositeeAddress = msg.sender;
         uint depositeeFunds = msg.value;
 
-        require(depositeeAddress.balance > depositeeFunds, "Player has to affford the buy-in");
         require(playerBalance[depositeeAddress] == uint(0), "A player can only deposit once.");
 
         /* First depositee controls the buy-in amount */
@@ -38,7 +37,7 @@ contract PokerTournament {
             setBuyIn(depositeeFunds);
         }
         else {
-            require(depositeeFunds == uint(buyIn), "Deposit amount has to match the buy-in amount");
+            require(depositeeFunds == uint(buyIn), "Deposit amount has to match the buy-in amount.");
         }
         // hold a record over registered players
         playersRegistered.push(depositeeAddress);
@@ -57,9 +56,13 @@ contract PokerTournament {
     // player sends in a listOfWinners array arranged from first to last place
     function voteForWinner(address[] memory listOfWinners) public payable {
         emit LogVoting(prizePool, allPlayersHaveVoted());
+        address depositeeAddress = msg.sender;
+        require(playerBalance[depositeeAddress] != uint(0), "Voter should be participating.");
+
+        require(ballot[depositeeAddress].length < 1, "A player can only vote once");
         require(
             listOfWinners.length == getPotiumSize(),
-            "The amount of addresses in player ballot has to match the potium size"
+            "The amount of addresses in player ballot has to match the potium size."
         );
 
         // mapping a players ballot (kjörseðill) to his address
@@ -69,7 +72,10 @@ contract PokerTournament {
         playersVoted.push(msg.sender);
 
         if (allPlayersHaveVoted()) {
-            //TODO: check if all votes match
+            // TODO: check if all votes match
+            // TODO: iterate through the potium in reverse (3-2-1) 
+            //  and use playerAccount.transfer(address(this).balance) to transfer the rest/dust.
+            //  then selfdestruct();
             for(uint i = 0; i < getPotiumSize(); i++) {
                 handOutReward(listOfWinners[i], i);
             }

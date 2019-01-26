@@ -3,13 +3,13 @@
 
 Contract:
     ☐ check if ballots match
-    ☐ send ether to winners
+    - send ether to winners
     ☐ add more requirements
-    ☐ add more tests
+    - add more tests
     ☐ set helper functions to private
     ☐ add better tests
     ☐ create events
-    ☐ add web3.js
+    - add web3.js
 
     ☐ tournament instances
 
@@ -18,11 +18,9 @@ Packages:
     ☐ Code coverage: https://github.com/sc-forks/solidity-coverage
 
 Research:
-    ☐ depositing to a
-    ☐ How to pay gas in advance, can player make a deposit?
+    - How to pay gas in advance, can player make a deposit?
     ☐ Voting mechanics? gets deposit back if player votes correctly?
     ☐ Ethereum smart contract vulnerabilities: https://github.com/trailofbits/not-so-smart-contracts
     ☐ maybe create Player Struct i.e: { address: '0x0000, registered: true, hasVoted: true }
         - map address to Player struct. i.e. mapping ( address => Player ) playerStruct
-    ☐ does it cost (if any) additonal computation to do a getCount function instead of getting a arrays length?
-    ☐ more gas cost utilization
+    ☐ gas cost utilization

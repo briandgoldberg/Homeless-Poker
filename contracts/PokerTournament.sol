@@ -124,12 +124,7 @@ contract PokerTournament {
     }
 
     function isEqual(address[] ballotOne, address[] ballotTwo) public pure returns (bool) {
-        // https://ethereum.stackexchange.com/questions/51846/compare-memory-pointers-in-solidity
-        bool equal = false;
-        assembly {
-            equal := eq(ballotOne, ballotTwo)
-        }
-        return equal;
+        return keccak256(abi.encodePacked(ballotOne)) == keccak256(abi.encodePacked(ballotTwo));
     }
 
     function getWinningBallot() public view returns (address[]) {

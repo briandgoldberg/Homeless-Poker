@@ -6,7 +6,7 @@ const truffleAssert = require('truffle-assertions');
 
 
 
-contract('PokerTournamentV2', async accounts => {
+contract.skip('PokerTournamentV2', async accounts => {
 
   let pokerTournament;
 

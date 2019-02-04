@@ -22,13 +22,14 @@ contract('PokerTournament', async accounts => {
   describe('interaction', () => { 
     it('should return correct buy-in', async () => {
       await pokerTournament.deposit({ value: VALUE } );
-      assert.equal(await pokerTournament.buyIn(), VALUE);
+      assert.equal(await pokerTournament.buyIn(), Math.ceil(VALUE * 3/4));
     });
 
     it('should return correct prize pool', async () => {
       await pokerTournament.deposit({from: accounts[0], value: VALUE });
       await pokerTournament.deposit({from: accounts[1], value: VALUE });
-      assert.equal(await pokerTournament.prizePool(), VALUE+VALUE);
+
+      assert.equal(await pokerTournament.prizePool(), Math.ceil(VALUE * 3/4) + Math.ceil(VALUE * 3/4));
     });
 
     it('should return correct player count', async () => {

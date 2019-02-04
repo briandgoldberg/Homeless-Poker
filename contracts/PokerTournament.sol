@@ -139,7 +139,6 @@ contract PokerTournament {
             thisBallot = ballot[playersVoted[i]];
             for(uint j = i + 1; j < playersVoted.length; j) {
                 restOfBallots = ballot[playersVoted[j]];
-                
                 if (isEqual(thisBallot, restOfBallots)) {
                     counter += 1;
                 }
@@ -151,7 +150,6 @@ contract PokerTournament {
         }
         return winningBallot;
     }
-
 
     function calculatePrize(uint place) public view returns (uint) {
         uint potiumSize = getPotiumSize();

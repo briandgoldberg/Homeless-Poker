@@ -19,7 +19,7 @@ contract('PokerTournament', async accounts => {
       assert.equal(await pokerTournament.prizePool(), 0)
     });
   })
-  describe('interaction', () => { 
+  describe('interaction', () => {
     it('should return correct buy-in', async () => {
       await pokerTournament.deposit({ value: VALUE } );
       assert.equal(await pokerTournament.buyIn(), Math.ceil(VALUE * 3/4));
@@ -53,7 +53,7 @@ contract('PokerTournament', async accounts => {
       assert.equal(await pokerTournament.getPotiumSize(), 1);
     });
 
-    it('Should reset the prizePool after everybody voted, potium: 1', async () => {
+    it.skip('Should reset the prizePool after everybody voted, potium: 1', async () => {
       for(let i = 0; i < 5; i++){
         await pokerTournament.deposit({from: accounts[i], value: VALUE });
       }
@@ -64,7 +64,7 @@ contract('PokerTournament', async accounts => {
       assert.equal(prizePool, 0);
     });
 
-    it('Should reset the prizePool after everybody voted, potiumSize: 2', async () => {
+    it.skip('Should reset the prizePool after everybody voted, potiumSize: 2', async () => {
       for(let i = 0; i < 10; i++){
         await pokerTournament.deposit({from: accounts[i], value: VALUE });
       }
@@ -76,7 +76,7 @@ contract('PokerTournament', async accounts => {
     });
   })
 
-  describe.only('helpers', () => { 
+  describe('helpers', () => {
     it('should not be equal', async () => {
       let isNotEqual = await pokerTournament.isEqual([`${accounts[0]}`], [`${accounts[1]}`]);
       assert.equal(isNotEqual, false);
@@ -88,36 +88,36 @@ contract('PokerTournament', async accounts => {
   });
 
   describe('limitations', async () => {
-    it.only('should throw an error if the same address tries to deposit again', async () => {
+    it('should throw an error if the same address tries to deposit again', async () => {
       await pokerTournament.deposit({ value: VALUE } );
       await truffleAssert.reverts(
         pokerTournament.deposit({ value: VALUE }),
         "A player can only deposit once."
       );
     });
-    it.only('should throw an error if an outside accounts tries to vote', async () => {
+    it('should throw an error if an outside accounts tries to vote', async () => {
       await truffleAssert.reverts(
         pokerTournament.voteForWinner([`${accounts[0]}`], {from: accounts[0] }),
         "Voter should be participating."
       );
     });
     it.only('should throw an error if the same address tries to vote again', async () => {
-      await pokerTournament.deposit({from: accounts[0], value: VALUE } );
-      await pokerTournament.voteForWinner([`${accounts[0]}`], {from: accounts[0] });
+      await pokerTournament.deposit({from: accounts[0], value: VALUE, gas: 3000000 } );
+      await pokerTournament.voteForWinner([`${accounts[0]}`], {from: accounts[0], gas: 3000000 });
 
       await truffleAssert.reverts(
-        pokerTournament.voteForWinner([`${accounts[0]}`], {from: accounts[0] }),
+        pokerTournament.voteForWinner([`${accounts[0]}`], {from: accounts[0], gas: 3000000 }),
         "A player can only vote once."
         );
     });
-    it.only('should throw an error if the amount of address voted for doesnt match potium size', async () => {
+    it('should throw an error if the amount of address voted for doesnt match potium size', async () => {
       await pokerTournament.deposit({from: accounts[0], value: VALUE });
       await truffleAssert.reverts(
         pokerTournament.voteForWinner([`${accounts[0]}`, `${accounts[1]}`], {from: accounts[0]}),
         "The amount of addresses in player ballot has to match the potium size."
       )
     });
-    it.only('should throw an error if deposit amount doesnt match buy-in', async () => {
+    it('should throw an error if deposit amount doesnt match buy-in', async () => {
       await pokerTournament.deposit({from: accounts[0], value: VALUE });
       await truffleAssert.reverts(
         pokerTournament.deposit({from: accounts[1], value: 15 }),

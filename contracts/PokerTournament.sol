@@ -39,22 +39,22 @@ contract PokerTournament {
     function deposit() public payable {
         address depositeeAddress = msg.sender;
         uint depositeeFunds = msg.value;
-        // require(!votingHasStarted, "Registration has ended");
-        // require(!isRegistered[depositeeAddress], "A player can only deposit once.");
+        require(votingHasStarted == false, "Voting started, registration has ended");
+        require(!isRegistered[depositeeAddress], "A player can only deposit once.");
 
         /* First depositee sets the buy-in amount */
         if (playersRegistered.length == 0) {
             setBuyInAndDeposit(depositeeFunds);
         }
         else {
-            require(depositeeFunds == uint(buyIn+deposit), "Value sent to contract has to match the buy-in + deposit amount.");
+            require(depositeeFunds == (buyIn + deposit), "Value sent to contract has to match the buy-in + deposit amount.");
         }
 
         depositPool += deposit;
         prizePool += buyIn;
         emit LogDeposit2(buyIn, deposit); 
         playersRegistered.push(depositeeAddress);
-        // isRegistered[depositeeAddress] = true;
+        isRegistered[depositeeAddress] = true;
 
         //emit LogDeposit(msg.sender, msg.value, msg.sender.balance);
     }
@@ -76,8 +76,7 @@ contract PokerTournament {
         votingHasStarted = true;
         emit LogVoting(prizePool, allPlayersHaveVoted());
         address depositeeAddress = msg.sender;
-        require(isRegistered[depositeeAddress], "Voter should be participating.");
-
+        require(isRegistered[depositeeAddress] == true, "Voter should be participating.");
         require(ballot[depositeeAddress].length < 1, "A player can only vote once");
         require(
             listOfWinners.length == getPotiumSize(),
@@ -94,12 +93,11 @@ contract PokerTournament {
 
         if (votingEnded()) {
             handOutReward();
-
-            // selfdestruct()
+            // TODO: selfdestruct
         }
-        else if(timedOut() && playersRegistered.length < 4) {
-            // selfdestruct() ?
-        }
+        // else if(timedOut()) {
+        //     // selfdestruct() ?
+        // }
     }
     function votingEnded() public view returns (bool) {
         if(allPlayersHaveVoted() || (majorityHasVoted() && timedOut())) {
@@ -163,11 +161,11 @@ contract PokerTournament {
 
     function handOutReward() public payable {
         for(uint place = getPotiumSize()-1; place >= 0; place--) {
-            
             address playerAccount = getWinningBallot()[place];
+
             emit LogHandout(getPotiumSize(), getPrizeCalculation(), place);
 
-            require(isRegistered[playerAccount] == true, "Player has to be registered.");
+            require(isRegistered[playerAccount], "Player has to be registered.");
 
             uint prize = calculatePrize(place); 
 

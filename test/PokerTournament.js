@@ -64,12 +64,12 @@ contract('PokerTournament', async accounts => {
       assert.equal(prizePool, 0);
     });
 
-    it.skip('Should reset the prizePool after everybody voted, potiumSize: 2', async () => {
+    it.only('Should reset the prizePool after everybody voted, potiumSize: 2', async () => {
       for(let i = 0; i < 10; i++){
         await pokerTournament.deposit({from: accounts[i], value: VALUE });
       }
       for(let i = 0; i < 10; i++){
-        await pokerTournament.voteForWinner([`${accounts[0]}`, `${accounts[1]}`], {from: accounts[i] });
+        await pokerTournament.voteForWinner([`${accounts[0]}`, `${accounts[1]}`], {from: accounts[i], gas: 3000000 });
       }
       let prizePool = (await pokerTournament.prizePool()).toNumber();  
       assert.equal(prizePool, 0);
@@ -101,8 +101,10 @@ contract('PokerTournament', async accounts => {
         "Voter should be participating."
       );
     });
-    it.only('should throw an error if the same address tries to vote again', async () => {
-      await pokerTournament.deposit({from: accounts[0], value: VALUE, gas: 3000000 } );
+    it('should throw an error if the same address tries to vote again', async () => {
+      for(let i = 0; i < 5; i++){
+        await pokerTournament.deposit({from: accounts[i], value: VALUE });
+      }
       await pokerTournament.voteForWinner([`${accounts[0]}`], {from: accounts[0], gas: 3000000 });
 
       await truffleAssert.reverts(

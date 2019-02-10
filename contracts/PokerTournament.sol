@@ -100,7 +100,7 @@ contract PokerTournament {
         // }
     }
     function votingEnded() public view returns (bool) {
-        if(allPlayersHaveVoted() || (majorityHasVoted() && timedOut())) {
+        if(allPlayersHaveVoted()) { // || majorityHasVoted()
             return true;
         }
         return false;
@@ -116,40 +116,41 @@ contract PokerTournament {
         return false;
     }
 
+    // when majority has voted, then pay the deposit back t
     function majorityHasVoted() public view returns (bool) {
         // uint() floors integers, add one to get ceiling.
-        // uint majority = uint(playersRegistered.length * 1 / 2) + 1;
-        // return playersVoted.length >= majority;
-        return false;
+        uint majority = uint(playersRegistered.length * 1 / 2) + 1;
+        return playersVoted.length >= majority;
+        // return false;
     }
 
     function isEqual(address[] ballotOne, address[] ballotTwo) public pure returns (bool) {
         return keccak256(abi.encodePacked(ballotOne)) == keccak256(abi.encodePacked(ballotTwo));
     }
 
+    // this function takes tons of gas, the last player to vote
+    // uses almost 300.000 additional gas.
     function getWinningBallot() public view returns (address[]) {
 
-        // uint max = 0;
-        // address[] memory winningBallot;
-        // address[] memory thisBallot;
-        // address[] memory restOfBallots;
+        uint max = 0;
+        address[] memory winningBallot;
+        address[] memory thisBallot;
+        address[] memory restOfBallots;
 
-        // for(uint i = 0; i < playersVoted.length; i++ ) {
-        //     uint counter = 0;
-        //     thisBallot = ballot[playersVoted[i]];
-        //     for(uint j = 1; j < playersVoted.length; j++) {
-        //         restOfBallots = ballot[playersVoted[j]];
-        //         if (isEqual(thisBallot, restOfBallots)) {
-        //             counter += 1;
-        //         }
-        //     }
-        //     if(counter > max) {
-        //         max = counter;
-        //         winningBallot = thisBallot;
-        //     }
-        // }
-        address [] memory winningBallot;
-        winningBallot = ballot[playersVoted[0]];
+        for(uint i = 0; i < playersVoted.length; i++ ) {
+            uint counter = 0;
+            thisBallot = ballot[playersVoted[i]];
+            for(uint j = 1; j < playersVoted.length; j++) {
+                restOfBallots = ballot[playersVoted[j]];
+                if (isEqual(thisBallot, restOfBallots)) {
+                    counter += 1;
+                }
+            }
+            if(counter > max) {
+                max = counter;
+                winningBallot = thisBallot;
+            }
+        }
         return winningBallot;
     }
 

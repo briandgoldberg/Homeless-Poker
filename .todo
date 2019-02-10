@@ -2,36 +2,30 @@
 // VSCode plugin: Todo+ by Fabio Spampinato
 
 v1:
-    ☐ check if ballots match
-        ☐ count identical ballots, find consensus
-        ☐ if only 1-4 vote?
-        ☐ if equal amount of players vote i.e. 3v3 > 
-            - forceResetVoting, clear everything voting related to start over
-    ☐ Lock registration after voting started
-    ☐ when can you start voting? 
-        - if last player registration was 3 blocks away
-        - 4 min. player limit?
-            - then if only <= 3 players register within 3 blocks, they get their funds back
+    ✔ find the majority of identical ballots @done(19-02-10 23:24)
+    ✔ Lock registration after voting started @done(19-02-03 03:39)
+    ☐ majorityHasVoted
 
     ☐ test every function
     ☐ test every revert
     ☐ set helper functions to private
 
 v1.1:
-    ☐ timedOut function 
-        ☐ set a blocknumber stamp for a registeredVote
-        ☐ if no votes are registered in 2 blocks, return true
+    ✘ timedOut function: can't see this work out @cancelled(19-02-10 23:27)
+        ✘ set a blocknumber stamp for a registeredVote @cancelled(19-02-10 23:27)
+        ✘ if no votes are registered in 2 blocks, return true @cancelled(19-02-10 23:27)
     ☐ selfdestruct when solved
 
+    ☐ refactor getWinningBallot, takes too much gas
     ☐ add more complex tests
     ☐ create events
 
-    ✔ add web3.js @done(19-02-03 01:15)
-    ✔ send ether to winners @done(19-02-03 01:15)
     ☐ create Player Struct i.e: { isRegistered: true, hasVoted: true }
-        ☐ map address to Player struct. i.e. mapping ( address => Player ) playerStruct
+    ☐ map address to Player struct. i.e. mapping ( address => Player ) playerStruct
     ☐ gas cost utilization
     ☐ tournament instances
+    ✔ send ether to winners @done(19-02-03 01:15)
+    ✔ add web3.js @done(19-02-03 01:15)
 
 Packages:
     ☐ Documentation generator: https://github.com/OpenZeppelin/solidity-docgen (examples in Open-Zeppelin)

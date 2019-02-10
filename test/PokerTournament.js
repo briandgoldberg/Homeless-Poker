@@ -53,15 +53,27 @@ contract('PokerTournament', async accounts => {
       assert.equal(await pokerTournament.getPotiumSize(), 1);
     });
 
-    it.skip('Should reset the prizePool after everybody voted, potium: 1', async () => {
+
+    it.skip('tests', async () => {
+      await pokerTournament.testa({from: accounts[0]});
+      // assert.equal(await pokerTournament.getPotiumSize(), 1);
+    });
+
+
+    it('Should reset the prizePool after everybody voted, potium: 1', async () => {
       for(let i = 0; i < 5; i++){
         await pokerTournament.deposit({from: accounts[i], value: VALUE });
       }
       for(let i = 0; i < 5; i++){
-        await pokerTournament.voteForWinner([`${accounts[0]}`], {from: accounts[i] });
+        await pokerTournament.voteForWinner([`${accounts[0]}`], {from: accounts[i], gas: "200000" }).catch((err) => console.log(err));
       }
       let prizePool = (await pokerTournament.prizePool()).toNumber();
+      let depositPool = (await pokerTournament.depositPool()).toNumber();
+
       assert.equal(prizePool, 0);
+      assert.equal(depositPool, 0);
+      assert.equal(await pokerTournament.votingEnded(), true);
+      assert.equal(await pokerTournament.getContractBalance(), 0);
     });
 
     it.only('Should reset the prizePool after everybody voted, potiumSize: 2', async () => {
@@ -69,10 +81,15 @@ contract('PokerTournament', async accounts => {
         await pokerTournament.deposit({from: accounts[i], value: VALUE });
       }
       for(let i = 0; i < 10; i++){
-        await pokerTournament.voteForWinner([`${accounts[0]}`, `${accounts[1]}`], {from: accounts[i], gas: 3000000 });
+        await pokerTournament.voteForWinner([`${accounts[0]}`, `${accounts[1]}`], {from: accounts[i], gas: "200000" });
       }
-      let prizePool = (await pokerTournament.prizePool()).toNumber();  
+      let prizePool = (await pokerTournament.prizePool()).toNumber();
+      let depositPool = (await pokerTournament.depositPool()).toNumber();
+
       assert.equal(prizePool, 0);
+      assert.equal(depositPool, 0);
+      assert.equal(await pokerTournament.votingEnded(), true);
+      assert.equal(await pokerTournament.getContractBalance(), 0);
     });
   })
 

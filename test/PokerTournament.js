@@ -124,7 +124,7 @@ contract('PokerTournament', async accounts => {
       assert.equal(await pokerTournament.votingEnded(), true);
       assert.equal(await pokerTournament.getContractBalance(), 0);
     });
-    it.skip('Should throw an error, async () => {
+    it.skip('Should throw an error', async () => {
     let prizePool, depositPool;
 
       for(let i = 0; i < 10; i++){
@@ -157,6 +157,34 @@ contract('PokerTournament', async accounts => {
     it('should be equal', async () => {
       let isEqual = await pokerTournament.isEqual([`${accounts[0]}`], [`${accounts[0]}`]);
       assert.equal(isEqual, true);
+    });
+    it('getPercentage', async () => {
+      assert.equal(
+        await pokerTournament.getPercentage(16, 25, {from: accounts[0]}),
+        "4"
+      )
+      assert.equal(
+        await pokerTournament.getPercentage(5, 50, {from: accounts[0]}),
+        "2"
+      )
+      assert.equal(
+        await pokerTournament.getPercentage(4, 60, {from: accounts[0]}),
+        "2"
+      )
+      assert.equal(
+        await pokerTournament.getPercentage(1, 50, {from: accounts[0]}),
+        "0"
+      )
+    });
+    it.only('getPrizeCalc', async () => {
+      assert.equal(
+        await pokerTournament.getPrizeCalculation(1, 2, 80, {from: accounts[0]}),
+        "53"
+      )
+      assert.equal(
+        await pokerTournament.getPrizeCalculation(2, 2, 80, {from: accounts[0]}),
+        "26"
+      )
     });
   });
 

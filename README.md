@@ -11,7 +11,7 @@ MVP
 
 Determining Prizes
 - 20% (Rounded Up) of users get prizes  = NumPrizes
-- Caculate 2^0 + 2^1 + 2^3..... + 2^NumPrizes = PrizeMath
+- Caculate 2^1 + 2^3..... + 2^NumPrizes = PrizeMath
 - 2^NumPrizes  /  PrizeMath X Prize Pool = 1st place
 - 2^NumPrizes-1  /  PrizeMath X Prize Pool = 2nd place...
 

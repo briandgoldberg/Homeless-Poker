@@ -177,13 +177,64 @@ contract('PokerTournament', async accounts => {
       )
     });
     it.only('getPrizeCalc', async () => {
+      // assert.equal(
+      //   await pokerTournament.getPrizeCalculation(1, 2, 80, {from: accounts[0]}),
+      //   "53"
+      // )
+      // assert.equal(
+      //   await pokerTournament.getPrizeCalculation(2, 2, 80, {from: accounts[0]}),
+      //   "26"
+      // )
       assert.equal(
-        await pokerTournament.getPrizeCalculation(1, 2, 80, {from: accounts[0]}),
-        "53"
+        (await pokerTournament.getPrizeCalculation(1, 2, 100, {from: accounts[0]})).toNumber(),
+        66
       )
       assert.equal(
-        await pokerTournament.getPrizeCalculation(2, 2, 80, {from: accounts[0]}),
-        "26"
+        (await pokerTournament.getPrizeCalculation(2, 2, 100, {from: accounts[0]})).toNumber(),
+        33
+      )
+      assert.equal(
+        (await pokerTournament.getPrizeCalculation(1, 5, 100, {from: accounts[0]})).toNumber(),
+        51
+      )
+      assert.equal(
+        (await pokerTournament.getPrizeCalculation(2, 5, 100, {from: accounts[0]})).toNumber(),
+        25
+      )
+      assert.equal(
+        (await pokerTournament.getPrizeCalculation(3, 5, 100, {from: accounts[0]})).toNumber(),
+        12
+      )
+      assert.equal(
+        (await pokerTournament.getPrizeCalculation(4, 5, 100, {from: accounts[0]})).toNumber(),
+        6
+      )
+      assert.equal(
+        (await pokerTournament.getPrizeCalculation(5, 5, 100, {from: accounts[0]})).toNumber(),
+        3
+      )
+    });
+    it.only('getPotium', async () => {
+      for(let i = 0; i < 5; i++){
+        await pokerTournament.deposit({from: accounts[i], value: 0 });
+      }
+      assert.equal(
+        (await pokerTournament.getPotiumSize()).toNumber(),
+        1
+      )
+      for(let i = 5; i < 10; i++){
+        await pokerTournament.deposit({from: accounts[i], value: 0 });
+      }
+      assert.equal(
+        (await pokerTournament.getPotiumSize()).toNumber(),
+        2
+      )
+      for(let i = 10; i < 15; i++){
+        await pokerTournament.deposit({from: accounts[i], value: 0 });
+      }
+      assert.equal(
+        (await pokerTournament.getPotiumSize()).toNumber(),
+        3
       )
     });
   });
@@ -237,5 +288,6 @@ contract('PokerTournament', async accounts => {
         "Value sent has to match the buy-in + deposit amount."
       )
     });
+
   })
 });

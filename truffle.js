@@ -17,7 +17,7 @@
 module.exports = {
   networks: {
     "develop": {
-      accounts: 10,
+      accounts: 15,
       defaultEtherBalance: 1,
     },
     development: {

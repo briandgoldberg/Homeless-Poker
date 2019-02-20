@@ -6,6 +6,7 @@ v1:
     ✔ Lock registration after voting started @done(19-02-03 03:39)
     ☐ majorityHasVoted
 
+    Add SafeMath: currently at getPrizeCalculation
     ☐ test every function
     ☐ test every revert
     ☐ set helper functions to private

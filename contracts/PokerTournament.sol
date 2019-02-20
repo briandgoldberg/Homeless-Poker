@@ -35,6 +35,8 @@ contract PokerTournament {
         address depositeeAddress = msg.sender;
         uint256 depositeeFunds = msg.value;
         require(votingHasStarted == false, "Voting started, registration has ended");
+        
+        // is this working? 
         require(!isRegistered[depositeeAddress], "A player can only deposit once.");
 
         /* First depositee sets the buy-in amount */
@@ -113,7 +115,7 @@ contract PokerTournament {
         // this won't work out..
         return false;
     }
-    function getPercentage(uint number, uint percent) public view returns (uint) {
+    function getPercentage(uint number, uint percent) public pure returns (uint) {
         return number.mul(percent).div(100);
 
     }
@@ -154,12 +156,6 @@ contract PokerTournament {
         return winningBallot;
     }
 
-    // function calculatePrize(uint place) public view returns (uint) {
-
-
-    //     return prizePool * 2**(getPotiumSize() - place) / getPrizeCalculation();
-    // }
-
     function handOutReward() public payable {
         address[] memory winningBallot = getWinningBallot();
         require(getPotiumSize() < playersRegistered.length, "uhh");
@@ -187,13 +183,13 @@ contract PokerTournament {
         return address(this).balance;
     }
 
-    function getPrizeCalculation(uint place, uint potiumSize, uint pool) public view returns (uint) {
+    function getPrizeCalculation(uint place, uint potiumSize, uint pool) public pure returns (uint) {
         uint prizeMath;
 
-        for (uint exponent = 1; exponent <= potiumSize; exponent++) {
-            prizeMath += 2**exponent;
+        for (uint exp = 0; exp < potiumSize; exp++) {
+            prizeMath += 2**exp;
         }
-        uint prize = pool * 2**(potiumSize - place.sub(1)) / prizeMath;
+        uint prize = pool * 2**(potiumSize.sub(place)) / prizeMath;
 
         return prize;
     }
@@ -211,7 +207,10 @@ contract PokerTournament {
         if (playersRegistered.length < 5) {
             return 1;
         }
-        return uint(playersRegistered.length / 5);
+        else if (playersRegistered.length.mod(5) == 0){
+            return uint(playersRegistered.length.div(5));
+        }
+        return uint(playersRegistered.length.div(5)).add(1);
     }
 
     function allPlayersHaveVoted() private view returns (bool) {

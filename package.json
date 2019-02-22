@@ -8,6 +8,7 @@
   },
   "scripts": {
     "compile": "truffle compile",
+    "deploy": "truffle console --network ropsten",
     "lint": "yarn solhint contracts/PokerTournament.sol",
     "migrate": "truffle migrate",
     "rpc": "truffle develop",
@@ -21,6 +22,7 @@
     "@babel/core": "^7.2.2",
     "@babel/node": "^7.2.2",
     "@babel/preset-env": "^7.2.3",
+    "dotenv": "^6.2.0",
     "eth-gas-reporter": "^0.1.12",
     "solhint": "^1.4.1",
     "truffle-assertions": "^0.6.3",
@@ -28,6 +30,7 @@
   },
   "dependencies": {
     "openzeppelin-solidity": "2.1.2",
-    "truffle": "^5.0.5"
+    "truffle": "^5.0.5",
+    "truffle-hdwallet-provider": "^1.0.4"
   }
 }

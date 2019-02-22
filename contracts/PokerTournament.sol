@@ -62,16 +62,15 @@ contract PokerTournament {
     function voteForWinner(address payable[] memory playerBallot) public payable {
         votingHasStarted = true;
         emit LogVoting(prizePool, allPlayersHaveVoted());
-        address depositeeAddress = msg.sender;
-        require(isRegistered[depositeeAddress] == true, "Voter should be participating.");
-        require(ballot[depositeeAddress].length < 1, "A player can only vote once");
+        require(isRegistered[msg.sender] == true, "Voter should be participating.");
+        require(ballot[msg.sender].length < 1, "A player can only vote once");
         require(
             playerBallot.length == getPotiumSize(),
             "The amount of addresses in player ballot has to match the potium size."
         );
 
         // mapping a players ballot (kjörseðill) to his address
-        ballot[depositeeAddress] = playerBallot; 
+        ballot[msg.sender] = playerBallot; 
     
         // maintain an iterable record for who has voted
         playersVoted.push(msg.sender);
@@ -80,7 +79,10 @@ contract PokerTournament {
 
         if (votingEnded()) {
             handOutReward();
-            // TODO: selfdestruct
+            // Is this ideal? 
+            // The last user to vote has to pay gas for getWinningBallot which is gas costly
+            // The memory arrays should free up some gas on selfdestruct to pay the user back.
+            selfdestruct(msg.sender);
         }
     }
 

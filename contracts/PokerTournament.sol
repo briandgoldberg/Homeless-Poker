@@ -1,7 +1,7 @@
 pragma solidity ^0.5.4;
 
 
-import "./SafeMath.sol";
+import "../node_modules/openzeppelin-solidity/contracts/math/SafeMath.sol";
 
 
 contract PokerTournament {

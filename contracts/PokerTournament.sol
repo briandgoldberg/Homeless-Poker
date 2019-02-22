@@ -2,6 +2,7 @@ pragma solidity ^0.4.25;
 
 import "./SafeMath.sol";
 
+
 contract PokerTournament {
     using SafeMath for uint;
     uint public _buyIn;
@@ -55,10 +56,6 @@ contract PokerTournament {
         //emit LogDeposit(msg.sender, msg.value, msg.sender.balance);
     }
 
-    function getPlayerCount() public view returns (int) {
-        return int(playersRegistered.length);
-    }
-
     // First iteration will trust that every player votes correctly:
     // player sends in a listOfWinners array arranged from first to last place
     function voteForWinner(address[] memory playerBallot) public payable {
@@ -86,14 +83,12 @@ contract PokerTournament {
         }
     }
 
-    function votingEnded() public view returns (bool) {
-        return allPlayersHaveVoted() ? true : false;
+    function getPlayerCount() public view returns (int) {
+        return int(playersRegistered.length);
     }
 
-    function refundDeposit(address sender) public {
-        sender.transfer(_deposit);
-        depositPool = depositPool.sub(_deposit);
-        emit LogRefund(_deposit, depositPool, getContractBalance());
+    function votingEnded() public view returns (bool) {
+        return allPlayersHaveVoted() ? true : false;
     }
 
     function getPercentage(uint number, uint percent) public pure returns (uint) {
@@ -106,14 +101,46 @@ contract PokerTournament {
     //     uint majority = getPercentage(playersRegistered.length, 50).add(1);
     //     return playersVoted.length >= majority;
     // }
-
+    //
     function isEqual(address[] memory ballotOne, address[] memory ballotTwo) public pure returns (bool) {
         return keccak256(abi.encodePacked(ballotOne)) == keccak256(abi.encodePacked(ballotTwo));
     }
 
+    function getContractBalance() public view returns (uint) {
+        return address(this).balance;
+    }
+
+    // inaccurate breakdown because a lack of decimals in solidity, 
+    // prices are not always distributed 100%, needs refactoring
+    function getPrizeCalculation(uint place, uint potiumSize, uint pool) public pure returns (uint) {
+        uint prizeMath;
+
+        for (uint exp = 0; exp < potiumSize; exp++) {
+            prizeMath += 2**exp;
+        }
+        uint prize = pool.mul(2**(potiumSize.sub(place))).div(prizeMath);
+
+        return prize;
+    }
+
+    function getPlayersVotedCount() public view returns (int) {
+        return int(playersVoted.length);
+    }
+
+    /* 20% of all players get rewards */
+    function getPotiumSize() public view returns (uint) {
+        if (playersRegistered.length < 5) {
+            return 1;
+        }
+        else if (playersRegistered.length.mod(5) == 0) {
+            return uint(playersRegistered.length.div(5));
+        }
+        return uint(playersRegistered.length.div(5)).add(1);
+    }
+
     // this function takes tons of gas, the last player to vote
     // uses almost 300.000 additional gas.
-    function getWinningBallot() public view returns (address[] memory) {
+    function getWinningBallot() private view returns (address[] memory) {
 
         uint64 max = 0;
         address[] memory winningBallot;
@@ -137,41 +164,6 @@ contract PokerTournament {
         return winningBallot;
     }
 
-
-
-    function getContractBalance() public view returns (uint) {
-        return address(this).balance;
-    }
-
-    // inaccurate breakdown because a lack of decimals in solidity, 
-    // prices are not always distributed 100%, needs refactoring
-    function getPrizeCalculation(uint place, uint potiumSize, uint pool) public pure returns (uint) {
-        uint prizeMath;
-
-        for (uint exp = 0; exp < potiumSize; exp++) {
-            prizeMath += 2**exp;
-        }
-        uint prize = pool.mul(2**(potiumSize.sub(place))).div(prizeMath);
-
-        return prize;
-    }
-
-  
-    function getPlayersVotedCount() public view returns (int) {
-        return int(playersVoted.length);
-    }
-
-    /* 20% of all players get rewards */
-    function getPotiumSize() public view returns (uint) {
-        if (playersRegistered.length < 5) {
-            return 1;
-        }
-        else if (playersRegistered.length.mod(5) == 0){
-            return uint(playersRegistered.length.div(5));
-        }
-        return uint(playersRegistered.length.div(5)).add(1);
-    }
-
     function handOutReward() private {
         address[] memory winningBallot = getWinningBallot();
         require(getPotiumSize() < playersRegistered.length, "TODO");
@@ -193,6 +185,12 @@ contract PokerTournament {
         }
     }
 
+    function refundDeposit(address sender) private {
+        depositPool = depositPool.sub(_deposit);
+        sender.transfer(_deposit);
+        emit LogRefund(_deposit, depositPool, getContractBalance());
+    }
+
     function getPlayerBallot() private view returns (address[] memory) {
         return ballot[msg.sender];
     }
@@ -206,8 +204,8 @@ contract PokerTournament {
 
     function transferDepositBack() private {
         for(uint i = 0; i < playersVoted.length; i++ ) {
-            playersVoted[i].transfer(_deposit);
             depositPool = depositPool.sub(_deposit);
+            playersVoted[i].transfer(_deposit);
         }
     }
 

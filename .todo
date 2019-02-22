@@ -7,7 +7,7 @@ v1:
     
     ✔ Add SafeMath @done(19-02-21 23:39)
     ✔ test every function @done(19-02-21 23:39)
-    ☐ set helper functions to private
+    ✔ set helper functions to private
     
     ☐ deploy to testnet
     

@@ -14,7 +14,7 @@ contract('PokerTournament', async accounts => {
 
   describe('initialization', () => {
     it('all get-functions should be initialized as 0', async () => {
-      assert.equal(await pokerTournament.buyIn(), 0);
+      assert.equal(await pokerTournament._buyIn(), 0);
       assert.equal(await pokerTournament.getPlayerCount(), 0);
       assert.equal(await pokerTournament.prizePool(), 0)
     });
@@ -22,7 +22,7 @@ contract('PokerTournament', async accounts => {
   describe('interaction', () => {
     it('should return correct buy-in', async () => {
       await pokerTournament.deposit({ value: VALUE } );
-      assert.equal(await pokerTournament.buyIn(), Math.ceil(VALUE * 3/4));
+      assert.equal(await pokerTournament._buyIn(), Math.ceil(VALUE * 3/4));
     });
 
     it('should return correct prize pool', async () => {
@@ -42,7 +42,7 @@ contract('PokerTournament', async accounts => {
       for(let i = 0; i < 7; i++){
         await pokerTournament.deposit({from: accounts[i], value: VALUE });
       }
-      await pokerTournament.voteForWinner([`${accounts[0]}`], {from: accounts[0]})
+      await pokerTournament.voteForWinner([`${accounts[0]}`, `${accounts[1]}`], {from: accounts[0]})
       assert.equal(await pokerTournament.getPlayersVotedCount(), 1);
     });
 
@@ -77,7 +77,7 @@ contract('PokerTournament', async accounts => {
       assert.equal(await pokerTournament.getContractBalance(), 0);
     });
 
-    it.only('Should reset the prizePool after everybody voted, 10p, potiumSize: 2', async () => {
+    it('Should reset the prizePool after everybody voted, 10p, potiumSize: 2', async () => {
     let prizePool, depositPool;
 
       for(let i = 0; i < 10; i++){
@@ -106,29 +106,6 @@ contract('PokerTournament', async accounts => {
 
       for(let i = 0; i < 10; i++){
         await pokerTournament.deposit({from: accounts[i], value: 0 });
-      }
-      prizePool = (await pokerTournament.prizePool()).toNumber();
-      depositPool = (await pokerTournament.depositPool()).toNumber();
-
-      assert.equal(prizePool, 0);
-      assert.equal(depositPool, 0);
-
-      for(let i = 0; i < 10; i++){
-        await pokerTournament.voteForWinner([`${accounts[0]}`, `${accounts[1]}`], {from: accounts[i], gas: "600000" });
-      }
-      prizePool = (await pokerTournament.prizePool()).toNumber();
-      depositPool = (await pokerTournament.depositPool()).toNumber();
-
-      assert.equal(prizePool, 0);
-      assert.equal(depositPool, 0);
-      assert.equal(await pokerTournament.votingEnded(), true);
-      assert.equal(await pokerTournament.getContractBalance(), 0);
-    });
-    it.skip('Should throw an error', async () => {
-    let prizePool, depositPool;
-
-      for(let i = 0; i < 10; i++){
-        await pokerTournament.deposit({from: accounts[i], value: -1 });
       }
       prizePool = (await pokerTournament.prizePool()).toNumber();
       depositPool = (await pokerTournament.depositPool()).toNumber();
@@ -176,15 +153,7 @@ contract('PokerTournament', async accounts => {
         "0"
       )
     });
-    it.only('getPrizeCalc', async () => {
-      // assert.equal(
-      //   await pokerTournament.getPrizeCalculation(1, 2, 80, {from: accounts[0]}),
-      //   "53"
-      // )
-      // assert.equal(
-      //   await pokerTournament.getPrizeCalculation(2, 2, 80, {from: accounts[0]}),
-      //   "26"
-      // )
+    it('getPrizeCalculation', async () => {
       assert.equal(
         (await pokerTournament.getPrizeCalculation(1, 2, 100, {from: accounts[0]})).toNumber(),
         66
@@ -214,7 +183,7 @@ contract('PokerTournament', async accounts => {
         3
       )
     });
-    it.only('getPotium', async () => {
+    it('getPotiumSize', async () => {
       for(let i = 0; i < 5; i++){
         await pokerTournament.deposit({from: accounts[i], value: 0 });
       }

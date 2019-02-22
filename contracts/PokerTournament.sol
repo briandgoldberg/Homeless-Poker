@@ -4,7 +4,7 @@ import "./SafeMath.sol";
 
 contract PokerTournament {
     using SafeMath for uint;
-    uint public buyIn;
+    uint public _buyIn;
     uint public _deposit;
     uint public prizePool;
     uint public depositPool;
@@ -18,9 +18,8 @@ contract PokerTournament {
 
     event LogDeposit (address sender, uint amount, uint balance);
     event LogRefund (uint deposit, uint depositPool, uint contractBalance);
-    event LogDeposit2 (uint buyIn, uint deposit);
-    event LogHandout (uint potiumSize, uint prizeCalculation, uint place );
-    event LogHandout2 (uint prize, uint prizePool);
+    event LogDeposit2 (uint _buyIn, uint deposit);
+    event LogHandout (uint prize, uint prizePool);
     event LogVoting (uint prizePool, bool hasEverybodyVoted);
     event LogPrize (uint prize);
     event LogCalc (uint prizePool, uint i, uint prizeMath);
@@ -44,12 +43,12 @@ contract PokerTournament {
             setBuyInAndDeposit(depositeeFunds);
         }
         else {
-            require(depositeeFunds == (buyIn + _deposit), "Value sent has to match the buy-in + deposit amount.");
+            require(depositeeFunds == (_buyIn + _deposit), "Value sent has to match the buy-in + deposit amount.");
         }
 
         depositPool = depositPool.add(_deposit);
-        prizePool = prizePool.add(buyIn);
-        emit LogDeposit2(buyIn, _deposit); 
+        prizePool = prizePool.add(_buyIn);
+        emit LogDeposit2(_buyIn, _deposit);
         playersRegistered.push(depositeeAddress);
         isRegistered[depositeeAddress] = true;
 
@@ -58,13 +57,6 @@ contract PokerTournament {
 
     function getPlayerCount() public view returns (int) {
         return int(playersRegistered.length);
-    }
-
-    function transferDepositBack() public {
-        for(uint i = 0; i < playersVoted.length; i++ ) {
-            playersVoted[i].transfer(_deposit);
-            depositPool = depositPool.sub(_deposit);
-        }
     }
 
     // First iteration will trust that every player votes correctly:
@@ -92,16 +84,10 @@ contract PokerTournament {
             handOutReward();
             // TODO: selfdestruct
         }
-        // else if(timedOut()) {
-        //     // selfdestruct() ?
-        // }
     }
 
     function votingEnded() public view returns (bool) {
-        if(allPlayersHaveVoted()) { // || majorityHasVoted()
-            return true;
-        }
-        return false;
+        return allPlayersHaveVoted() ? true : false;
     }
 
     function refundDeposit(address sender) public {
@@ -110,21 +96,16 @@ contract PokerTournament {
         emit LogRefund(_deposit, depositPool, getContractBalance());
     }
 
-    function timedOut() public pure returns (bool) {
-        // TODO: After 2 blocks, return true
-        // this won't work out..
-        return false;
-    }
     function getPercentage(uint number, uint percent) public pure returns (uint) {
         return number.mul(percent).div(100);
+    }
 
-    }
     // when majority has voted, then pay the deposit back
-    function majorityHasVoted() public view returns (bool) {
-        // uint() floors integers, add one to get ceiling.
-        uint majority = getPercentage(playersRegistered.length, 50).add(1);
-        return playersVoted.length >= majority;
-    }
+    // function majorityHasVoted() public view returns (bool) {
+    //     // uint() floors integers, add one to get ceiling.
+    //     uint majority = getPercentage(playersRegistered.length, 50).add(1);
+    //     return playersVoted.length >= majority;
+    // }
 
     function isEqual(address[] memory ballotOne, address[] memory ballotTwo) public pure returns (bool) {
         return keccak256(abi.encodePacked(ballotOne)) == keccak256(abi.encodePacked(ballotTwo));
@@ -156,47 +137,25 @@ contract PokerTournament {
         return winningBallot;
     }
 
-    function handOutReward() public payable {
-        address[] memory winningBallot = getWinningBallot();
-        require(getPotiumSize() < playersRegistered.length, "uhh");
-        for(uint place = getPotiumSize(); place > 0; place--) {
-            uint slot = place.sub(1);
-            address playerAccount = winningBallot[slot];
 
-            // emit LogHandout(getPotiumSize(), getPrizeCalculation(place, prizePool, getPotiumSize()), place);
-
-            require(isRegistered[playerAccount], "Player has to be registered.");
-            uint prize = getPrizeCalculation(place, getPotiumSize(), prizePool);
-
-            // The top player gets the "dust" + depositPool if someone didn't vote
-            if (place == 1) {
-                prize = getContractBalance().add(depositPool);
-            }
-
-            emit LogHandout2(prize, prizePool);
-            prizePool = prizePool.sub(prize);
-            playerAccount.transfer(prize);
-        }
-    }
 
     function getContractBalance() public view returns (uint) {
         return address(this).balance;
     }
 
+    // inaccurate breakdown because a lack of decimals in solidity, 
+    // prices are not always distributed 100%, needs refactoring
     function getPrizeCalculation(uint place, uint potiumSize, uint pool) public pure returns (uint) {
         uint prizeMath;
 
         for (uint exp = 0; exp < potiumSize; exp++) {
             prizeMath += 2**exp;
         }
-        uint prize = pool * 2**(potiumSize.sub(place)) / prizeMath;
+        uint prize = pool.mul(2**(potiumSize.sub(place))).div(prizeMath);
 
         return prize;
     }
 
-    function getPlayerBallot() public view returns (address[] memory) {
-        return ballot[msg.sender];
-    }
   
     function getPlayersVotedCount() public view returns (int) {
         return int(playersVoted.length);
@@ -213,16 +172,48 @@ contract PokerTournament {
         return uint(playersRegistered.length.div(5)).add(1);
     }
 
+    function handOutReward() private {
+        address[] memory winningBallot = getWinningBallot();
+        require(getPotiumSize() < playersRegistered.length, "TODO");
+        for(uint place = getPotiumSize(); place > 0; place--) {
+            uint slot = place.sub(1);
+            address playerAccount = winningBallot[slot];
+
+            require(isRegistered[playerAccount], "Player has to be registered.");
+            uint prize = getPrizeCalculation(place, getPotiumSize(), prizePool);
+
+            // The top player gets the "dust" + depositPool if someone didn't vote
+            if (place == 1) {
+                prize = getContractBalance().add(depositPool);
+            }
+
+            emit LogHandout(prize, prizePool);
+            prizePool = prizePool.sub(prize);
+            playerAccount.transfer(prize);
+        }
+    }
+
+    function getPlayerBallot() private view returns (address[] memory) {
+        return ballot[msg.sender];
+    }
+
+    function setBuyInAndDeposit(uint amount) private {
+        uint depositAmount = getPercentage(amount, 25);
+
+        _deposit = depositAmount;
+        _buyIn = amount - depositAmount;
+    }
+
+    function transferDepositBack() private {
+        for(uint i = 0; i < playersVoted.length; i++ ) {
+            playersVoted[i].transfer(_deposit);
+            depositPool = depositPool.sub(_deposit);
+        }
+    }
+
     function allPlayersHaveVoted() private view returns (bool) {
         return (playersRegistered.length == playersVoted.length);
     }
 
-    function setBuyInAndDeposit(uint amount) private {
-        require(amount >= 0, "The buy-in amount has to be positive.");
-        uint depositAmount = amount * 1 / 4;
-
-        _deposit = depositAmount;
-        buyIn = amount - depositAmount;
-    }
 }
 

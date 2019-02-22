@@ -18,7 +18,7 @@ module.exports = {
   networks: {
     "develop": {
       accounts: 15,
-      defaultEtherBalance: 1,
+      defaultEtherBalance: 5,
     },
     development: {
       host: "127.0.0.1",

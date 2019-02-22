@@ -1,4 +1,5 @@
-pragma solidity ^0.4.25;
+pragma solidity ^0.5.4;
+
 
 import "./SafeMath.sol";
 
@@ -11,10 +12,10 @@ contract PokerTournament {
     uint public depositPool;
     bool public votingHasStarted;
     address[] private playersRegistered;
-    address[] private playersVoted;
+    address payable[] private playersVoted;
 
     mapping(address => bool) private isRegistered;
-    mapping(address  => address[]) private ballot;
+    mapping(address => address payable[]) private ballot;
     mapping(address => uint) private count;
 
     event LogDeposit (address sender, uint amount, uint balance);
@@ -58,7 +59,7 @@ contract PokerTournament {
 
     // First iteration will trust that every player votes correctly:
     // player sends in a listOfWinners array arranged from first to last place
-    function voteForWinner(address[] memory playerBallot) public payable {
+    function voteForWinner(address payable[] memory playerBallot) public payable {
         votingHasStarted = true;
         emit LogVoting(prizePool, allPlayersHaveVoted());
         address depositeeAddress = msg.sender;
@@ -102,7 +103,8 @@ contract PokerTournament {
     //     return playersVoted.length >= majority;
     // }
     //
-    function isEqual(address[] memory ballotOne, address[] memory ballotTwo) public pure returns (bool) {
+    function isEqual(address payable[] memory ballotOne, address payable[] memory ballotTwo) 
+    public pure returns (bool) {
         return keccak256(abi.encodePacked(ballotOne)) == keccak256(abi.encodePacked(ballotTwo));
     }
 
@@ -140,12 +142,12 @@ contract PokerTournament {
 
     // this function takes tons of gas, the last player to vote
     // uses almost 300.000 additional gas.
-    function getWinningBallot() private view returns (address[] memory) {
+    function getWinningBallot() private view returns (address payable[] memory) {
 
         uint64 max = 0;
-        address[] memory winningBallot;
-        address[] memory thisBallot;
-        address[] memory restOfBallots;
+        address payable[] memory winningBallot;
+        address payable[] memory thisBallot;
+        address payable[] memory restOfBallots;
 
         for(uint64 i = 0; i < playersVoted.length; i++ ) {
             uint64 counter = 0;
@@ -165,11 +167,11 @@ contract PokerTournament {
     }
 
     function handOutReward() private {
-        address[] memory winningBallot = getWinningBallot();
+        address payable[] memory winningBallot = getWinningBallot();
         require(getPotiumSize() < playersRegistered.length, "TODO");
         for(uint place = getPotiumSize(); place > 0; place--) {
             uint slot = place.sub(1);
-            address playerAccount = winningBallot[slot];
+            address payable playerAccount = winningBallot[slot];
 
             require(isRegistered[playerAccount], "Player has to be registered.");
             uint prize = getPrizeCalculation(place, getPotiumSize(), prizePool);
@@ -185,13 +187,13 @@ contract PokerTournament {
         }
     }
 
-    function refundDeposit(address sender) private {
+    function refundDeposit(address payable sender) private {
         depositPool = depositPool.sub(_deposit);
         sender.transfer(_deposit);
         emit LogRefund(_deposit, depositPool, getContractBalance());
     }
 
-    function getPlayerBallot() private view returns (address[] memory) {
+    function getPlayerBallot() private view returns (address payable[] memory) {
         return ballot[msg.sender];
     }
 

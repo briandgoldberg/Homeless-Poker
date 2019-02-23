@@ -20,7 +20,8 @@ module.exports = {
     reporter: 'eth-gas-reporter',
     reporterOptions : {
       currency: 'USD',
-      showTimeSpent: true
+      showTimeSpent: true,
+      onlyCalledMethods: false
     }
   },
   compilers: {

@@ -25,12 +25,7 @@ contract PokerTournament {
     event LogVoting (uint prizePool, bool hasEverybodyVoted);
     event LogPrize (uint prize);
     event LogCalc (uint prizePool, uint i, uint prizeMath);
-
-    /* solhint-disable no-empty-blocks */
-    constructor() public payable {
-        // TODO: Initiate tournament instance ID
-    }
-    /* solhint-enable no-empty-blocks */
+    event LogSelfDestruct (address sender, uint accountBalance);
 
     function deposit() public payable {
         address depositeeAddress = msg.sender;
@@ -70,7 +65,7 @@ contract PokerTournament {
         );
 
         // mapping a players ballot (kjörseðill) to his address
-        ballot[msg.sender] = playerBallot; 
+        ballot[msg.sender] = playerBallot;
     
         // maintain an iterable record for who has voted
         playersVoted.push(msg.sender);
@@ -79,9 +74,10 @@ contract PokerTournament {
 
         if (votingEnded()) {
             handOutReward();
-            // Is this ideal? 
+            // Is this ideal?
             // The last user to vote has to pay gas for getWinningBallot which is gas costly
             // The memory arrays should free up some gas on selfdestruct to pay the user back.
+            emit LogSelfDestruct(msg.sender, address(this).balance);
             selfdestruct(msg.sender);
         }
     }
@@ -116,6 +112,7 @@ contract PokerTournament {
 
     // inaccurate breakdown because a lack of decimals in solidity, 
     // prices are not always distributed 100%, needs refactoring
+    // Solution ? : use Finney as a unit.
     function getPrizeCalculation(uint place, uint potiumSize, uint pool) public pure returns (uint) {
         uint prizeMath;
 
@@ -203,7 +200,7 @@ contract PokerTournament {
         uint depositAmount = getPercentage(amount, 25);
 
         _deposit = depositAmount;
-        _buyIn = amount - depositAmount;
+        _buyIn = amount.sub(depositAmount);
     }
 
     function transferDepositBack() private {

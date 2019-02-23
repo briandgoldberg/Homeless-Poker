@@ -1,5 +1,3 @@
-var web3 = require('web3');
-
 const PokerTournament = artifacts.require('./PokerTournament.sol');
 const truffleAssert = require('truffle-assertions');
 
@@ -53,7 +51,7 @@ contract('PokerTournament', async accounts => {
       assert.equal(await pokerTournament.getPotiumSize(), 1);
     });
 
-    it('Should reset the prizePool after everybody voted, 5p, potiumSize: 1', async () => {
+    it.only('Should selfdescrtuct after everybody voted, 5p, potiumSize: 1', async () => {
       let prizePool, depositPool;
 
       for(let i = 0; i < 5; i++){
@@ -65,16 +63,27 @@ contract('PokerTournament', async accounts => {
       assert.equal(prizePool, 40);
       assert.equal(depositPool, 10);
 
-      for(let i = 0; i < 5; i++){
+      for(let i = 0; i < 4; i++){
         await pokerTournament.voteForWinner([`${accounts[0]}`], {from: accounts[i], gas: "600000" }).catch((err) => console.log(err));
       }
-      // prizePool = (await pokerTournament.prizePool()).toNumber();
-      // depositPool = (await pokerTournament.depositPool()).toNumber();
+      depositPool = (await pokerTournament.depositPool()).toNumber();
+      assert.equal(depositPool, 2);
 
-      // assert.equal(prizePool, 0);
-      // assert.equal(depositPool, 0);
-      // assert.equal(await pokerTournament.votingEnded(), true);
-      // assert.equal(await pokerTournament.getContractBalance(), 0);
+      let winnerBalanceBefore = await web3.eth.getBalance(accounts[4])
+      
+      await pokerTournament.voteForWinner([`${accounts[0]}`], {from: accounts[4], gas: "600000" }).catch((err) => console.log(err));
+
+      let senderbalanceAfter = await web3.eth.getBalance(accounts[0])
+      let winnerBalanceAfter = await web3.eth.getBalance(accounts[4])
+
+      let winnerDiff = BigInt(winnerBalanceAfter) - BigInt(winnerBalanceBefore)
+
+      // TODO: 
+      // console.log('difference', web3.utils.fromWei(winnerDiff.toString(), 'ether'))
+      // assert.equal(`${winnerDiff}`, prizePool)
+
+      // contract should selfdestruct
+      assert.equal(await web3.eth.getCode(pokerTournament.address), '0x')
     });
 
     it('Should reset the prizePool after everybody voted, 10p, potiumSize: 2', async () => {

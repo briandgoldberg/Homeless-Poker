@@ -12,8 +12,8 @@ let contract = async () => {
     console.log('contractAddress:', deployedNetwork && deployedNetwork.address)
     return new eth.Contract(
         PokerTournamentContract.abi,
-        // "0x4b18456eF5D2e584DD314E4f65E65872d4937746"
-        deployedNetwork && deployedNetwork.address
+        "0xA7CEC45371adCd537B3AaA6117778fF781A9137d"
+        //deployedNetwork && deployedNetwork.address
     );
 }
 

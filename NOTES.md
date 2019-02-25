@@ -30,7 +30,19 @@ Retrieve the instance by its public address via:
 `web3.eth.contract(HelloWorld.abi, contractAddress)`
 Where PokerTournament.abi is the locally compile abi, (./build/contracts/PokerTournament.json" and contractAddress is your publicly deployed contract instance.
 
-Invoke it:
-`PokerTournament.deployed().then(function(instance){return instance.deposit()});`
+Invoke it by depositing 100 wei:
+`PokerTournament.deployed().then(function(instance){return instance.deposit({ value: 100 })});`
 
 https://medium.com/coinmonks/5-minute-guide-to-deploying-smart-contracts-with-truffle-and-ropsten-b3e30d5ee1e
+
+
+1 ether:  '1,000,000,000,000,000,000'
+1 finney: '0.001,000,000,000,000,000'
+1 szabo:  '0.000.001,000,000,000,000'
+1 gwei:   '0.000.000.001,000,000,000'
+1 mwei:   '0.000.000.000.001,000,000'
+1 kwei:   '0.000.000.000.000.001,000'
+1 wei:    '0.000.000.000.000.000.001'
+2.936.620.000.000.000
+
+https://github.com/ethjs/ethjs-unit/blob/master/docs/user-guide.md

@@ -36,3 +36,22 @@ Migrate the contract to the test network (RPC has to be running)
 
 Start the client
 `yarn start`
+
+Contract is live on Ropsten test network at 0x5791c4F1c4b3ee91feC5A483bB50bDF7606d319
+
+Public functions:
+
+`deposit()`
+Users deposit to contract, first player controls the amount with `value` in wei.
+
+`voteForWinner(ballot)`
+`ballot`: array of addresses listed from first to last
+
+`getPotiumSize()`
+The amount of players that has to be voted for.
+
+`getPrizeCalculation(place, potiumSize, prizePool)`
+
+`getPlayersVotedCount()`
+
+`getPlayerCount`

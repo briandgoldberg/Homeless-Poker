@@ -28,28 +28,33 @@ contract PokerTournament {
     event LogSelfDestruct (address sender, uint accountBalance);
 
     function deposit() public payable {
-        address depositeeAddress = msg.sender;
-        uint256 depositeeFunds = msg.value;
         require(votingHasStarted == false, "Voting started, registration has ended");
         
         // is this working? 
-        require(!isRegistered[depositeeAddress], "A player can only deposit once.");
+        require(!isRegistered[msg.sender], "A player can only deposit once.");
 
         /* First depositee sets the buy-in amount */
         if (playersRegistered.length == 0) {
-            setBuyInAndDeposit(depositeeFunds);
+            setBuyInAndDeposit(msg.value);
         }
         else {
-            require(depositeeFunds == (_buyIn + _deposit), "Value sent has to match the buy-in + deposit amount.");
+            require(msg.value == (_buyIn + _deposit), "Value sent has to match the buy-in + deposit amount.");
         }
 
         depositPool = depositPool.add(_deposit);
         prizePool = prizePool.add(_buyIn);
         emit LogDeposit2(_buyIn, _deposit);
-        playersRegistered.push(depositeeAddress);
-        isRegistered[depositeeAddress] = true;
+        playersRegistered.push(msg.sender);
+        isRegistered[msg.sender] = true;
 
         //emit LogDeposit(msg.sender, msg.value, msg.sender.balance);
+    }
+    function getPlayerCount() public view returns (int) {
+        return int(playersRegistered.length);
+    }
+
+    function getPlayersVotedCount() public view returns (int) {
+        return int(playersVoted.length);
     }
 
     // First iteration will trust that every player votes correctly:
@@ -80,10 +85,6 @@ contract PokerTournament {
             emit LogSelfDestruct(msg.sender, address(this).balance);
             selfdestruct(msg.sender);
         }
-    }
-
-    function getPlayerCount() public view returns (int) {
-        return int(playersRegistered.length);
     }
 
     function votingEnded() public view returns (bool) {
@@ -119,13 +120,10 @@ contract PokerTournament {
         for (uint exp = 0; exp < potiumSize; exp++) {
             prizeMath += 2**exp;
         }
-        uint prize = pool.mul(2**(potiumSize.sub(place))).div(prizeMath);
+        // x << y == x * 2**y
+        uint prize = (pool << potiumSize.sub(place)).div(prizeMath);
 
         return prize;
-    }
-
-    function getPlayersVotedCount() public view returns (int) {
-        return int(playersVoted.length);
     }
 
     /* 20% of all players get rewards */
@@ -140,18 +138,19 @@ contract PokerTournament {
     }
 
     // this function takes tons of gas, the last player to vote
-    // uses almost 300.000 additional gas.
+    // uses almost 300.000 additional gas
     function getWinningBallot() private view returns (address payable[] memory) {
 
-        uint64 max = 0;
+        uint8 max = 0;
         address payable[] memory winningBallot;
         address payable[] memory thisBallot;
         address payable[] memory restOfBallots;
 
-        for(uint64 i = 0; i < playersVoted.length; i++ ) {
-            uint64 counter = 0;
+        for(uint8 i = 0; i < playersVoted.length; i++ ) {
+            uint8 counter = 0;
             thisBallot = ballot[playersVoted[i]];
-            for(uint64 j = 1; j < playersVoted.length; j++) {
+
+            for(uint8 j = 1; j < playersVoted.length; j++) {
                 restOfBallots = ballot[playersVoted[j]];
                 if (isEqual(thisBallot, restOfBallots)) {
                     counter += 1;
@@ -190,10 +189,6 @@ contract PokerTournament {
         depositPool = depositPool.sub(_deposit);
         sender.transfer(_deposit);
         emit LogRefund(_deposit, depositPool, getContractBalance());
-    }
-
-    function getPlayerBallot() private view returns (address payable[] memory) {
-        return ballot[msg.sender];
     }
 
     function setBuyInAndDeposit(uint amount) private {

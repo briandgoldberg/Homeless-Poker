@@ -4,7 +4,7 @@ pragma solidity ^0.5.4;
 import "../node_modules/openzeppelin-solidity/contracts/math/SafeMath.sol";
 
 
-contract PokerTournament {
+contract HomelessPoker {
     using SafeMath for uint;
     uint public _buyIn;
     uint public _deposit;

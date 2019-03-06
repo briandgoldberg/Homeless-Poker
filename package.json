@@ -10,7 +10,7 @@
     "compile": "truffle compile",
     "deploy:test": "truffle deploy --network ropsten",
     "console:test": "truffle console --network ropsten",
-    "lint": "yarn solhint contracts/PokerTournament.sol",
+    "lint": "yarn solhint contracts/HomelessPoker.sol",
     "migrate": "truffle migrate",
     "rpc": "truffle develop",
     "start": "babel-node client/src/index.js",

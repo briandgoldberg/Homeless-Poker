@@ -1,5 +1,5 @@
-var PokerTournament = artifacts.require("./PokerTournament.sol");
+const HomelessPoker = artifacts.require('./HomelessPoker.sol');
 
 module.exports = function(deployer) {
-  deployer.deploy(PokerTournament);
+  deployer.deploy(HomelessPoker);
 };

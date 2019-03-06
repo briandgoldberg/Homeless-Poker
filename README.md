@@ -37,7 +37,9 @@ Migrate the contract to the test network (RPC has to be running)
 Start the client
 `yarn start`
 
-Contract is live on Ropsten test network at 0x5791c4F1c4b3ee91feC5A483bB50bDF7606d319
+Contract is live on Ropsten test network at 
+0xa7cec45371adcd537b3aaa6117778ff781a9137d & 0x13c273cb47c7c1fE62865e5b2069C361C574a7F5
+https://ropsten.etherscan.io/address/0xa7cec45371adcd537b3aaa6117778ff781a9137d
 
 Public functions:
 

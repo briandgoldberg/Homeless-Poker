@@ -3,7 +3,7 @@ const HDWalletProvider = require("truffle-hdwallet-provider");
 
 // MNEMONIC = MetaMask seed
 const MNEMONIC = process.env.MNEMONIC;
-
+const infuraRopstenApiKey = "8e61f915bb5a42849d92927bc3f4ff73"
 module.exports = {
   networks: {
     "develop": {
@@ -17,7 +17,7 @@ module.exports = {
     },
     ropsten: {
       provider: function() {
-        return new HDWalletProvider(MNEMONIC, "https://ropsten.infura.io/v3/8e61f915bb5a42849d92927bc3f4ff73")
+        return new HDWalletProvider(MNEMONIC, `https://ropsten.infura.io/v3/${infuraRopstenApiKey}`)
       },
       network_id: 3,
       gas: 4000000      //make sure this gas allocation isn't over 4M, which is the max

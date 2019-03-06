@@ -13,7 +13,11 @@ v1:
     Needs to have a selfdestruct option if voting hasn't started
     
     v1.1:
-    ☐ create a modifier for voting phase
+    ☐ create a modifier for voting phase ? 
+       - What about, if everybody doesn't vote, those who voted will
+       be able to call a function with hasVoted modifier that 
+       selfdestructs the contract after x blocks, else punishes.?
+
     ☐ test every revert
     ✔ selfdestruct when solved
     ☐ majorityHasVoted

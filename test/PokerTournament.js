@@ -2,7 +2,6 @@ const PokerTournament = artifacts.require('./PokerTournament.sol');
 const truffleAssert = require('truffle-assertions');
 
 contract('PokerTournament', async accounts => {
-
   let pokerTournament;
   const VALUE = 10;
 

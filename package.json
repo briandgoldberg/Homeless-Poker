@@ -1,6 +1,6 @@
 {
   "name": "homeless-poker",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "Poker without a house.",
   "main": "index.js",
   "directories": {

@@ -41,7 +41,7 @@ contract('HomelessPoker', async accounts => {
       for (let i = 0; i < 7; i++) {
         await homelessPoker.deposit({ from: accounts[i], value: VALUE });
       }
-      await homelessPoker.voteForWinner([`${accounts[0]}`, `${accounts[1]}`], {
+      await homelessPoker.vote([`${accounts[0]}`, `${accounts[1]}`], {
         from: accounts[0]
       });
       assert.equal(await homelessPoker.getPlayersVotedCount(), 1);
@@ -68,7 +68,7 @@ contract('HomelessPoker', async accounts => {
 
       for (let i = 0; i < 4; i++) {
         await homelessPoker
-          .voteForWinner([`${accounts[0]}`], {
+          .vote([`${accounts[0]}`], {
             from: accounts[i],
             gas: '600000'
           })
@@ -80,7 +80,7 @@ contract('HomelessPoker', async accounts => {
       let winnerBalanceBefore = await web3.eth.getBalance(accounts[4]);
 
       await homelessPoker
-        .voteForWinner([`${accounts[0]}`], { from: accounts[4], gas: '600000' })
+        .vote([`${accounts[0]}`], { from: accounts[4], gas: '600000' })
         .catch(err => console.log(err));
 
       let senderbalanceAfter = await web3.eth.getBalance(accounts[0]);
@@ -109,7 +109,7 @@ contract('HomelessPoker', async accounts => {
       assert.equal(depositPool, 20);
 
       for (let i = 0; i < 10; i++) {
-        await homelessPoker.voteForWinner(
+        await homelessPoker.vote(
           [`${accounts[0]}`, `${accounts[1]}`],
           { from: accounts[i], gas: '600000' }
         );
@@ -136,7 +136,7 @@ contract('HomelessPoker', async accounts => {
       assert.equal(depositPool, 0);
 
       for (let i = 0; i < 10; i++) {
-        await homelessPoker.voteForWinner(
+        await homelessPoker.vote(
           [`${accounts[0]}`, `${accounts[1]}`],
           { from: accounts[i], gas: '600000' }
         );
@@ -254,7 +254,7 @@ contract('HomelessPoker', async accounts => {
     });
     it('should throw an error if an outside accounts tries to vote', async () => {
       await truffleAssert.reverts(
-        homelessPoker.voteForWinner([`${accounts[0]}`], {
+        homelessPoker.vote([`${accounts[0]}`], {
           from: accounts[0]
         }),
         'Voter should be participating.'
@@ -264,13 +264,13 @@ contract('HomelessPoker', async accounts => {
       for (let i = 0; i < 5; i++) {
         await homelessPoker.deposit({ from: accounts[i], value: VALUE });
       }
-      await homelessPoker.voteForWinner([`${accounts[0]}`], {
+      await homelessPoker.vote([`${accounts[0]}`], {
         from: accounts[0],
         gas: 3000000
       });
 
       await truffleAssert.reverts(
-        homelessPoker.voteForWinner([`${accounts[0]}`], {
+        homelessPoker.vote([`${accounts[0]}`], {
           from: accounts[0],
           gas: 3000000
         }),
@@ -281,7 +281,7 @@ contract('HomelessPoker', async accounts => {
       for (let i = 0; i < 5; i++) {
         await homelessPoker.deposit({ from: accounts[i], value: VALUE });
       }
-      await homelessPoker.voteForWinner([`${accounts[0]}`], {
+      await homelessPoker.vote([`${accounts[0]}`], {
         from: accounts[0]
       });
       await truffleAssert.reverts(
@@ -292,7 +292,7 @@ contract('HomelessPoker', async accounts => {
     it('should throw an error if the amount of address voted for doesnt match potium size', async () => {
       await homelessPoker.deposit({ from: accounts[0], value: VALUE });
       await truffleAssert.reverts(
-        homelessPoker.voteForWinner([`${accounts[0]}`, `${accounts[1]}`], {
+        homelessPoker.vote([`${accounts[0]}`, `${accounts[1]}`], {
           from: accounts[0]
         }),
         'The amount of addresses in player ballot has to match the potium size.'

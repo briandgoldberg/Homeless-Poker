@@ -20,7 +20,7 @@ Team
 - Javascript Lead: TBD
 - Eventually, we would like the project to support more features and blockchains.  Contact briandgoldberg@gmail.com with any ideas!
 
-# How to run
+# How to run locally
 
 Install dependencies:
 `yarn`
@@ -46,7 +46,7 @@ Public functions:
 `deposit()`
 Users deposit to contract, first player controls the amount with `value` in wei.
 
-`voteForWinner(ballot)`
+`vote(ballot)`
 `ballot`: array of addresses listed from first to last
 
 `getPotiumSize()`

@@ -59,7 +59,7 @@ contract HomelessPoker {
 
     // First iteration will trust that every player votes correctly:
     // player sends in a listOfWinners array arranged from first to last place
-    function voteForWinner(address payable[] memory playerBallot) public payable {
+    function vote(address payable[] memory playerBallot) public payable {
         votingHasStarted = true;
         emit LogVoting(prizePool, allPlayersHaveVoted());
         require(isRegistered[msg.sender] == true, "Voter should be participating.");

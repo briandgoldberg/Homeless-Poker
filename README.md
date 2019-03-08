@@ -11,7 +11,7 @@ MVP
 
 Determining Prizes
 - 20% (Rounded Up) of users get prizes  = NumPrizes
-- Caculate 2^0 + 2^1 + 2^3..... + 2^NumPrizes = PrizeMath
+- Caculate 2^1 + 2^3..... + 2^NumPrizes = PrizeMath
 - 2^NumPrizes  /  PrizeMath X Prize Pool = 1st place
 - 2^NumPrizes-1  /  PrizeMath X Prize Pool = 2nd place...
 
@@ -19,3 +19,41 @@ Team
 - Solidity lead: einaralex
 - Javascript Lead: kristjanmik
 - Eventually, we would like the project to support more features and blockchains.  Contact briandgoldberg@gmail.com with any ideas!
+
+# How to run locally
+
+Install dependencies:
+`yarn`
+
+Start the test network
+`yarn rpc`
+
+Compile the contract
+`yarn compile`
+
+Migrate the contract to the test network (RPC has to be running)
+`yarn migrate`
+
+Start the client
+`yarn start`
+
+Contract is live on Ropsten test network at 
+0xa7cec45371adcd537b3aaa6117778ff781a9137d & 0x13c273cb47c7c1fE62865e5b2069C361C574a7F5
+https://ropsten.etherscan.io/address/0xa7cec45371adcd537b3aaa6117778ff781a9137d
+
+Public functions:
+
+`deposit()`
+Users deposit to contract, first player controls the amount with `value` in wei.
+
+`vote(ballot)`
+`ballot`: array of addresses listed from first to last
+
+`getPotiumSize()`
+The amount of players that has to be voted for.
+
+`getPrizeCalculation(place, potiumSize, prizePool)`
+
+`getPlayersVotedCount()`
+
+`getPlayerCount`

@@ -1,0 +1,22 @@
+{
+  "extends": "default",
+  "rules": {
+    "avoid-throw": false,
+    "avoid-suicide": "error",
+    "avoid-sha3": "warn",
+    "indent": ["warn", 4],
+    "check-send-result": "error",
+    "multiple-sends": "error",
+    "avoid-low-level-calls": "error",
+    "event-name-camelcase": "warn",
+    "const-name-snakecase": "warn",
+    "statement-indent": false,
+    "bracket-align": "warn",
+    "space-after-comma": "warn", 
+    "no-unused-vars": "warn",
+    "code-complexity": "warn",
+    "separate-by-one-line-in-contract": "warn",
+    "two-lines-top-level-separator": "warn",
+    "compiler-fixed": false
+  }
+}

@@ -27,7 +27,7 @@
     "eth-gas-reporter": "^0.1.12",
     "solhint": "^1.4.1",
     "truffle-assertions": "^0.6.3",
-    "web3": "^1.0.0-beta.37"
+    "web3": "^1.0.0-beta.48"
   },
   "dependencies": {
     "openzeppelin-solidity": "2.1.2",

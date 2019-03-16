@@ -1,0 +1,7 @@
+.earn-points {
+  display: flex;
+}
+
+.item {
+  flex-grow: 1;
+}

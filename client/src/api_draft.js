@@ -1,16 +1,16 @@
-import HomelessPokerContract from '../../build/contracts/HomelessPoker.json';
+import ContractArtifacts from '../../build/contracts/HomelessPoker.json';
 import Web3 from 'web3';
 
-const web3 = new Web3(Web3.givenProvider || 'http://localhost:9545');
+const web3 = new Web3(Web3.currentProvider || 'http://localhost:9545');
 const eth = web3.eth;
 
 // creates a contract object for solidity contracts
 let contract = async () => {
   const networkId = await eth.net.getId();
-  const deployedNetwork = HomelessPokerContract.networks[networkId];
+  const deployedNetwork = ContractArtifacts.networks[networkId];
   console.log('contractAddress:', deployedNetwork && deployedNetwork.address);
   return new eth.Contract(
-    HomelessPokerContract.abi,
+    ContractArtifacts.abi,
     deployedNetwork && deployedNetwork.address //"0xA7CEC45371adCd537B3AaA6117778fF781A9137d"
   );
 };

@@ -33,17 +33,19 @@ const deploy = async (account) => {
   await contractInstance
   .deploy({ data: ContractArtifacts.bytecode } )
   .send({ from: account, gas: 2000000 })
+  .on('receipt', (receipt) => {
+    contractAddress = receipt.contractAddress
+    contractInstance.options.address = receipt.contractAddress
+  })
   .on('error', (error) => {
     console.log(error)
   })
-  .on('receipt', (receipt) => {
-    contractAddress = receipt.contractAddress
-  })
-  console.log('deployed to address: ', contractAddress)
+  console.log('Deployed to address: ', contractAddress)
 }
 
 deploy(testAccount)
-
+console.log(contractAddress, 'yolo')
+contractInstance.options.address = contractAddress
 // console.log(instance().then((d) => console.log(d.options.address)));
 // const instance = await contract();
 // const accounts = eth.getAccounts();
@@ -52,11 +54,14 @@ deploy(testAccount)
 // const GAS = 200000;
 
 const deposit = async (address, value) => {
-    await contractInstance
+  console.log(contractInstance.options.address)
+    await contractInstance.methods
     .deposit()
-    .send({ from: address, gas: GAS, value })
+    .send({ from: address, gas: 2000000, value })
     .catch(console.error);
 }
+
+deposit(testAccount, 10)
 // deposit()
     // let methods = await instance()
     // console.log('yay', Object.entries(instance().then((l) => console.log(Object.entries(l)))))

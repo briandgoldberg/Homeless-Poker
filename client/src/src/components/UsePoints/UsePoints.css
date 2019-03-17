@@ -1,8 +1,0 @@
-.use-points {
-  display: flex;
-  flex-direction: column;
-}
-
-.item {
-  flex-grow: 1;
-}

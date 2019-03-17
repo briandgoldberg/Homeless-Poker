@@ -1,6 +1,6 @@
 require('dotenv').config();
 const HDWalletProvider = require('truffle-hdwallet-provider');
-const buildPath = `${__dirname}/contracts/migrations/build`;
+const buildPath = `${__dirname}/client/src/contracts`;
 
 // MNEMONIC = MetaMask seed
 const MNEMONIC = process.env.MNEMONIC;

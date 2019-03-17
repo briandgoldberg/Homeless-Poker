@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import ContractArtifacts from "./contracts/HomelessPoker.json";
 import getWeb3 from "./utils/getWeb3";
-import Web3 from 'web3'
 
 import "./App.css";
 
@@ -81,9 +80,7 @@ class App extends Component {
 
     await this.deposit(accounts[0], web3.utils.toWei("0.001"))
 
-    console.log('kemst ég hingað?')
     const response = await contract.methods.getPlayerCount().call();
-    console.log(response)
 
     this.setState({ registeredPlayersCount: response });
   };
@@ -96,16 +93,7 @@ class App extends Component {
     }
     return (
       <div className="App">
-        <h1>Good to Go!</h1>
-        <p>Your Truffle Box is installed and ready.</p>
         <h2>Smart Contract Example</h2>
-        <p>
-          If your contracts compiled and migrated successfully, below will show
-          a stored value of 5 (by default).
-        </p>
-        <p>
-          Try changing the value stored on <strong>line 40</strong> of App.js.
-        </p>
         <div> Registered player count: {this.state.registeredPlayersCount}</div>
       </div>
     );

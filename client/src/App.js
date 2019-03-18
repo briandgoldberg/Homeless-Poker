@@ -19,7 +19,7 @@ class App extends Component {
       const web3 = await getWeb3();
 
       // Use web3 to get the user's accounts.
-      const accounts = await web3.eth.getAccounts();
+      const account = (await web3.eth.getAccounts())[0];
 
       // Get the contract instance.
       const networkId = await web3.eth.net.getId();
@@ -32,7 +32,7 @@ class App extends Component {
 
       // Set web3, accounts, and contract to the state, and then proceed with an
       // example of interacting with the contract's methods.
-      this.setState({ web3, accounts, contract: instance }, this.runExample);
+      this.setState({ web3, account, contract: instance }, () => this.deploy(account));
     } catch (error) {
       alert(
         `Failed to load web3, accounts, or contract. Check console for details.`,
@@ -61,7 +61,7 @@ class App extends Component {
   }
 
   deposit = async (address, value) => {
-    const { contract } = this.state;
+    const { contract, web3 } = this.state;
     await contract.methods
       .deposit()
       .send({ from: address, gas: 2000000, value })
@@ -71,30 +71,26 @@ class App extends Component {
       .on('receipt', (receipt) => {
         console.log(receipt)
       })
+
+    console.log(web3.utils.fromWei((await this.prizePool()).toString()))
   }
 
-  runExample = async () => {
-    const { accounts, contract, web3 } = this.state;
-
-    await this.deploy(accounts[0])
-
-    await this.deposit(accounts[0], web3.utils.toWei("0.001"))
-
-    const response = await contract.methods.getPlayerCount().call();
-
-    this.setState({ registeredPlayersCount: response });
-  };
-
-
+  prizePool = async () => {
+    const { contract } = this.state;
+    return await contract.methods.prizePool.call();
+  }
 
   render() {
-    if (!this.state.web3) {
+    const { account, web3 } = this.state;
+    if (!web3) {
       return <div>Loading Web3, accounts, and contract...</div>;
     }
     return (
       <div className="App">
         <h2>Smart Contract Example</h2>
         <div> Registered player count: {this.state.registeredPlayersCount}</div>
+        <input></input>
+        <button onClick={() => this.deposit(account, web3.utils.toWei("0.001"))}>Deposit ether</button>
       </div>
     );
   }

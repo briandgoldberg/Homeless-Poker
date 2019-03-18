@@ -111,9 +111,6 @@ contract HomelessPoker {
         return address(this).balance;
     }
 
-    // inaccurate breakdown because a lack of decimals in solidity, 
-    // prices are not always distributed 100%, needs refactoring
-    // Solution ? : use Finney as a unit.
     function getPrizeCalculation(uint place, uint potiumSize, uint pool) public pure returns (uint) {
         uint prizeMath;
 

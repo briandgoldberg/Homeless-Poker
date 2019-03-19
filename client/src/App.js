@@ -10,7 +10,8 @@ class App extends Component {
     web3: null, 
     accounts: null, 
     contract: null,
-    contractAddress: null
+    contractAddress: null,
+    value: null // value that player sends to contract
   };
 
   componentDidMount = async () => {
@@ -61,7 +62,7 @@ class App extends Component {
   }
 
   deposit = async (address, value) => {
-    const { contract, web3 } = this.state;
+    const { contract } = this.state;
     await contract.methods
       .deposit()
       .send({ from: address, gas: 2000000, value })
@@ -72,12 +73,48 @@ class App extends Component {
         console.log(receipt)
       })
 
-    console.log(web3.utils.fromWei((await this.prizePool()).toString()))
+    // console.log(web3.utils.fromWei((await this.getPrizePool()).toString()))
+    
+    this.getLobbyInfo()
   }
 
-  prizePool = async () => {
+  getLobbyInfo = async () => {
+    // create an event in the contract for this information, that is triggered after every deposit
+    console.log(await this.getPrizePool())
+    console.log(await this.getDepositPool())
+    console.log(await this.getBuyIn())
+    console.log(await this.getDeposit())
+  }
+
+  fromWei = (amount) => {
+    const { web3 } = this.state;
+    return web3.utils.fromWei((amount).toString())
+  }
+
+  getPrizePool = async () => {
     const { contract } = this.state;
-    return await contract.methods.prizePool.call();
+    return this.fromWei(await contract.methods.prizePool.call());
+  }
+
+  getDepositPool = async () => {
+    const { contract } = this.state;
+    return this.fromWei(await contract.methods.depositPool.call());
+  }
+
+  getBuyIn = async () => {
+    const { contract } = this.state;
+    return this.fromWei(await contract.methods._buyIn.call());
+  }
+
+  // need to rename the individual deposit
+  getDeposit = async () => {
+    const { contract } = this.state;
+    return this.fromWei(await contract.methods._deposit.call());
+  }
+
+  handleChange = (event) => {
+    console.log(this.state.value)
+    this.setState({ value: event.target.value })
   }
 
   render() {
@@ -89,8 +126,8 @@ class App extends Component {
       <div className="App">
         <h2>Smart Contract Example</h2>
         <div> Registered player count: {this.state.registeredPlayersCount}</div>
-        <input></input>
-        <button onClick={() => this.deposit(account, web3.utils.toWei("0.001"))}>Deposit ether</button>
+        <input placeholder="0.0001" onChange={(e) => this.handleChange(e)}  ></input>
+        <button onClick={() => this.state.value && this.deposit(account, web3.utils.toWei(this.state.value.toString()))}>Deposit ether</button>
       </div>
     );
   }

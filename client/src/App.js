@@ -11,7 +11,8 @@ class App extends Component {
     accounts: null, 
     contract: null,
     contractAddress: null,
-    value: null // value that player sends to contract
+    value: null, // value that player sends to contract
+    deposited: false
   };
 
   componentDidMount = async () => {
@@ -55,7 +56,7 @@ class App extends Component {
       })
       .on('transactionHash', (transactionHash) => { console.log('TransactionHash', transactionHash) })
       .on('receipt', (receipt) => {
-      this.setState({ contractAddress: receipt.contractAddress })
+        this.setState({ contractAddress: receipt.contractAddress})
         contract.options.address = receipt.contractAddress
       })
     console.log('Deployed to address: ', this.state.contractAddress)
@@ -70,6 +71,7 @@ class App extends Component {
         console.log(error)
       })
       .on('receipt', (receipt) => {
+        this.setState({ deposited: true, registeredPlayersCount: this.state.registeredPlayersCount+1 })
         console.log(receipt)
       })
 
@@ -126,8 +128,11 @@ class App extends Component {
       <div className="App">
         <h2>Smart Contract Example</h2>
         <div> Registered player count: {this.state.registeredPlayersCount}</div>
-        <input placeholder="0.0001" onChange={(e) => this.handleChange(e)}  ></input>
+        { !this.state.deposited && (<>
+        <input placeholder="0.0001" onChange={(e) => this.handleChange(e)}></input>
         <button onClick={() => this.state.value && this.deposit(account, web3.utils.toWei(this.state.value.toString()))}>Deposit ether</button>
+        </>)}
+        { this.state.deposited && <p>You deposited {this.state.value}</p>}
       </div>
     );
   }

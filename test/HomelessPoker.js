@@ -11,14 +11,14 @@ contract('HomelessPoker', async accounts => {
 
   describe('initialization', () => {
     it('all get-functions should be initialized as 0', async () => {
-      assert.equal(await homelessPoker._buyIn(), 0);
+      assert.equal(await homelessPoker.buyIn(), 0);
       assert.equal(await homelessPoker.prizePool(), 0);
     });
   });
   describe('interaction', () => {
     it('should return correct buy-in', async () => {
       await homelessPoker.deposit({ value: VALUE });
-      assert.equal(await homelessPoker._buyIn(), Math.ceil((VALUE * 3) / 4));
+      assert.equal(await homelessPoker.buyIn(), Math.ceil((VALUE * 3) / 4));
     });
 
     it('should return correct prize pool', async () => {
@@ -55,16 +55,16 @@ contract('HomelessPoker', async accounts => {
     });
 
     it('Should selfdescrtuct after everybody voted, 5p, potiumSize: 1', async () => {
-      let prizePool, depositPool;
+      let prizePool, pledgePool;
 
       for (let i = 0; i < 5; i++) {
         await homelessPoker.deposit({ from: accounts[i], value: VALUE });
       }
       prizePool = (await homelessPoker.prizePool()).toNumber();
-      depositPool = (await homelessPoker.depositPool()).toNumber();
+      pledgePool = (await homelessPoker.pledgePool()).toNumber();
 
       assert.equal(prizePool, 40);
-      assert.equal(depositPool, 10);
+      assert.equal(pledgePool, 10);
 
       for (let i = 0; i < 4; i++) {
         await homelessPoker
@@ -74,8 +74,8 @@ contract('HomelessPoker', async accounts => {
           })
           .catch(err => console.log(err));
       }
-      depositPool = (await homelessPoker.depositPool()).toNumber();
-      assert.equal(depositPool, 2);
+      pledgePool = (await homelessPoker.pledgePool()).toNumber();
+      assert.equal(pledgePool, 2);
 
       let winnerBalanceBefore = await web3.eth.getBalance(accounts[4]);
 
@@ -97,16 +97,16 @@ contract('HomelessPoker', async accounts => {
     });
 
     it('Should reset the prizePool after everybody voted, 10p, potiumSize: 2', async () => {
-      let prizePool, depositPool;
+      let prizePool, pledgePool;
 
       for (let i = 0; i < 10; i++) {
         await homelessPoker.deposit({ from: accounts[i], value: VALUE });
       }
       prizePool = (await homelessPoker.prizePool()).toNumber();
-      depositPool = (await homelessPoker.depositPool()).toNumber();
+      pledgePool = (await homelessPoker.pledgePool()).toNumber();
 
       assert.equal(prizePool, 80);
-      assert.equal(depositPool, 20);
+      assert.equal(pledgePool, 20);
 
       for (let i = 0; i < 10; i++) {
         await homelessPoker.vote(
@@ -115,25 +115,25 @@ contract('HomelessPoker', async accounts => {
         );
       }
       // prizePool = (await homelessPoker.prizePool()).toNumber();
-      // depositPool = (await homelessPoker.depositPool()).toNumber();
+      // pledgePool = (await homelessPoker.pledgePool()).toNumber();
 
       // assert.equal(prizePool, 0);
-      // assert.equal(depositPool, 0);
+      // assert.equal(pledgePool, 0);
       // assert.equal(await homelessPoker.votingEnded(), true);
       // assert.equal(await homelessPoker.getContractBalance(), 0);
     });
 
     it('Should allow 0 value', async () => {
-      let prizePool, depositPool;
+      let prizePool, pledgePool;
 
       for (let i = 0; i < 10; i++) {
         await homelessPoker.deposit({ from: accounts[i], value: 0 });
       }
       prizePool = (await homelessPoker.prizePool()).toNumber();
-      depositPool = (await homelessPoker.depositPool()).toNumber();
+      pledgePool = (await homelessPoker.pledgePool()).toNumber();
 
       assert.equal(prizePool, 0);
-      assert.equal(depositPool, 0);
+      assert.equal(pledgePool, 0);
 
       for (let i = 0; i < 10; i++) {
         await homelessPoker.vote(

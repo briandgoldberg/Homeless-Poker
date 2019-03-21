@@ -1,0 +1,10 @@
+web3:
+    Add voting
+    Doc how to use local (import private key to metamask)
+
+Contract:
+    Better events
+    Create Player struct with name, isRegistered, hasVoter, ballot + map it to address
+    Create function that fetches player name by address for ui
+
+Pre-push testrun

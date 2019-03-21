@@ -114,13 +114,6 @@ contract('HomelessPoker', async accounts => {
           { from: accounts[i], gas: '600000' }
         );
       }
-      // prizePool = (await homelessPoker.prizePool()).toNumber();
-      // pledgePool = (await homelessPoker.pledgePool()).toNumber();
-
-      // assert.equal(prizePool, 0);
-      // assert.equal(pledgePool, 0);
-      // assert.equal(await homelessPoker.votingEnded(), true);
-      // assert.equal(await homelessPoker.getContractBalance(), 0);
     });
 
     it('Should allow 0 value', async () => {
@@ -141,13 +134,6 @@ contract('HomelessPoker', async accounts => {
           { from: accounts[i], gas: '600000' }
         );
       }
-      // prizePool = (await homelessPoker.prizePool()).toNumber();
-      // depositPool = (await homelessPoker.depositPool()).toNumber();
-
-      // assert.equal(prizePool, 0);
-      // assert.equal(depositPool, 0);
-      // assert.equal(await homelessPoker.votingEnded(), true);
-      // assert.equal(await homelessPoker.getContractBalance(), 0);
     });
   });
 

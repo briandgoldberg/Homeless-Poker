@@ -1,0 +1,1 @@
+ls -s ./pre_commit.sh ../.git/hooks/pre-commit

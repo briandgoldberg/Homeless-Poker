@@ -88,10 +88,6 @@ contract('HomelessPoker', async accounts => {
 
       let winnerDiff = BigInt(winnerBalanceAfter) - BigInt(winnerBalanceBefore);
 
-      // TODO:
-      // console.log('difference', web3.utils.fromWei(winnerDiff.toString(), 'ether'))
-      // assert.equal(`${winnerDiff}`, prizePool)
-
       // contract should selfdestruct
       assert.equal(await web3.eth.getCode(homelessPoker.address), '0x');
     });

@@ -84,7 +84,6 @@ class App extends Component {
         this.setState({ voted: true, votedPlayers: this.state.votedPlayers +1 })
         console.log(receipt)
       })
-
     this.getLobbyInfo()
   }
   vote = async (ballot) => {

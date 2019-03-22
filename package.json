@@ -33,5 +33,11 @@
     "openzeppelin-solidity": "2.1.2",
     "truffle": "^5.0.5",
     "truffle-hdwallet-provider": "^1.0.4"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "yarn lint",
+      "pre-push": "yarn test",
+    }
   }
 }

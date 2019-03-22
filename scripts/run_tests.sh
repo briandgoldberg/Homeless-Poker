@@ -1,2 +1,0 @@
-cd .. 
-yarn test

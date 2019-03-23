@@ -6,13 +6,12 @@ import "./App.css";
 
 class App extends Component {
   state = { 
-    registeredPlayers: 0, // doesn't make sense, get this info from the contract
-    votedPlayers: 0, // --||--
+    registeredPlayers: 0,
+    votedPlayers: 0,
     web3: null,
     account: null,
     contract: null,
     contractAddress: null,
-    lobby: [], // { address, code }
     value: null, // value that player sends to contract
     deposited: false,
     voted: false
@@ -92,7 +91,7 @@ class App extends Component {
     await contract.methods
       .vote(ballot)
       .send({ from: account, gas: 2000000})
-            .on('error', (error) => {
+      .on('error', (error) => {
         console.log(error)
       })
       .on('receipt', (receipt) => {

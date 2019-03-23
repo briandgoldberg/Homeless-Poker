@@ -1,10 +1,10 @@
 pragma solidity ^0.5.4;
 
-
 import "../node_modules/openzeppelin-solidity/contracts/math/SafeMath.sol";
 
 
 contract HomelessPoker {
+
     using SafeMath for uint;
     uint public buyIn;
     uint public pledge;
@@ -13,6 +13,8 @@ contract HomelessPoker {
     bool public votingHasStarted;
     address[] public playersRegistered;
     address payable[] private playersVoted;
+    address payable[] private playersVotedCorrectly;
+    uint public lastVote;
 
     mapping(address => bool) private isRegistered; // TODO: move this to player struct
     mapping(address => address payable[]) private ballot;
@@ -33,7 +35,7 @@ contract HomelessPoker {
 
         /* First depositee sets the buy-in amount */
         if (playersRegistered.length == 0) {
-            setBuyInAndDeposit(msg.value);
+            setBuyIn(msg.value);
         }
         else {
             require(msg.value == (buyIn + pledge), "Value sent has to match the buy-in + deposit amount.");
@@ -47,6 +49,7 @@ contract HomelessPoker {
 
         //emit LogDeposit(msg.sender, msg.value, msg.sender.balance);
     }
+
     function getPlayerCount() public view returns (int) {
         return int(playersRegistered.length);
     }
@@ -73,16 +76,19 @@ contract HomelessPoker {
         // maintain an iterable record for who has voted
         playersVoted.push(msg.sender);
 
-        refundDeposit(msg.sender);
+        // set a time
+        lastVote = now;
+
 
         if (votingEnded()) {
-            handOutReward();
-            // Is this ideal?
-            // The last user to vote has to pay gas for getWinningBallot which is gas costly
-            // The memory arrays should free up some gas on selfdestruct to pay the user back.
-            emit LogSelfDestruct(msg.sender, address(this).balance);
-            selfdestruct(msg.sender);
+            resolve();
         }
+    }
+
+    // trigger activated 1h after last vote
+    function trigger() public {
+        require(lastVote.add(3600) > now, "1h has to pass since last vote");
+        resolve();
     }
 
     function votingEnded() public view returns (bool) {
@@ -93,13 +99,6 @@ contract HomelessPoker {
         return number.mul(percent).div(100);
     }
 
-    // when majority has voted, then pay the deposit back
-    // function majorityHasVoted() public view returns (bool) {
-    //     // uint() floors integers, add one to get ceiling.
-    //     uint majority = getPercentage(playersRegistered.length, 50).add(1);
-    //     return playersVoted.length >= majority;
-    // }
-    //
     function isEqual(address payable[] memory ballotOne, address payable[] memory ballotTwo) 
     public pure returns (bool) {
         return keccak256(abi.encodePacked(ballotOne)) == keccak256(abi.encodePacked(ballotTwo));
@@ -132,6 +131,12 @@ contract HomelessPoker {
         return uint(playersRegistered.length.div(5)).add(1);
     }
 
+    function resolve () private {
+        handOutReward();
+        emit LogSelfDestruct(msg.sender, address(this).balance);
+        selfdestruct(msg.sender);
+    }
+
     // this function takes tons of gas, the last player to vote
     // uses almost 300.000 additional gas
     function getWinningBallot() private view returns (address payable[] memory) {
@@ -159,9 +164,24 @@ contract HomelessPoker {
         return winningBallot;
     }
 
+    function refundPledge(address payable[] memory winningBallot) private {
+        for ( uint i = 0; i < playersVoted.length; i++ ) {
+            if (isEqual(ballot[playersVoted[i]], winningBallot)) {
+                playersVotedCorrectly.push(playersVoted[i]);
+            }
+        }
+        uint pledgeHandout = pledgePool.div(playersVotedCorrectly.length);
+        for ( uint i = 0; i < playersVotedCorrectly.length; i++) {
+            pledgePool = pledgePool.sub(pledgeHandout);
+            playersVotedCorrectly[i].transfer(pledgeHandout);
+        }
+    }
+
     function handOutReward() private {
         address payable[] memory winningBallot = getWinningBallot();
-        require(getPotiumSize() < playersRegistered.length, "TODO");
+
+        refundPledge(winningBallot); // TODO test
+
         for(uint place = getPotiumSize(); place > 0; place--) {
             uint slot = place.sub(1);
             address payable playerAccount = winningBallot[slot];
@@ -180,17 +200,17 @@ contract HomelessPoker {
         }
     }
 
-    function refundDeposit(address payable sender) private {
-        pledgePool = pledgePool.sub(pledge);
-        sender.transfer(pledge);
-        emit LogRefund(pledge, pledgePool, getContractBalance());
-    }
+    // function refundDeposit(address payable sender) private {
+    //     pledgePool = pledgePool.sub(pledge);
+    //     sender.transfer(pledge);
+    //     emit LogRefund(pledge, pledgePool, getContractBalance());
+    // }
 
-    function setBuyInAndDeposit(uint amount) private {
-        uint depositAmount = getPercentage(amount, 25);
-
-        pledge = depositAmount;
-        buyIn = amount.sub(depositAmount);
+    function setBuyIn(uint amount) private {
+        // uint pledgeAmount = getPercentage(amount, 25);
+        uint pledgeAmount = amount == 0 ? 0 : 0.01 ether;
+        pledge = pledgeAmount;
+        buyIn = amount.sub(pledgeAmount);
     }
 
     function transferDepositBack() private {

@@ -1,24 +1,27 @@
 const HomelessPoker = artifacts.require('./HomelessPoker.sol');
 const truffleAssert = require('truffle-assertions');
+const web3Utils = require('web3-utils'); // TODO : import { toWei } ...
+
+const { toWei, fromWei } = web3Utils;
 
 contract('HomelessPoker', async accounts => {
   let homelessPoker;
-  const VALUE = 10;
-
+  const VALUE = toWei("0.1");
+  const PLEDGE = toWei("0.01");
   beforeEach(async () => {
     homelessPoker = await HomelessPoker.new({ from: accounts[0] });
   });
 
   describe('initialization', () => {
     it('all get-functions should be initialized as 0', async () => {
-      assert.equal(await homelessPoker._buyIn(), 0);
+      assert.equal(await homelessPoker.buyIn(), 0);
       assert.equal(await homelessPoker.prizePool(), 0);
     });
   });
   describe('interaction', () => {
     it('should return correct buy-in', async () => {
       await homelessPoker.deposit({ value: VALUE });
-      assert.equal(await homelessPoker._buyIn(), Math.ceil((VALUE * 3) / 4));
+      assert.equal(await homelessPoker.buyIn(), VALUE-PLEDGE);
     });
 
     it('should return correct prize pool', async () => {
@@ -27,7 +30,7 @@ contract('HomelessPoker', async accounts => {
 
       assert.equal(
         await homelessPoker.prizePool(),
-        Math.ceil((VALUE * 3) / 4) + Math.ceil((VALUE * 3) / 4)
+        (VALUE-PLEDGE) + (VALUE-PLEDGE)
       );
     });
 
@@ -54,17 +57,17 @@ contract('HomelessPoker', async accounts => {
       assert.equal(await homelessPoker.getPotiumSize(), 1);
     });
 
-    it('Should selfdescrtuct after everybody voted, 5p, potiumSize: 1', async () => {
-      let prizePool, depositPool;
+    it('Should selfdestruct after everybody voted, 5p, potiumSize: 1', async () => {
+      let prizePool, pledgePool;
 
       for (let i = 0; i < 5; i++) {
         await homelessPoker.deposit({ from: accounts[i], value: VALUE });
       }
-      prizePool = (await homelessPoker.prizePool()).toNumber();
-      depositPool = (await homelessPoker.depositPool()).toNumber();
+      prizePool = fromWei(await homelessPoker.prizePool());
+      pledgePool = fromWei(await homelessPoker.pledgePool());
 
-      assert.equal(prizePool, 40);
-      assert.equal(depositPool, 10);
+      assert.equal(prizePool, 0.45);
+      assert.equal(pledgePool, 0.05);
 
       for (let i = 0; i < 4; i++) {
         await homelessPoker
@@ -74,8 +77,8 @@ contract('HomelessPoker', async accounts => {
           })
           .catch(err => console.log(err));
       }
-      depositPool = (await homelessPoker.depositPool()).toNumber();
-      assert.equal(depositPool, 2);
+      // pledgePool = (await homelessPoker.pledgePool()).toNumber();
+      // assert.equal(pledgePool, 2);
 
       let winnerBalanceBefore = await web3.eth.getBalance(accounts[4]);
 
@@ -88,66 +91,48 @@ contract('HomelessPoker', async accounts => {
 
       let winnerDiff = BigInt(winnerBalanceAfter) - BigInt(winnerBalanceBefore);
 
-      // TODO:
-      // console.log('difference', web3.utils.fromWei(winnerDiff.toString(), 'ether'))
-      // assert.equal(`${winnerDiff}`, prizePool)
-
       // contract should selfdestruct
       assert.equal(await web3.eth.getCode(homelessPoker.address), '0x');
     });
 
     it('Should reset the prizePool after everybody voted, 10p, potiumSize: 2', async () => {
-      let prizePool, depositPool;
+      let prizePool, pledgePool;
 
       for (let i = 0; i < 10; i++) {
         await homelessPoker.deposit({ from: accounts[i], value: VALUE });
       }
-      prizePool = (await homelessPoker.prizePool()).toNumber();
-      depositPool = (await homelessPoker.depositPool()).toNumber();
+      prizePool = fromWei(await homelessPoker.prizePool());
+      pledgePool = fromWei(await homelessPoker.pledgePool());
 
-      assert.equal(prizePool, 80);
-      assert.equal(depositPool, 20);
+      assert.equal(prizePool, 0.90);
+      assert.equal(pledgePool, 0.10);
 
       for (let i = 0; i < 10; i++) {
         await homelessPoker.vote(
           [`${accounts[0]}`, `${accounts[1]}`],
-          { from: accounts[i], gas: '600000' }
+          { from: accounts[i], gas: '2000000' }
         );
       }
-      // prizePool = (await homelessPoker.prizePool()).toNumber();
-      // depositPool = (await homelessPoker.depositPool()).toNumber();
-
-      // assert.equal(prizePool, 0);
-      // assert.equal(depositPool, 0);
-      // assert.equal(await homelessPoker.votingEnded(), true);
-      // assert.equal(await homelessPoker.getContractBalance(), 0);
     });
 
     it('Should allow 0 value', async () => {
-      let prizePool, depositPool;
+      let prizePool, pledgePool;
 
       for (let i = 0; i < 10; i++) {
         await homelessPoker.deposit({ from: accounts[i], value: 0 });
       }
-      prizePool = (await homelessPoker.prizePool()).toNumber();
-      depositPool = (await homelessPoker.depositPool()).toNumber();
+      prizePool = fromWei(await homelessPoker.prizePool());
+      pledgePool = fromWei(await homelessPoker.pledgePool());
 
       assert.equal(prizePool, 0);
-      assert.equal(depositPool, 0);
+      assert.equal(pledgePool, 0);
 
       for (let i = 0; i < 10; i++) {
         await homelessPoker.vote(
           [`${accounts[0]}`, `${accounts[1]}`],
-          { from: accounts[i], gas: '600000' }
+          { from: accounts[i], gas: '2000000' }
         );
       }
-      // prizePool = (await homelessPoker.prizePool()).toNumber();
-      // depositPool = (await homelessPoker.depositPool()).toNumber();
-
-      // assert.equal(prizePool, 0);
-      // assert.equal(depositPool, 0);
-      // assert.equal(await homelessPoker.votingEnded(), true);
-      // assert.equal(await homelessPoker.getContractBalance(), 0);
     });
   });
 

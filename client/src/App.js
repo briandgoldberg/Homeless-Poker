@@ -34,15 +34,17 @@ class App extends Component {
     }
   };
 
-  start = async (address) => {
-    let contractAddress = address || "";
-    if (address === "TEST") {
+  start = async (roomCode) => {
+    // console.log(address)
+    let contractAddress = "";
+    if (roomCode === "TEST") {
       contractAddress = "0x5013E5D122105358aE0e25eE99bBa4E1F068f791"
     }
 
     try {
+      // console.lo
       const contract = this.getContractInstance(contractAddress)
-      this.setState({ contract }, () => !address && this.deploy());
+      this.setState({ contract }, () => !roomCode && this.deploy());
     } catch (error) {
       alert(
         `Failed to load web3, accounts, or contract. Check console for details.`,

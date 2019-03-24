@@ -29,21 +29,26 @@ contract HomelessPoker {
     event LogCalc (uint prizePool, uint i, uint prizeMath);
     event LogSelfDestruct (address sender, uint accountBalance);
 
+
+    // can a constructor set the first deposit?
+
+    // pick a username when joining
     function deposit() public payable {
         require(votingHasStarted == false, "Voting started, registration has ended");
         require(!isRegistered[msg.sender], "A player can only deposit once.");
 
         /* First depositee sets the buy-in amount */
-        if (playersRegistered.length == 0) {
+        if (playersRegistered.length == 0) { // TODO: Move to contstructor
             setBuyIn(msg.value);
         }
         else {
+            // TODO: allow higher payments
             require(msg.value == (buyIn + pledge), "Value sent has to match the buy-in + deposit amount.");
         }
 
         pledgePool = pledgePool.add(pledge);
         prizePool = prizePool.add(buyIn);
-        emit LogDeposit2(buyIn, pledge);
+        // emit LogDeposit2(buyIn, pledge);
         playersRegistered.push(msg.sender);
         isRegistered[msg.sender] = true;
 
@@ -62,7 +67,7 @@ contract HomelessPoker {
     // player sends in a listOfWinners array arranged from first to last place
     function vote(address payable[] memory playerBallot) public payable {
         votingHasStarted = true;
-        emit LogVoting(prizePool, allPlayersHaveVoted());
+        // emit LogVoting(prizePool, allPlayersHaveVoted());
         require(isRegistered[msg.sender] == true, "Voter should be participating.");
         require(ballot[msg.sender].length < 1, "A player can only vote once");
         require(
@@ -78,7 +83,6 @@ contract HomelessPoker {
 
         // set a time
         lastVote = now;
-
 
         if (votingEnded()) {
             resolve();
@@ -207,7 +211,7 @@ contract HomelessPoker {
     // }
 
     function setBuyIn(uint amount) private {
-        // uint pledgeAmount = getPercentage(amount, 25);
+        // uint pledgeAmount = getPercentage(amount, 5);
         uint pledgeAmount = amount == 0 ? 0 : 0.01 ether;
         pledge = pledgeAmount;
         buyIn = amount.sub(pledgeAmount);
@@ -225,4 +229,3 @@ contract HomelessPoker {
     }
 
 }
-

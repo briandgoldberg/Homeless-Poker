@@ -1,29 +1,41 @@
-pragma solidity ^0.5.6;
+pragma solidity 0.5.6;
 
 
-contract HomelessPoker {
+contract HomelessPokerV2 {
     
     uint public buyIn;
     uint public prizePool;
     uint public depositPool;
     uint public potiumSize;
-    address[] public playersRegistered;
+    uint public roomSize;
+    
+    bytes32 private winningBallotHash;
+    
     address[] public playersVoted;
     
-    bool votingHasStarted;
+    bool public votingHasStarted;
+    bool public distributionHasEnded;
     
     struct Player {
         bytes32 username;
-        address payable[] ballot;
         bool hasVoted;
         bool isRegistered;
     }
     
+    struct Candidate {
+        uint voteCount;
+        address[] voters;
+        address[] potium;
+    }
+    
     mapping(address => Player) player;
+    mapping(bytes32 => Candidate) candidates;
 
-    constructor(bytes32 name) public payable {
+    constructor(bytes32 name, uint _roomSize) public payable {
         // require name
         buyIn = msg.value;
+        roomSize = _roomSize;
+        setPotiumSize(_roomSize);
         participate(name);
     }
     
@@ -40,47 +52,54 @@ contract HomelessPoker {
         
         player[msg.sender].username = name;
         player[msg.sender].isRegistered = true;
-        
-        playersRegistered.push(msg.sender); // needed ?
     }
     
     function vote(address payable[] memory ballot) public {
 
-        
         require(player[msg.sender].isRegistered == true, "Voter should be participating.");
-        require(player[msg.sender].ballot.length < 1, "A player can only vote once");
+        require(player[msg.sender].hasVoted == false, "Player should not vote again.");
+        //require(player[msg.sender].ballot.length < 1, "A player can only vote once");
         
-        setPotiumSize(playersRegistered.length);
         require(
             ballot.length == potiumSize,
             "The amount of addresses in player ballot has to match the potium size."
         );
         
         votingHasStarted = true;
-        
-        player[msg.sender].ballot = ballot;
         player[msg.sender].hasVoted = true;
-        
         playersVoted.push(msg.sender);
         
-        bool majorityVoted = majorityHasVoted(playersRegistered.length, playersVoted.length);
+        bytes32 ballotHash = keccak256(abi.encodePacked(ballot));
         
-        if(majorityVoted) {
-            address payable[] memory winningBallot = getWinningBallot();
-            distributePrizes(winningBallot);
-            delete winningBallot; // does this work?
-            // TODO handOutRewards
+        if(distributionHasEnded && ballotHash == winningBallotHash){
+            uint depositHandout = depositPool / potiumSize;
+            msg.sender.transfer(depositHandout);
+        }
+        else {
+            candidates[ballotHash].voteCount += 1;
+            candidates[ballotHash].voters.push(msg.sender);
+            candidates[ballotHash].potium = ballot;
+            
+            if(candidates[ballotHash].voteCount > candidates[winningBallotHash].voteCount){
+                winningBallotHash = ballotHash;
+            }
+            
+            bool majorityVoted = majorityHasVoted(roomSize, playersVoted.length);
+            
+            if(majorityVoted) {
+                distributePrizes(candidates[winningBallotHash].potium);
+            }
         }
         
     }
     
     /* 20% of all players get rewards */
-    function setPotiumSize(uint playersRegisteredCount) public returns (uint) {
-        if(playersRegisteredCount % 5 == 0) {
-            potiumSize = (playersRegisteredCount / 5);
+    function setPotiumSize(uint _roomSize) private returns (uint) {
+        if(_roomSize % 5 == 0) {
+            potiumSize = (_roomSize / 5);
         }
         else {
-            potiumSize = (playersRegisteredCount / 5) + 1;
+            potiumSize = (_roomSize / 5) + 1;
         }
     }
     
@@ -93,17 +112,17 @@ contract HomelessPoker {
         return (number * percent) / 100;
     }
     
-    function distributePrizes(address payable[] memory winningBallot) private {
+    function distributePrizes(address[] memory winningBallot) private {
         
-        //refundPledge(winningBallot); // TODO test
+        refundDeposits();
+
         uint slot;
         uint prize;
         address payable playerAccount;
         for(uint place = potiumSize; place > 0; place--) {
             slot = place - 1;
-            playerAccount = winningBallot[slot];
+            playerAccount = address(uint(winningBallot[slot]));
 
-            require(player[playerAccount].isRegistered, "Player has to be registered.");
             prize = getPrizeCalculation(place, potiumSize, prizePool);
 
             // The top player gets the "dust" + pledgePool if someone didn't vote
@@ -115,34 +134,13 @@ contract HomelessPoker {
             prizePool = prizePool - prize;
             playerAccount.transfer(prize);
         }
-        delete slot; // DOES THIS DO ANYTHING?
-        delete playerAccount; // ?
+        distributionHasEnded = true;
+        delete slot;
+        delete playerAccount; 
         delete prize;  // Comment out and see difference
     }
-    
-    function getWinningBallot() private view returns (address payable[] memory) {
-
-        uint8 max = 0;
-        address payable[] memory winningBallot;
-        address payable[] memory thisBallot;
-        address payable[] memory restOfBallots;
-
-        for(uint8 i = 0; i < playersVoted.length; i++ ) {
-            uint8 counter = 0;
-            thisBallot = player[playersVoted[i]].ballot;
-
-            for(uint8 j = 1; j < playersVoted.length; j++) {
-                restOfBallots = player[playersVoted[j]].ballot;
-                if (isEqual(thisBallot, restOfBallots)) {
-                    counter += 1;
-                }
-            }
-            if(counter > max) {
-                max = counter;
-                winningBallot = thisBallot;
-            }
-        }
-        return winningBallot;
+    function getContractBalance() public view returns (uint) {
+        return address(this).balance;
     }
 
     function getPrizeCalculation(uint place, uint _potiumSize, uint pool) public pure returns (uint) {
@@ -155,8 +153,12 @@ contract HomelessPoker {
         return (pool << _potiumSize - place)/prizeMath;
     }
     
-    function isEqual(address payable[] memory ballotOne, address payable[] memory ballotTwo) 
-    public pure returns (bool) {
-        return keccak256(abi.encodePacked(ballotOne)) == keccak256(abi.encodePacked(ballotTwo));
+    function refundDeposits() private {
+        uint depositHandout = depositPool / potiumSize;
+        for (uint i = 0; i < candidates[winningBallotHash].voters.length; i++ ) {
+            depositPool = depositPool - depositHandout;
+            address(uint(candidates[winningBallotHash].voters[i])).transfer(depositHandout);
+        }
     }
+
 }

@@ -2,10 +2,13 @@ pragma solidity 0.5.6;
 
 
 contract HomelessPokerV2 {
-    
+
+    event DebugDistribution (uint place, uint prize, uint getContractBalance);
+    event DebugDistribution2 (uint getContractBalance);
+    event DebugMajorityHasVoted(address[] ballot);
+    event DebugRefundDeposits(uint depositHandout, uint getContractBalance);
+
     uint public buyIn;
-    uint public prizePool;
-    uint public depositPool;
     uint public potiumSize;
     uint public roomSize;
     
@@ -45,11 +48,7 @@ contract HomelessPokerV2 {
         require(votingHasStarted == false, "Voting started, registration has ended");
         require(msg.value == buyIn, "Value has to match buyIn");
         require(!player[msg.sender].isRegistered, "A player can only deposit once.");
-        
-        uint deposit = (msg.value * 5)/100;
-        depositPool += deposit;
-        prizePool += msg.value-deposit;
-        
+
         player[msg.sender].username = name;
         player[msg.sender].isRegistered = true;
     }
@@ -72,8 +71,7 @@ contract HomelessPokerV2 {
         bytes32 ballotHash = keccak256(abi.encodePacked(ballot));
         
         if(distributionHasEnded && ballotHash == winningBallotHash){
-            uint depositHandout = depositPool / potiumSize;
-            msg.sender.transfer(depositHandout);
+            msg.sender.transfer((buyIn * 5) / 100); // getPercentage ?
         }
         else {
             candidates[ballotHash].voteCount += 1;
@@ -87,6 +85,7 @@ contract HomelessPokerV2 {
             bool majorityVoted = majorityHasVoted(roomSize, playersVoted.length);
             
             if(majorityVoted) {
+                emit DebugMajorityHasVoted(candidates[winningBallotHash].potium);
                 distributePrizes(candidates[winningBallotHash].potium);
             }
         }
@@ -123,18 +122,13 @@ contract HomelessPokerV2 {
             slot = place - 1;
             playerAccount = address(uint(winningBallot[slot]));
 
-            prize = getPrizeCalculation(place, potiumSize, prizePool);
+            prize = getPrizeCalculation(place, potiumSize, ((buyIn*roomSize)*95)/100); //getPercentage?
 
-            // The top player gets the "dust" + pledgePool if someone didn't vote
-            // TODO: is this still needed ?
-            if (place == 1) {
-                prize = address(this).balance + depositPool;
-            }
-
-            prizePool = prizePool - prize;
+            emit DebugDistribution(place, prize, getContractBalance());
             playerAccount.transfer(prize);
         }
         distributionHasEnded = true;
+        emit DebugDistribution2(getContractBalance());
         delete slot;
         delete playerAccount; 
         delete prize;  // Comment out and see difference
@@ -143,6 +137,9 @@ contract HomelessPokerV2 {
         return address(this).balance;
     }
 
+    
+    // TODO: this is not correct, should always be the sum of 100.
+    // (e.g. 2 in potium will result in 66 and 33, should be more accurate then that)
     function getPrizeCalculation(uint place, uint _potiumSize, uint pool) public pure returns (uint) {
         uint prizeMath;
 
@@ -152,13 +149,18 @@ contract HomelessPokerV2 {
         // x << y == x * 2**y
         return (pool << _potiumSize - place)/prizeMath;
     }
+
+    function getPlayersVotedCount() public view returns (int) {
+        return int(playersVoted.length);
+    }
     
     function refundDeposits() private {
-        uint depositHandout = depositPool / potiumSize;
+        uint depositHandout = (buyIn * 5) / 100; //getPercentage ?
+
+        emit DebugRefundDeposits(depositHandout, getContractBalance());
+
         for (uint i = 0; i < candidates[winningBallotHash].voters.length; i++ ) {
-            depositPool = depositPool - depositHandout;
             address(uint(candidates[winningBallotHash].voters[i])).transfer(depositHandout);
         }
     }
-
 }

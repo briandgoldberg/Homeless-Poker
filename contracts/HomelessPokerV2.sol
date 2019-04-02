@@ -12,81 +12,78 @@ contract HomelessPokerV2 {
     uint public potiumSize;
     uint public roomSize;
     
-    bytes32 private winningBallotHash;
+    bytes32 private winningBallot;
+    bytes32 private roomSecret;
     
     address[] public playersVoted;
     
-    bool public votingHasStarted;
     bool public distributionHasEnded;
     
     struct Player {
         bytes32 username;
         bool hasVoted;
-        bool isRegistered;
     }
     
     struct Candidate {
         uint voteCount;
         address[] voters;
-        address[] potium;
+        address[] ballot;
     }
     
     mapping(address => Player) player;
     mapping(bytes32 => Candidate) candidates;
 
-    constructor(bytes32 name, uint _roomSize) public payable {
-        // require name
+    constructor(bytes32 name, uint _roomSize, bytes32 _roomSecret) public payable {
+        require(name != 0, "You have to pick a username");
         buyIn = msg.value;
         roomSize = _roomSize;
+        roomSecret = _roomSecret;
         setPotiumSize(_roomSize);
-        participate(name);
+        participate(name, _roomSecret);
     }
     
-    function participate(bytes32 name) public payable {
-     
-        // require name
-        require(votingHasStarted == false, "Voting started, registration has ended");
-        require(msg.value == buyIn, "Value has to match buyIn");
-        require(!player[msg.sender].isRegistered, "A player can only deposit once.");
+    function participate(bytes32 name, bytes32 _roomSecret) public payable {
+        require(roomSecret == _roomSecret, "You have to have the right secret for this room");
+        require(name != 0, "You have to pick a username");
+        require(msg.value == buyIn, "Your value has to match the buy-in");
+        require(player[msg.sender].username == 0, "You can only deposit once.");
 
         player[msg.sender].username = name;
-        player[msg.sender].isRegistered = true;
     }
-    
+
     function vote(address payable[] memory ballot) public {
 
-        require(player[msg.sender].isRegistered == true, "Voter should be participating.");
-        require(player[msg.sender].hasVoted == false, "Player should not vote again.");
-        //require(player[msg.sender].ballot.length < 1, "A player can only vote once");
-        
+        require(player[msg.sender].username != 0, "You can't vote if you're not participating"); // TODO: TEST
+        require(player[msg.sender].hasVoted == false, "You can't vote again.");
+
         require(
             ballot.length == potiumSize,
-            "The amount of addresses in player ballot has to match the potium size."
+            "The amount of players in ballot has to match the potium size."
         );
-        
-        votingHasStarted = true;
+
         player[msg.sender].hasVoted = true;
         playersVoted.push(msg.sender);
-        
-        bytes32 ballotHash = keccak256(abi.encodePacked(ballot));
-        
-        if(distributionHasEnded && ballotHash == winningBallotHash){
-            msg.sender.transfer((buyIn * 5) / 100); // getPercentage ?
+
+        bytes32 voted = keccak256(abi.encodePacked( ballot ));
+
+        // Give players opertunity to vote correctly and get their deposits back.
+        if(distributionHasEnded && voted == winningBallot){
+            msg.sender.transfer( getPercentage(buyIn, 5) ); // getPercentage ?
         }
         else {
-            candidates[ballotHash].voteCount += 1;
-            candidates[ballotHash].voters.push(msg.sender);
-            candidates[ballotHash].potium = ballot;
-            
-            if(candidates[ballotHash].voteCount > candidates[winningBallotHash].voteCount){
-                winningBallotHash = ballotHash;
+            candidates[voted].voteCount += 1;
+            candidates[voted].voters.push(msg.sender);
+            candidates[voted].ballot = ballot;
+
+            if( candidates[voted].voteCount > candidates[winningBallot].voteCount ){
+                winningBallot = voted;
             }
-            
+
             bool majorityVoted = majorityHasVoted(roomSize, playersVoted.length);
-            
+
             if(majorityVoted) {
-                emit DebugMajorityHasVoted(candidates[winningBallotHash].potium);
-                distributePrizes(candidates[winningBallotHash].potium);
+                emit DebugMajorityHasVoted(candidates[winningBallot].ballot);
+                distributePrizes(candidates[winningBallot].ballot);
             }
         }
         
@@ -106,13 +103,13 @@ contract HomelessPokerV2 {
         uint majority = getPercentage(registeredCount, 50) + 1;
         return votedCount >= majority;
     }
-    
+
     function getPercentage(uint number, uint percent) public pure returns (uint) {
         return (number * percent) / 100;
     }
-    
-    function distributePrizes(address[] memory winningBallot) private {
-        
+
+    function distributePrizes(address[] memory winners) private {
+
         refundDeposits();
 
         uint slot;
@@ -120,9 +117,9 @@ contract HomelessPokerV2 {
         address payable playerAccount;
         for(uint place = potiumSize; place > 0; place--) {
             slot = place - 1;
-            playerAccount = address(uint(winningBallot[slot]));
+            playerAccount = address(uint(winners[slot]));
 
-            prize = getPrizeCalculation(place, potiumSize, ((buyIn*roomSize)*95)/100); //getPercentage?
+            prize = getPrizeCalculation(place, potiumSize, getPercentage( buyIn*roomSize, 95 ));
 
             emit DebugDistribution(place, prize, getContractBalance());
             playerAccount.transfer(prize);
@@ -137,9 +134,6 @@ contract HomelessPokerV2 {
         return address(this).balance;
     }
 
-    
-    // TODO: this is not correct, should always be the sum of 100.
-    // (e.g. 2 in potium will result in 66 and 33, should be more accurate then that)
     function getPrizeCalculation(uint place, uint _potiumSize, uint pool) public pure returns (uint) {
         uint prizeMath;
 
@@ -155,12 +149,12 @@ contract HomelessPokerV2 {
     }
     
     function refundDeposits() private {
-        uint depositHandout = (buyIn * 5) / 100; //getPercentage ?
+        uint depositHandout = getPercentage(buyIn, 5);
 
         emit DebugRefundDeposits(depositHandout, getContractBalance());
 
-        for (uint i = 0; i < candidates[winningBallotHash].voters.length; i++ ) {
-            address(uint(candidates[winningBallotHash].voters[i])).transfer(depositHandout);
+        for (uint i = 0; i < candidates[winningBallot].voters.length; i++ ) {
+            address(uint(candidates[winningBallot].voters[i])).transfer(depositHandout);
         }
     }
 }

@@ -7,32 +7,29 @@ const { toWei, fromWei, fromAscii, toAscii } = web3Utils;
 contract('HomelessPoker', async accounts => {
   let homelessPoker;
   const VALUE = toWei("0.1");
+  const ROOM_SECRET = fromAscii("ABCD");
   describe('Max 6 player room size', () => {
       beforeEach(async () => {
-      homelessPoker = await HomelessPoker.new(fromAscii("Player1"), 6, { from: accounts[0], value: VALUE });
+      homelessPoker = await HomelessPoker.new(fromAscii("Player1"), 6, ROOM_SECRET, { from: accounts[0], value: VALUE });
     });
     describe('constructor', () => {
       it('should return the inital values', async () => {
-        assert.equal(await homelessPoker.votingHasStarted(), false);
         assert.equal(await homelessPoker.distributionHasEnded(), false);
         assert.equal(await homelessPoker.roomSize(), 6);
       });
       it('should return the correct input values from deployer', async () => {
         assert.equal(await homelessPoker.buyIn(), VALUE);
-        // assert.equal(await homelessPoker.prizePool(), VALUE*0.95);
-        // assert.equal(await homelessPoker.depositPool(), VALUE*0.05);
       });
     });
     describe('participate', () => {
       it('should return correct prizepool and contract balance for two registered players', async () => {
-        await homelessPoker.participate(fromAscii("Player2"), { from: accounts[1], value: VALUE });
-        // assert.equal(await homelessPoker.prizePool(), (VALUE*0.95)*2);
+        await homelessPoker.participate(fromAscii("Player2"), ROOM_SECRET, { from: accounts[1], value: VALUE });
         assert.equal(await homelessPoker.getContractBalance(), VALUE*2);
       });
 
       it('should return correct amount of players that has voted', async () => {
         for (let i = 2; i < 6; i++) {
-          await homelessPoker.participate(fromAscii(`Player${i}`), { from: accounts[i], value: VALUE });
+          await homelessPoker.participate(fromAscii(`Player${i}`), ROOM_SECRET,  { from: accounts[i], value: VALUE });
         }
         assert.equal(await homelessPoker.potiumSize(), 2);
         await homelessPoker.vote([`${accounts[0]}`, `${accounts[1]}`], {
@@ -43,7 +40,7 @@ contract('HomelessPoker', async accounts => {
 
       it('should distribute prizes but leave the deposit for those that havent voted', async () => {
         for (let i = 1; i < 6; i++) {
-          await homelessPoker.participate(fromAscii(`Player${i}`), { from: accounts[i], value: VALUE });
+          await homelessPoker.participate(fromAscii(`Player${i}`), ROOM_SECRET, { from: accounts[i], value: VALUE });
         }
         assert.equal(await homelessPoker.potiumSize(), 2);
         assert.equal(fromWei(await homelessPoker.getContractBalance()), "0.6")
@@ -58,7 +55,7 @@ contract('HomelessPoker', async accounts => {
       });
       it('should distribute prizes and all deposits', async () => {
         for (let i = 1; i < 6; i++) {
-          await homelessPoker.participate(fromAscii(`Player${i}`), { from: accounts[i], value: VALUE });
+          await homelessPoker.participate(fromAscii(`Player${i}`), ROOM_SECRET, { from: accounts[i], value: VALUE });
         }
         assert.equal(await homelessPoker.potiumSize(), 2);
         assert.equal(fromWei(await homelessPoker.getContractBalance()), "0.6")
@@ -77,15 +74,22 @@ contract('HomelessPoker', async accounts => {
         }
         assert.equal(fromWei(await homelessPoker.getContractBalance()), "0");
       });
+      it('should throw an error if the same address tries to deposit again', async () => {
+        await homelessPoker.participate(fromAscii('Player7'), ROOM_SECRET, { from: accounts[7], value: VALUE });
+        await truffleAssert.reverts(
+          homelessPoker.participate(fromAscii('Player7'), ROOM_SECRET, { from: accounts[7],  value: VALUE }),
+          'You can only deposit once.'
+        );
+      });
     });
     
     describe('getPrizeCalculation', () => {
       it('should return correct number from prizecalculation', async () => {
         assert.equal(
-          (await homelessPoker.getPrizeCalculation(1, 2, 100, {
+          (await homelessPoker.getPrizeCalculation(1, 2, 100000, {
             from: accounts[0]
           })).toNumber(),
-          66
+          66666
         );
         assert.equal(
           (await homelessPoker.getPrizeCalculation(2, 2, 100, {

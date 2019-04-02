@@ -69,7 +69,8 @@ contract HomelessPokerV2 {
         bytes32 voted = keccak256(abi.encodePacked( ballot ));
 
         // Give players opertunity to vote correctly and get their deposits back.
-        if(distributionHasEnded && voted == winningBallot){
+        if(distributionHasEnded){
+            require(voted == winningBallot, "Vote has to match the top candidate");
             msg.sender.transfer( getPercentage(buyIn, 5) ); 
         }
         else {
@@ -89,7 +90,13 @@ contract HomelessPokerV2 {
             }
         }
     }
-
+    function killswitch() public {
+        require(player[msg.sender].username != 0, "Player has to be registered to kill contract");
+        require(playersRegistered.length < roomSize, "Can't kill a contract when everyone is registered");
+        for(uint i = 0; i < playersRegistered.length; i++) {
+            address(uint(playersRegistered[i])).transfer(buyIn);
+        }
+    }
     
     /* 20% of all players get rewards */
     function setPotiumSize(uint _roomSize) private returns (uint) {

@@ -144,4 +144,76 @@ contract('HomelessPoker', async accounts => {
       });
     })
   })
+   describe('15 player room size', () => {
+      beforeEach(async () => {
+      homelessPoker = await HomelessPoker.new(fromAscii("Player1"), 15, ROOM_SECRET, { from: accounts[0], value: VALUE });
+    });
+    it('should distribute prizes and pay out all deposits', async () => {
+       for (let i = 1; i < 15; i++) {
+          await homelessPoker.participate(fromAscii(`Player${i}`), ROOM_SECRET, { from: accounts[i], value: VALUE });
+        }
+        assert.equal(await homelessPoker.potiumSize(), 3);
+        assert.equal(fromWei(await homelessPoker.getContractBalance()), "1.5")
+        for (let i = 0; i < 13; i++) {
+          await homelessPoker.vote([`${accounts[0]}`, `${accounts[1]}`, `${accounts[2]}`], {
+            from: accounts[i]
+          });
+        }
+        assert.equal(await homelessPoker.getPlayersVotedCount(), 13);
+        assert.equal(await homelessPoker.distributionHasEnded(), true);
+        assert.equal(fromWei(await homelessPoker.getContractBalance()).slice(0,4), "0.01");
+        for (let i = 13; i < 15; i++) {
+          await homelessPoker.vote([`${accounts[0]}`, `${accounts[1]}`, `${accounts[2]}`], {
+            from: accounts[i]
+          });
+        }
+        assert.equal(fromWei(await homelessPoker.getContractBalance()).slice(0,4), "0.00");
+    })
+    it('should distribute prizes and pay out all deposits', async () => {
+       for (let i = 1; i < 15; i++) {
+          await homelessPoker.participate(fromAscii(`Player${i}`), ROOM_SECRET, { from: accounts[i], value: VALUE });
+        }
+        assert.equal(await homelessPoker.potiumSize(), 3);
+        assert.equal(fromWei(await homelessPoker.getContractBalance()), "1.5")
+        for (let i = 0; i < 13; i++) {
+          await homelessPoker.vote([`${accounts[0]}`, `${accounts[1]}`, `${accounts[2]}`], {
+            from: accounts[i]
+          });
+        }
+        assert.equal(await homelessPoker.getPlayersVotedCount(), 13);
+        assert.equal(await homelessPoker.distributionHasEnded(), true);
+        assert.equal(fromWei(await homelessPoker.getContractBalance()).slice(0,4), "0.01");
+        for (let i = 13; i < 15; i++) {
+          await truffleAssert.reverts(
+            homelessPoker.vote([`${accounts[0]}`, `${accounts[1]}`, `${accounts[3]}`], {
+            from: accounts[i]
+          }), "Vote has to match the top candidate" )
+        }
+        assert.equal(fromWei(await homelessPoker.getContractBalance()).slice(0,4), "0.01");
+    })
+    it('should trigger killswitch and repay everyone', async () => {
+       for (let i = 1; i < 14; i++) {
+          await homelessPoker.participate(fromAscii(`Player${i}`), ROOM_SECRET, { from: accounts[i], value: VALUE });
+        }
+        let before = fromWei(await web3.eth.getBalance(accounts[0]))
+        await homelessPoker.killswitch()
+        assert.equal(fromWei(await homelessPoker.getContractBalance()), "0");
+
+        let after = fromWei(await web3.eth.getBalance(accounts[13]))
+        assert.notStrictEqual(after-before, 0.1)
+    })
+    it('should not trigger killswitch', async () => {
+       for (let i = 1; i < 14; i++) {
+          await homelessPoker.participate(fromAscii(`Player${i}`), ROOM_SECRET, { from: accounts[i], value: VALUE });
+        }
+
+        await truffleAssert.reverts(
+            homelessPoker.killswitch({ from: accounts[14]}), "Player has to be registered to kill contract"
+        )
+        await homelessPoker.participate(fromAscii(`Player${14}`), ROOM_SECRET, { from: accounts[14], value: VALUE });
+        await truffleAssert.reverts(
+          homelessPoker.killswitch({ from: accounts[14]}), "Can't kill a contract when everyone is registered"
+        )
+    })
+   })
 });

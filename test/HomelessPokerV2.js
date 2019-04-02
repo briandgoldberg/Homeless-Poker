@@ -40,8 +40,10 @@ contract('HomelessPoker', async accounts => {
 
       it('should distribute prizes but leave the deposit for those that havent voted', async () => {
         for (let i = 1; i < 6; i++) {
+          assert.equal((await homelessPoker.votingCanStart()), false);
           await homelessPoker.participate(fromAscii(`Player${i}`), ROOM_SECRET, { from: accounts[i], value: VALUE });
         }
+        assert.equal(await homelessPoker.votingCanStart(), true);
         assert.equal(await homelessPoker.potiumSize(), 2);
         assert.equal(fromWei(await homelessPoker.getContractBalance()), "0.6")
         for (let i = 0; i < 4; i++) {

@@ -151,7 +151,7 @@ contract HomelessPokerV2 {
         return int(playersVoted.length);
     }
 
-    function votingCanStart() public returns (bool) {
+    function votingCanStart() public view returns (bool) {
         return playersRegistered.length == roomSize;
     }
 

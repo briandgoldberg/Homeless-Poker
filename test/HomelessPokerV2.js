@@ -28,7 +28,7 @@ contract('HomelessPoker', async accounts => {
       });
 
       it('should return correct amount of players that has voted', async () => {
-        for (let i = 2; i < 6; i++) {
+        for (let i = 1; i < 6; i++) {
           await homelessPoker.participate(fromAscii(`Player${i}`), ROOM_SECRET,  { from: accounts[i], value: VALUE });
         }
         assert.equal(await homelessPoker.potiumSize(), 2);
@@ -132,6 +132,13 @@ contract('HomelessPoker', async accounts => {
     describe('setPotiumSize', () => {
       it('should return right amount of players in potium', async () => {
         assert.equal((await homelessPoker.potiumSize()).toNumber(), 2);
+      });
+    })
+    describe('majorityHasVoted', () => {
+      it('should return the right flag for majority', async () => {
+        assert.equal(await homelessPoker.majorityHasVoted(10,5), false);
+        assert.equal(await homelessPoker.majorityHasVoted(10,6), true);
+        assert.equal(await homelessPoker.majorityHasVoted(2,6), true);
       });
     })
   })

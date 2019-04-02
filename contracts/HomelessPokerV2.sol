@@ -16,9 +16,10 @@ contract HomelessPokerV2 {
     bytes32 private roomSecret;
     
     address[] public playersVoted;
-    
+    address[] public playersRegistered;
+
     bool public distributionHasEnded;
-    
+
     struct Player {
         bytes32 username;
         bool hasVoted;
@@ -49,10 +50,11 @@ contract HomelessPokerV2 {
         require(player[msg.sender].username == 0, "You can only deposit once.");
 
         player[msg.sender].username = name;
+        playersRegistered.push(msg.sender);
     }
 
     function vote(address payable[] memory ballot) public {
-
+        require(playersRegistered.length == roomSize, "Can't start voting, not everybody is signed up");
         require(player[msg.sender].username != 0, "You can't vote if you're not participating"); // TODO: TEST
         require(player[msg.sender].hasVoted == false, "You can't vote again.");
 
@@ -68,14 +70,14 @@ contract HomelessPokerV2 {
 
         // Give players opertunity to vote correctly and get their deposits back.
         if(distributionHasEnded && voted == winningBallot){
-            msg.sender.transfer( getPercentage(buyIn, 5) ); // getPercentage ?
+            msg.sender.transfer( getPercentage(buyIn, 5) ); 
         }
         else {
             candidates[voted].voteCount += 1;
             candidates[voted].voters.push(msg.sender);
             candidates[voted].ballot = ballot;
 
-            if( candidates[voted].voteCount > candidates[winningBallot].voteCount ){
+            if ( candidates[voted].voteCount > candidates[winningBallot].voteCount ){
                 winningBallot = voted;
             }
 
@@ -86,8 +88,8 @@ contract HomelessPokerV2 {
                 distributePrizes(candidates[winningBallot].ballot);
             }
         }
-        
     }
+
     
     /* 20% of all players get rewards */
     function setPotiumSize(uint _roomSize) private returns (uint) {
@@ -126,10 +128,11 @@ contract HomelessPokerV2 {
         }
         distributionHasEnded = true;
         emit DebugDistribution2(getContractBalance());
-        delete slot;
+        delete slot; // Does this free up anything?
         delete playerAccount; 
-        delete prize;  // Comment out and see difference
+        delete prize;
     }
+
     function getContractBalance() public view returns (uint) {
         return address(this).balance;
     }
@@ -144,10 +147,14 @@ contract HomelessPokerV2 {
         return (pool << _potiumSize - place)/prizeMath;
     }
 
-    function getPlayersVotedCount() public view returns (int) {
+    function getPlayersVotedCount() external view returns (int) {
         return int(playersVoted.length);
     }
-    
+
+    function votingCanStart() public returns (bool) {
+        return playersRegistered.length == roomSize;
+    }
+
     function refundDeposits() private {
         uint depositHandout = getPercentage(buyIn, 5);
 

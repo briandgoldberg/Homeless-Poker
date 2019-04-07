@@ -11,6 +11,7 @@ contract HomelessPokerV2 {
     uint public buyIn;
     uint public potiumSize;
     uint public roomSize;
+    uint public timer;
     
     bytes32 private winningBallot;
     bytes32 private roomSecret;
@@ -19,6 +20,7 @@ contract HomelessPokerV2 {
     address[] public playersRegistered;
 
     bool public distributionHasEnded;
+    bool public majorityVoted;
 
     struct Player {
         bytes32 username;
@@ -31,8 +33,8 @@ contract HomelessPokerV2 {
         address[] ballot;
     }
     
-    mapping(address => Player) player;
-    mapping(bytes32 => Candidate) candidates;
+    mapping(address => Player) public player;
+    mapping(bytes32 => Candidate) public candidates;
 
     constructor(bytes32 name, uint _roomSize, bytes32 _roomSecret) public payable {
         require(name != 0, "You have to pick a username");
@@ -40,10 +42,18 @@ contract HomelessPokerV2 {
         roomSize = _roomSize;
         roomSecret = _roomSecret;
         setPotiumSize(_roomSize);
-        participate(name, _roomSecret);
+        register(name, _roomSecret);
+    }
+
+    function getPlayersVotedCount() external view returns (int) {
+        return int(playersVoted.length);
     }
     
-    function participate(bytes32 name, bytes32 _roomSecret) public payable {
+    function votingCanStart() external view returns (bool) {
+        return playersRegistered.length == roomSize;
+    }
+
+    function register(bytes32 name, bytes32 _roomSecret) public payable {
         require(roomSecret == _roomSecret, "You have to have the right secret for this room");
         require(name != 0, "You have to pick a username");
         require(msg.value == buyIn, "Your value has to match the buy-in");
@@ -55,7 +65,7 @@ contract HomelessPokerV2 {
 
     function vote(address payable[] memory ballot) public {
         require(playersRegistered.length == roomSize, "Can't start voting, not everybody is signed up");
-        require(player[msg.sender].username != 0, "You can't vote if you're not participating"); // TODO: TEST
+        require(player[msg.sender].username != 0, "You can't vote if you're not participating.");
         require(player[msg.sender].hasVoted == false, "You can't vote again.");
 
         require(
@@ -66,23 +76,25 @@ contract HomelessPokerV2 {
         player[msg.sender].hasVoted = true;
         playersVoted.push(msg.sender);
 
-        bytes32 voted = keccak256(abi.encodePacked( ballot ));
+        bytes32 voted = keccak256(abi.encodePacked(ballot));
 
         // Give players opertunity to vote correctly and get their deposits back.
-        if(distributionHasEnded){
+        if(distributionHasEnded) {
             require(voted == winningBallot, "Vote has to match the top candidate");
-            msg.sender.transfer( getPercentage(buyIn, 5) ); 
+            msg.sender.transfer(getPercentage(buyIn, 5)); 
         }
         else {
             candidates[voted].voteCount += 1;
             candidates[voted].voters.push(msg.sender);
             candidates[voted].ballot = ballot;
 
-            if ( candidates[voted].voteCount > candidates[winningBallot].voteCount ){
+            if ( candidates[voted].voteCount > candidates[winningBallot].voteCount ) {
                 winningBallot = voted;
             }
 
-            bool majorityVoted = majorityHasVoted(roomSize, playersVoted.length);
+            setMajorityVoted(roomSize, playersVoted.length);
+
+            timer = now;
 
             if(majorityVoted) {
                 emit DebugMajorityHasVoted(candidates[winningBallot].ballot);
@@ -90,56 +102,23 @@ contract HomelessPokerV2 {
             }
         }
     }
+
     function killswitch() public {
         require(player[msg.sender].username != 0, "Player has to be registered to kill contract");
-        require(playersRegistered.length < roomSize, "Can't kill a contract when everyone is registered");
+        if(playersRegistered.length == roomSize) {
+            require(!majorityVoted, "Can not kill contract when majority has voted");
+            require(now > timer+3600, "An hour must have passed since last vote");
+            require(timer != uint(0), "Can not kill a contract with everyone registered and no votes");
+        }
         for(uint i = 0; i < playersRegistered.length; i++) {
             address(uint(playersRegistered[i])).transfer(buyIn);
         }
     }
     
-    /* 20% of all players get rewards */
-    function setPotiumSize(uint _roomSize) private returns (uint) {
-        if(_roomSize % 5 == 0) {
-            potiumSize = (_roomSize / 5);
-        }
-        else {
-            potiumSize = (_roomSize / 5) + 1;
-        }
-    }
-    
-    function majorityHasVoted(uint registeredCount, uint votedCount) public pure returns (bool) {
-        uint majority = getPercentage(registeredCount, 50) + 1;
-        return votedCount >= majority;
-    }
-
     function getPercentage(uint number, uint percent) public pure returns (uint) {
         return (number * percent) / 100;
     }
-
-    function distributePrizes(address[] memory winners) private {
-
-        refundDeposits();
-
-        uint slot;
-        uint prize;
-        address payable playerAccount;
-        for(uint place = potiumSize; place > 0; place--) {
-            slot = place - 1;
-            playerAccount = address(uint(winners[slot]));
-
-            prize = getPrizeCalculation(place, potiumSize, getPercentage( buyIn*roomSize, 95 ));
-
-            emit DebugDistribution(place, prize, getContractBalance());
-            playerAccount.transfer(prize);
-        }
-        distributionHasEnded = true;
-        emit DebugDistribution2(getContractBalance());
-        delete slot; // Does this free up anything?
-        delete playerAccount; 
-        delete prize;
-    }
-
+ 
     function getContractBalance() public view returns (uint) {
         return address(this).balance;
     }
@@ -154,12 +133,38 @@ contract HomelessPokerV2 {
         return (pool << _potiumSize - place)/prizeMath;
     }
 
-    function getPlayersVotedCount() external view returns (int) {
-        return int(playersVoted.length);
+    function setMajorityVoted(uint registeredCount, uint votedCount) private {
+        majorityVoted = votedCount >= getPercentage(registeredCount, 50) + 1;
     }
 
-    function votingCanStart() public view returns (bool) {
-        return playersRegistered.length == roomSize;
+    /* 20% of all players get rewards */
+    function setPotiumSize(uint _roomSize) private returns (uint) {
+        if(_roomSize % 5 == 0) {
+            potiumSize = (_roomSize / 5);
+        }
+        else {
+            potiumSize = (_roomSize / 5) + 1;
+        }
+    }
+
+    function distributePrizes(address[] memory winners) private {
+
+        refundDeposits();
+
+        uint slot;
+        uint prize;
+        address payable playerAccount;
+        for(uint place = potiumSize; place > 0; place--) {
+            slot = place - 1;
+            playerAccount = address(uint(winners[slot]));
+
+            prize = getPrizeCalculation(place, potiumSize, getPercentage(buyIn*roomSize, 95));
+
+            emit DebugDistribution(place, prize, getContractBalance());
+             distributionHasEnded = true;
+            playerAccount.transfer(prize);
+        }
+        emit DebugDistribution2(getContractBalance());
     }
 
     function refundDeposits() private {

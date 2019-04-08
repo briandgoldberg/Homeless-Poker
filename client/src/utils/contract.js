@@ -1,10 +1,20 @@
 // // const Artifacts = require('../contracts/HomelessPoker.json');
-const web3 = require('./web3');
+import web3 from './web3';
 // const web3 = setProvider();
 
-const getAccount = () => {
-  console.log(web3.currentProvider);
-  return web3.eth.getAccounts()[0];
-};
+class Contract extends web3 {
+  constructor() {
+    super();
+    this.web3 = web3;
+  }
+  static test() {
+    return 'test';
+  }
+}
+export { Contract };
+// const getAccount = async () => {
+//   console.log(web3.currentProvider);
+//   return web3.eth.getAccounts()[0];
+// };
 
-export { getAccount };
+// export { getAccount };

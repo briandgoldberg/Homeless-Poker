@@ -1,12 +1,14 @@
 import React, { Component } from 'react';
 import ContractArtifacts from './contracts/HomelessPoker.json';
-import setProvider from './utils/web3';
-import { getAccount } from './utils/contract';
+import Provider from './utils/web3';
+// import { getAccount } from './utils/contract';
+import { Contract } from './utils/contract';
 
 import './App.css';
 // const web3 = require('./utils/web3');
+console.log(Contract.test());
+const web3 = new Provider();
 
-const web3 = setProvider();
 class App extends Component {
   state = {
     registeredPlayers: 0,
@@ -22,14 +24,9 @@ class App extends Component {
 
   componentDidMount = async () => {
     try {
-      // Get network provider and web3 instance.
-      // const web3 = getWeb3();
-      console.log(web3);
-      // console.log(getAccount());
-      // Use web3 to get the user's accounts.
-      const account = (await web3.eth.getAccounts())[0];
+      const account = await web3.userAccount;
       console.log('account', account);
-
+      console.log('account');
       this.setState({ account, web3 });
     } catch (error) {
       alert(`Failed to load web3.`);

@@ -6,7 +6,7 @@ import Box from '@material-ui/core/Box'
 import Container from '@material-ui/core/Container'
 import Typography from '@material-ui/core/Typography'
 import MuiButton from '@material-ui/core/Button'
-// import MuiInput from '@material-ui/core/Input'
+import MuiInput from '@material-ui/core/Input'
 
 let web3
 try {
@@ -16,14 +16,20 @@ try {
 }
 let contract
 
-// function Input(placeholder, onChange) {
-//   return <MuiInput placeholder={placeholder} onChange={() => onChange()} />
-// }
+function Input(props) {
+  const { onChange, placeholder } = props
+  return <MuiInput placeholder={placeholder} onChange={e => onChange(e)} />
+}
+
+Input.propTypes = {
+  onChange: PropTypes.func.isRequired,
+  placeholder: PropTypes.string.isRequired
+}
 
 function Button(props) {
   const { onClick, title } = props
   return (
-    <MuiButton type="submit" onClick={() => onClick()}>
+    <MuiButton variant="contained" color="primary" onClick={() => onClick()}>
       {title}
     </MuiButton>
   )
@@ -83,6 +89,14 @@ export default class Index extends Component {
     contract.vote(ballot)
   }
 
+  handleValue = event => {
+    this.setState({ value: event.target.value })
+  }
+
+  handleAddress = event => {
+    this.setState({ contractAddress: event.target.value })
+  }
+
   render() {
     const { contractAddress, value } = this.state
     if (!web3) {
@@ -92,23 +106,21 @@ export default class Index extends Component {
       <Container maxWidth="sm">
         <Box my={4}>
           <Typography variant="h4" component="h1" gutterBottom>
-            Next.js v4-alpha example
+            Homeless Poker
           </Typography>
           {/* <Link href="/about" color="secondary">
             Go to the about page
           </Link> */}
           <Button title="Start" onClick={this.start} />
-          {/* <button type="submit" onClick={() => this.start()}>
-            Start
-          </button> */}
-          {/* <Input placeholder="address" onChange={e => this.handleAddress(e)} />
-          <Input placeholder="0.0001" onChange={e => this.handleValue(e)} /> */}
-          {/* <Button
+          <Input placeholder="address" onChange={this.handleAddress} />
+          <Input placeholder="0.0001" onChange={this.handleValue} />
+          {/* <Input placeholder="secret" onChange={this.handleValue} /> */}
+          <Button
             title="Deposit ether"
             onClick={() =>
               value && this.join(contractAddress, 'name', value, 'TEST')
             }
-          /> */}
+          />
           {' '}
         </Box>
       </Container>

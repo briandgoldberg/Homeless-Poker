@@ -37,15 +37,22 @@ export default class Contract {
   async register(address, msgSender, username, value, roomCode) {
     console.log('address:', address)
     this.contract.options.address = address
-    await this.contract.methods
-      .register(asciiToHex(username), asciiToHex(roomCode))
-      .send({ from: msgSender, gas: 2000000, value: toWei(value) })
-      .on('error', error => {
-        console.log(error)
-      })
-      .on('receipt', receipt => {
-        console.log(receipt)
-      })
+    try {
+      await this.contract.methods
+        .register(asciiToHex(username), asciiToHex(roomCode))
+        .send({ from: msgSender, gas: 2000000, value: toWei(value) })
+        .on('error', error => {
+          console.log(error)
+        })
+        .on('receipt', receipt => {
+          console.log(receipt)
+        })
+    } catch (error) {
+      console.error('Failed to register')
+      if (!address) {
+        console.error('Missing address')
+      }
+    }
   }
 
   async vote(msgSender, ballot) {

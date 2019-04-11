@@ -1,33 +1,22 @@
-import Web3 from 'web3';
+import Web3 from 'web3'
 
 export default () => {
-  let web3;
-  // Modern dapp browsers...
-  if (window.ethereum) {
-    web3 = new Web3(window.ethereum);
-    const resolveEthereum = async () => {
-      await window.ethereum.enable();
-    };
-    resolveEthereum();
-  }
-  // Legacy dapp browsers...
-  else if (window.web3) {
-    // Use Mist/MetaMask's provider.
-    console.log('Injected web3 detected.');
-    web3 = window.web3;
-  }
-  // Fallback to localhost...
-  else {
-    const provider = new Web3.providers.HttpProvider('http://127.0.0.1:9545');
-    console.log('No web3 instance injected, using Local web3.');
-    web3 = new Web3(provider);
-  }
-  // web3.userAccount = this.getAccount();
-  // this.web3 = web3;
-  return web3;
-};
+  const { ethereum, web3 } = window
+  let provider
 
-// async getAccount(i = 0) {
-//   console.log(web3);
-//   // return (await web3.eth.getAccounts())[i];
-// }
+  if (ethereum) {
+    provider = new Web3(ethereum) // Modern dapp browsers.
+    const resolveEthereum = async () => {
+      await ethereum.enable()
+    }
+    resolveEthereum()
+  } else if (web3) {
+    console.log('Injected web3 detected.')
+    provider = web3 // Legacy dapp browsers. (Mist/MegaMask)
+  } else {
+    console.loßg('No web3 instance injected, using Local web3.')
+    const localhost = new Web3.providers.HttpProvider('http://127.0.0.1:9545')
+    provider = new Web3(localhost)
+  }
+  return provider
+}

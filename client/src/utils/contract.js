@@ -1,14 +1,13 @@
-import { asciiToHex, fromAscii, toWei } from 'web3-utils'
+import { asciiToHex, toWei } from 'web3-utils'
 import Artifacts from '../contracts/HomelessPoker.json'
 
-class Contract {
+export default class Contract {
   constructor(web3, address = '') {
     this.web3 = web3
     this.contract = new web3.eth.Contract(Artifacts.abi, address)
   }
 
   generateRoomCode() {
-    // return 'TEST';
     return Math.random()
       .toString(36)
       .replace(/[^a-z]+/g, '')
@@ -65,4 +64,3 @@ class Contract {
     return this.contract.methods.buyIn.call()
   }
 }
-export default Contract

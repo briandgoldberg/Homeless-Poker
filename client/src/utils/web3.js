@@ -3,7 +3,6 @@ import Web3 from 'web3'
 export default () => {
   const { ethereum, web3 } = window
   let provider
-
   if (ethereum) {
     provider = new Web3(ethereum) // Modern dapp browsers.
     const resolveEthereum = async () => {

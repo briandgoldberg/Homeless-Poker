@@ -1,11 +1,12 @@
 import React, { Component } from 'react'
-import { Contract } from 'utils'
+import Contract from 'utils/contract'
 import Web3 from 'utils/web3'
+import PropTypes from 'prop-types'
 import Box from '@material-ui/core/Box'
 import Container from '@material-ui/core/Container'
 import Typography from '@material-ui/core/Typography'
-import * as MuiButton from '@material-ui/core/Button'
-import * as MuiInput from '@material-ui/core/Input'
+import MuiButton from '@material-ui/core/Button'
+// import MuiInput from '@material-ui/core/Input'
 
 let web3
 try {
@@ -19,12 +20,18 @@ let contract
 //   return <MuiInput placeholder={placeholder} onChange={() => onChange()} />
 // }
 
-function Button(title, onClick) {
+function Button(props) {
+  const { onClick, title } = props
   return (
-    <MuiButton type="submit" onClick={onClick()}>
+    <MuiButton type="submit" onClick={() => onClick()}>
       {title}
     </MuiButton>
   )
+}
+
+Button.propTypes = {
+  onClick: PropTypes.func.isRequired,
+  title: PropTypes.string.isRequired
 }
 
 export default class Index extends Component {
@@ -37,6 +44,7 @@ export default class Index extends Component {
   componentDidMount = async () => {
     try {
       const account = (await web3.eth.getAccounts())[0]
+      console.log(account)
       this.setState({ account })
     } catch (error) {
       alert(`Failed to load web3.`)
@@ -89,7 +97,10 @@ export default class Index extends Component {
           {/* <Link href="/about" color="secondary">
             Go to the about page
           </Link> */}
-          <Button title="Start" onClick={() => this.start()} />
+          <Button title="Start" onClick={this.start} />
+          {/* <button type="submit" onClick={() => this.start()}>
+            Start
+          </button> */}
           {/* <Input placeholder="address" onChange={e => this.handleAddress(e)} />
           <Input placeholder="0.0001" onChange={e => this.handleValue(e)} /> */}
           {/* <Button

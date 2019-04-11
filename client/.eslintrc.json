@@ -1,7 +1,9 @@
 {
+  "parser": "babel-eslint",
   "env": {
     "browser": true,
-    "es6": true
+    "es6": true,
+    "commonjs": true
   },
   "extends": ["airbnb", "prettier"],
   "plugins": ["prettier"],
@@ -11,6 +13,12 @@
     }
   },
   "rules": {
+    "sort-imports": [
+      "error",
+      {
+        "memberSyntaxSortOrder": ["none", "single", "multiple", "all"]
+      }
+    ],
     "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }],
     "no-unused-vars": ["error", { "args": "none" }],
     "import/no-extraneous-dependencies": ["error", { "devDependencies": true }],

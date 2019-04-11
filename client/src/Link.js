@@ -17,18 +17,22 @@ function NextComposed(props) {
 }
 
 NextComposed.propTypes = {
-  as: PropTypes.string,
+  as: PropTypes.string.isRequired,
   href: PropTypes.string,
   prefetch: PropTypes.bool
 }
 
+NextComposed.defaultProps = {
+  href: '',
+  prefetch: false
+}
 // A styled version of the Next.js Link component:
 // https://nextjs.org/docs/#with-link
 function Link(props) {
-  const { activeClassName, router, className: classNameProps, naked, ...other } = props
+  const { activeClassName, href, router, className: classNameProps, naked, ...other } = props
 
   const className = clsx(classNameProps, {
-    [activeClassName]: router.pathname === props.href && activeClassName
+    [activeClassName]: router.pathname === href && activeClassName
   })
 
   if (naked) {

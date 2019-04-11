@@ -1,13 +1,13 @@
-import React from 'react'
-import PropTypes from 'prop-types'
-import Paper from '@material-ui/core/Paper'
+// import React from 'react'
+// import PropTypes from 'prop-types'
+// import Paper from '@material-ui/core/Paper'
 
-function PaperSheet(props) {
-  return <Paper elevation={1}>{props.children}</Paper>
-}
+// function PaperSheet(props) {
+//   return <Paper elevation={1}>{props.children}</Paper>
+// }
 
-PaperSheet.propTypes = {
-  children: PropTypes.any
-}
+// PaperSheet.propTypes = {
+//   children: PropTypes.any
+// }
 
-export default PaperSheet
+// export default PaperSheet

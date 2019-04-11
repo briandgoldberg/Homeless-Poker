@@ -14,7 +14,7 @@ export default () => {
     console.log('Injected web3 detected.')
     provider = web3 // Legacy dapp browsers. (Mist/MegaMask)
   } else {
-    console.loßg('No web3 instance injected, using Local web3.')
+    console.log('No web3 instance injected, using Local web3.')
     const localhost = new Web3.providers.HttpProvider('http://127.0.0.1:9545')
     provider = new Web3(localhost)
   }

@@ -7,7 +7,9 @@
         "root": ["./"],
         "alias": {
           "components": "./components",
-          "pages": "./pages"
+          "contracts": "./src/contracts",
+          "pages": "./pages",
+          "utils": "./src/utils"
         }
       }
     ]

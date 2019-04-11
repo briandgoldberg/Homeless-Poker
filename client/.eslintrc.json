@@ -16,7 +16,7 @@
     "sort-imports": [
       "error",
       {
-        "memberSyntaxSortOrder": ["none", "single", "multiple", "all"]
+        "ignoreDeclarationSort": true
       }
     ],
     "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }],

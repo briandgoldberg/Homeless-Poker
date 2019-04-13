@@ -1,7 +1,7 @@
-/node_modules
+**/node_modules
 /docs
 /build
 .DS_Store
 .env
-/client/node_modules
-/client/yarn-error.log
+**/yarn-error.log
+**/.next

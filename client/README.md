@@ -1,3 +1,5 @@
+To use a local account through metamask, copy the private key from the RPC and import to metamask
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts

@@ -161,7 +161,7 @@ contract HomelessPoker {
             prize = getPrizeCalculation(place, potiumSize, getPercentage(buyIn*roomSize, 95));
 
             emit DebugDistribution(place, prize, getContractBalance());
-             distributionHasEnded = true;
+            distributionHasEnded = true;
             playerAccount.transfer(prize);
         }
         emit DebugDistribution2(getContractBalance());

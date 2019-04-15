@@ -1,12 +1,16 @@
+/* eslint-disable react/forbid-prop-types */
 import React, { Component } from 'react'
 import Contract from 'utils/contract'
 import Web3 from 'utils/web3'
 import PropTypes from 'prop-types'
+import { withStyles } from '@material-ui/core/styles'
 import Box from '@material-ui/core/Box'
 import Container from '@material-ui/core/Container'
 import Typography from '@material-ui/core/Typography'
 import MuiButton from '@material-ui/core/Button'
 import MuiInput from '@material-ui/core/Input'
+import MuiCard from '@material-ui/core/Card'
+import MuiCardContent from '@material-ui/core/CardContent'
 
 let web3
 try {
@@ -40,7 +44,27 @@ Button.propTypes = {
   title: PropTypes.string.isRequired
 }
 
-export default class Index extends Component {
+function Card(props) {
+  const { children, classes } = props
+  return (
+    <MuiCard className={classes.card} color="primary">
+      <MuiCardContent>{children}</MuiCardContent>
+    </MuiCard>
+  )
+}
+
+Card.propTypes = {
+  children: PropTypes.array.isRequired,
+  // eslint-disable-next-line react/require-default-props
+  classes: PropTypes.object
+}
+
+const styles = {
+  card: {
+    maxWidth: 275
+  }
+}
+class Index extends Component {
   state = {
     account: null,
     contractAddress: null,
@@ -99,6 +123,7 @@ export default class Index extends Component {
 
   render() {
     const { contractAddress, value } = this.state
+    const { classes } = this.props
     if (!web3) {
       return <div>Loading Web3, accounts, and contract...</div>
     }
@@ -111,19 +136,33 @@ export default class Index extends Component {
           {/* <Link href="/about" color="secondary">
             Go to the about page
           </Link> */}
-          <Button title="Start" onClick={this.start} />
-          <Input placeholder="address" onChange={this.handleAddress} />
+          <Input placeholder="username" onChange="" />
           <Input placeholder="0.0001" onChange={this.handleValue} />
+          <Card classes={classes}>
+            <Input placeholder="address" onChange={this.handleAddress} />
+            <Input placeholder="roomCode" onChange="" />
+            <Button
+              title="Deposit ether"
+              onClick={() =>
+                value && this.join(contractAddress, 'name', value, 'TEST')
+              }
+            />
+          </Card>
+          <Card classes={classes}>
+            <Input placeholder="roomsize" onChange="" />
+            <Button title="Start" onClick={this.start} />
+          </Card>
           {/* <Input placeholder="secret" onChange={this.handleValue} /> */}
-          <Button
-            title="Deposit ether"
-            onClick={() =>
-              value && this.join(contractAddress, 'name', value, 'TEST')
-            }
-          />
           {' '}
         </Box>
       </Container>
     )
   }
+}
+
+export default withStyles(styles)(Index)
+
+Index.propTypes = {
+  // eslint-disable-next-line react/require-default-props
+  classes: PropTypes.object
 }

@@ -88,9 +88,7 @@ class Index extends Component {
       contract = new Contract(web3)
       contract.deploy(account, 'username', '0.1', 7)
     } catch (error) {
-      alert(
-        `Failed to load web3, accounts, or contract. Check console for details.`
-      )
+      alert(`Failed to load web3, accounts, or contract.`)
       console.error(error)
     }
   }
@@ -101,9 +99,7 @@ class Index extends Component {
       contract = new Contract(web3, address)
       contract.register(address, account, userName, value, roomCode)
     } catch (error) {
-      alert(
-        `Failed to load web3, accounts, or contract. Check console for details.`
-      )
+      alert(`Failed to load web3, accounts, or contract.`)
       console.error(error)
     }
     console.log('todo, roomcode *', roomCode)
@@ -113,13 +109,18 @@ class Index extends Component {
     contract.vote(ballot)
   }
 
-  handleValue = event => {
-    this.setState({ value: event.target.value })
+  handleInput = type => event => {
+    console.log(type)
+    if (type === 'value') {
+      this.setState({ value: event.target.value })
+    } else if (type === 'address') {
+      this.setState({ contractAddress: event.target.value })
+    }
   }
 
-  handleAddress = event => {
-    this.setState({ contractAddress: event.target.value })
-  }
+  // handleAddress = event => {
+  //   this.setState({ contractAddress: event.target.value })
+  // }
 
   render() {
     const { contractAddress, value } = this.state
@@ -137,9 +138,17 @@ class Index extends Component {
             Go to the about page
           </Link> */}
           <Input placeholder="username" onChange="" />
-          <Input placeholder="0.0001" onChange={this.handleValue} />
+          <Input
+            placeholder="0.0001"
+            id="123"
+            name="345"
+            onChange={this.handleInput('value')}
+          />
           <Card classes={classes}>
-            <Input placeholder="address" onChange={this.handleAddress} />
+            <Input
+              placeholder="address"
+              onChange={this.handleInput('address')}
+            />
             <Input placeholder="roomCode" onChange="" />
             <Button
               title="Deposit ether"
@@ -152,7 +161,7 @@ class Index extends Component {
             <Input placeholder="roomsize" onChange="" />
             <Button title="Start" onClick={this.start} />
           </Card>
-          {/* <Input placeholder="secret" onChange={this.handleValue} /> */}
+          {/* <Input placeholder="secret" onChange={this.handleInput} /> */}
           {' '}
         </Box>
       </Container>

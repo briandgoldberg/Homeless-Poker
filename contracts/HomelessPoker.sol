@@ -57,6 +57,7 @@ contract HomelessPoker {
         require(roomSecret == _roomSecret, "You have to have the right secret for this room");
         require(name != 0, "You have to pick a username");
         require(msg.value == buyIn, "Your value has to match the buy-in");
+        require(playersRegistered.length+1 <= roomSize, "Room is full");
         require(player[msg.sender].username == 0, "You can only deposit once.");
 
         player[msg.sender].username = name;

@@ -105,6 +105,21 @@ contract('HomelessPoker', async accounts => {
           'You can only deposit once.'
         );
       });
+      it('should throw an error if the room is full', async () => {
+        for (let i = 1; i < 6; i++) {
+          await homelessPoker.register(fromAscii(`Player${i}`), ROOM_SECRET, {
+            from: accounts[i],
+            value: VALUE
+          });
+        }
+        await truffleAssert.reverts(
+          homelessPoker.register(fromAscii(`Player${6}`), ROOM_SECRET, {
+            from: accounts[6],
+            value: VALUE
+          }),
+          'Room is full'
+        );
+      });
     });
 
     describe('getPrizeCalculation', () => {

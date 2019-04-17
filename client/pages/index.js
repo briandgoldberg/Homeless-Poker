@@ -11,7 +11,7 @@ import MuiButton from '@material-ui/core/Button'
 import MuiInput from '@material-ui/core/Input'
 import MuiCard from '@material-ui/core/Card'
 import MuiCardContent from '@material-ui/core/CardContent'
-import { sortableContainer, sortableElement } from 'react-sortable-hoc'
+import List from 'components/List'
 import arrayMove from 'array-move'
 
 let web3
@@ -21,12 +21,6 @@ try {
   console.error(err)
 }
 let contract
-
-const SortableItem = sortableElement(({ value }) => <li>{value}</li>)
-
-const SortableContainer = sortableContainer(({ children }) => {
-  return <ul>{children}</ul>
-})
 
 function Input(props) {
   const { onChange, placeholder } = props
@@ -134,11 +128,7 @@ class Index extends Component {
     }
   }
 
-  // handleAddress = event => {
-  //   this.setState({ contractAddress: event.target.value })
-  // }
-
-  onSortEnd = ({ oldIndex, newIndex }) => {
+  rearrangeList = ({ oldIndex, newIndex }) => {
     this.setState(({ items }) => ({
       items: arrayMove(items, oldIndex, newIndex)
     }))
@@ -183,14 +173,9 @@ class Index extends Component {
             <Input placeholder="roomsize" onChange="" />
             <Button title="Start" onClick={this.start} />
           </Card>
-          <SortableContainer onSortEnd={this.onSortEnd}>
-            {items.map((v, index) => (
-              // eslint-disable-next-line react/no-array-index-key
-              <SortableItem key={`item-${index}`} index={index} value={v} />
-            ))}
-          </SortableContainer>
           {/* <Input placeholder="secret" onChange={this.handleInput} /> */}
           {' '}
+          <List items={items} onChange={this.rearrangeList} />
         </Box>
       </Container>
     )

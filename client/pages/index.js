@@ -11,6 +11,8 @@ import MuiButton from '@material-ui/core/Button'
 import MuiInput from '@material-ui/core/Input'
 import MuiCard from '@material-ui/core/Card'
 import MuiCardContent from '@material-ui/core/CardContent'
+import { sortableContainer, sortableElement } from 'react-sortable-hoc'
+import arrayMove from 'array-move'
 
 let web3
 try {
@@ -19,6 +21,12 @@ try {
   console.error(err)
 }
 let contract
+
+const SortableItem = sortableElement(({ value }) => <li>{value}</li>)
+
+const SortableContainer = sortableContainer(({ children }) => {
+  return <ul>{children}</ul>
+})
 
 function Input(props) {
   const { onChange, placeholder } = props
@@ -66,6 +74,14 @@ const styles = {
 }
 class Index extends Component {
   state = {
+    items: [
+      'Address 1',
+      'Address 2',
+      'Address 3',
+      'Address 4',
+      'Address 5',
+      'Address 6'
+    ],
     account: null,
     contractAddress: null,
     value: null // value that player sends to contract
@@ -122,8 +138,14 @@ class Index extends Component {
   //   this.setState({ contractAddress: event.target.value })
   // }
 
+  onSortEnd = ({ oldIndex, newIndex }) => {
+    this.setState(({ items }) => ({
+      items: arrayMove(items, oldIndex, newIndex)
+    }))
+  }
+
   render() {
-    const { contractAddress, value } = this.state
+    const { contractAddress, value, items } = this.state
     const { classes } = this.props
     if (!web3) {
       return <div>Loading Web3, accounts, and contract...</div>
@@ -161,6 +183,12 @@ class Index extends Component {
             <Input placeholder="roomsize" onChange="" />
             <Button title="Start" onClick={this.start} />
           </Card>
+          <SortableContainer onSortEnd={this.onSortEnd}>
+            {items.map((v, index) => (
+              // eslint-disable-next-line react/no-array-index-key
+              <SortableItem key={`item-${index}`} index={index} value={v} />
+            ))}
+          </SortableContainer>
           {/* <Input placeholder="secret" onChange={this.handleInput} /> */}
           {' '}
         </Box>

@@ -72,4 +72,8 @@ export default class Contract {
   getBuyIn() {
     return this.contract.methods.buyIn.call()
   }
+
+  getPlayersRegistered() {
+    return this.contract.methods.getPlayersRegistered().call()
+  }
 }

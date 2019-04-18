@@ -78,6 +78,8 @@ class Index extends Component {
     ],
     account: null,
     contractAddress: null,
+    contractInstance: null,
+    registeredPlayers: null,
     username: null,
     roomCode: null,
     roomSize: null,
@@ -99,7 +101,8 @@ class Index extends Component {
     const { account, username, value, roomSize } = this.state
     try {
       contract = new Contract(web3)
-      contract.deploy(account, username, value, roomSize)
+      await contract.deploy(account, username, value, roomSize)
+      this.setState({ contractInstance: contract })
     } catch (error) {
       alert(`Failed to load web3, accounts, or contract.`)
       console.error(error)
@@ -110,12 +113,25 @@ class Index extends Component {
     const { account } = this.state
     try {
       contract = new Contract(web3, address)
-      contract.register(address, account, userName, value, roomCode)
+      await contract.register(address, account, userName, value, roomCode)
+      this.setState({ contractInstance: contract })
     } catch (error) {
       alert(`Failed to load web3, accounts, or contract.`)
       console.error(error)
     }
-    console.log('todo, roomcode *', roomCode)
+  }
+
+  getPlayersRegistered = async () => {
+    const { contractInstance } = this.state
+    let registeredPlayers = null
+    try {
+      console.log(await contractInstance.getPlayersRegistered())
+      registeredPlayers = await contractInstance.getPlayersRegistered()
+      this.setState({ registeredPlayers })
+    } catch (error) {
+      console.error(error)
+    }
+    return registeredPlayers
   }
 
   vote = async ballot => {
@@ -144,7 +160,14 @@ class Index extends Component {
   }
 
   render() {
-    const { contractAddress, username, value, items, roomCode } = this.state
+    const {
+      contractAddress,
+      contractInstance,
+      username,
+      value,
+      items,
+      roomCode
+    } = this.state
     const { classes } = this.props
     if (!web3) {
       return <div>Loading Web3, accounts, and contract...</div>
@@ -194,6 +217,12 @@ class Index extends Component {
           {/* <Input placeholder="secret" onChange={this.handleInput} /> */}
           {' '}
           <List items={items} onChange={this.rearrangeList} />
+          {contractInstance && (
+            <button type="submit" onClick={() => this.getPlayersRegistered()}>
+              test
+            </button>
+          )}
+          {' '}
         </Box>
       </Container>
     )

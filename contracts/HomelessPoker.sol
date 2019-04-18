@@ -49,6 +49,10 @@ contract HomelessPoker {
         return int(playersVoted.length);
     }
 
+    function getPlayersRegistered() external view returns (address[] memory) {
+        return playersRegistered;
+    }
+
     function votingCanStart() external view returns (bool) {
         return playersRegistered.length == roomSize;
     }

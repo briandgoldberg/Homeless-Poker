@@ -144,7 +144,7 @@ class Index extends Component {
   }
 
   render() {
-    const { contractAddress, username, value, items } = this.state
+    const { contractAddress, username, value, items, roomCode } = this.state
     const { classes } = this.props
     if (!web3) {
       return <div>Loading Web3, accounts, and contract...</div>
@@ -180,7 +180,7 @@ class Index extends Component {
             <Button
               title="Deposit ether"
               onClick={() =>
-                value && this.join(contractAddress, username, value, 'TEST')
+                value && this.join(contractAddress, username, value, roomCode)
               }
             />
           </Card>

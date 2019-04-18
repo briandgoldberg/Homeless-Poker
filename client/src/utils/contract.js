@@ -22,7 +22,7 @@ export default class Contract {
         data: Artifacts.bytecode,
         arguments: [asciiToHex(username), roomSize, asciiToHex(roomCode)]
       })
-      .send({ from: msgSender, gas: 2000000, value: toWei(value) })
+      .send({ from: msgSender, gas: 3000000, value: toWei(value) })
       .on('error', error => {
         console.error(error)
       })

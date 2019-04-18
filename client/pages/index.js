@@ -79,6 +79,8 @@ class Index extends Component {
     account: null,
     contractAddress: null,
     username: null,
+    roomCode: null,
+    roomSize: null,
     value: null // value that player sends to contract
   }
 
@@ -94,10 +96,10 @@ class Index extends Component {
   }
 
   start = async () => {
-    const { account } = this.state
+    const { account, username, value, roomSize } = this.state
     try {
       contract = new Contract(web3)
-      contract.deploy(account, 'username', '0.1', 7)
+      contract.deploy(account, username, value, roomSize)
     } catch (error) {
       alert(`Failed to load web3, accounts, or contract.`)
       console.error(error)
@@ -128,6 +130,10 @@ class Index extends Component {
       this.setState({ contractAddress: event.target.value })
     } else if (type === 'username') {
       this.setState({ username: event.target.value })
+    } else if (type === 'roomcode') {
+      this.setState({ roomCode: event.target.value })
+    } else if (type === 'roomsize') {
+      this.setState({ roomSize: event.target.value })
     }
   }
 
@@ -167,7 +173,10 @@ class Index extends Component {
               placeholder="address"
               onChange={this.handleInput('address')}
             />
-            <Input placeholder="roomCode" onChange="" />
+            <Input
+              placeholder="roomCode"
+              onChange={this.handleInput('roomcode')}
+            />
             <Button
               title="Deposit ether"
               onClick={() =>
@@ -176,7 +185,10 @@ class Index extends Component {
             />
           </Card>
           <Card classes={classes}>
-            <Input placeholder="roomsize" onChange="" />
+            <Input
+              placeholder="roomsize"
+              onChange={this.handleInput('roomsize')}
+            />
             <Button title="Start" onClick={this.start} />
           </Card>
           {/* <Input placeholder="secret" onChange={this.handleInput} /> */}

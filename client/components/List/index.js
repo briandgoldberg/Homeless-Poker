@@ -1,14 +1,17 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { sortableContainer, sortableElement } from 'react-sortable-hoc'
+import { sortableContainer, sortableElement, sortableHandle } from 'react-sortable-hoc'
 // // import get from 'lodash/get'
 
 import MuiList from '@material-ui/core/List'
 import MuiListItem from '@material-ui/core/ListItem'
 import ListItemText from '@material-ui/core/ListItemText'
 
+const DragHandle = sortableHandle(() => <span>::</span>)
+
 const SortableItem = sortableElement(({ value }) => (
   <MuiListItem button dividers>
+    <DragHandle />
     <ListItemText primary={value} secondary="Secondary text" />
   </MuiListItem>
 ))

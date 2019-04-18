@@ -78,6 +78,7 @@ class Index extends Component {
     ],
     account: null,
     contractAddress: null,
+    username: null,
     value: null // value that player sends to contract
   }
 
@@ -125,6 +126,8 @@ class Index extends Component {
       this.setState({ value: event.target.value })
     } else if (type === 'address') {
       this.setState({ contractAddress: event.target.value })
+    } else if (type === 'username') {
+      this.setState({ username: event.target.value })
     }
   }
 
@@ -135,7 +138,7 @@ class Index extends Component {
   }
 
   render() {
-    const { contractAddress, value, items } = this.state
+    const { contractAddress, username, value, items } = this.state
     const { classes } = this.props
     if (!web3) {
       return <div>Loading Web3, accounts, and contract...</div>
@@ -149,7 +152,10 @@ class Index extends Component {
           {/* <Link href="/about" color="secondary">
             Go to the about page
           </Link> */}
-          <Input placeholder="username" onChange="" />
+          <Input
+            placeholder="username"
+            onChange={this.handleInput('username')}
+          />
           <Input
             placeholder="0.0001"
             id="123"
@@ -165,7 +171,7 @@ class Index extends Component {
             <Button
               title="Deposit ether"
               onClick={() =>
-                value && this.join(contractAddress, 'name', value, 'TEST')
+                value && this.join(contractAddress, username, value, 'TEST')
               }
             />
           </Card>

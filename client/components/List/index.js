@@ -13,7 +13,7 @@ import ListItemText from '@material-ui/core/ListItemText'
 const DragHandle = sortableHandle(() => <span>::</span>)
 
 const SortableItem = sortableElement(({ value }) => (
-  <MuiListItem button dividers>
+  <MuiListItem button dividers="true">
     <DragHandle />
     <ListItemText primary={value} secondary="Secondary text" />
   </MuiListItem>

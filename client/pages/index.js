@@ -68,14 +68,6 @@ const styles = {
 }
 class Index extends Component {
   state = {
-    items: [
-      'Address 1',
-      'Address 2',
-      'Address 3',
-      'Address 4',
-      'Address 5',
-      'Address 6'
-    ],
     account: null,
     contractAddress: null,
     contractInstance: null,
@@ -156,8 +148,8 @@ class Index extends Component {
   }
 
   rearrangeList = ({ oldIndex, newIndex }) => {
-    this.setState(({ items }) => ({
-      items: arrayMove(items, oldIndex, newIndex)
+    this.setState(({ registeredPlayers }) => ({
+      registeredPlayers: arrayMove(registeredPlayers, oldIndex, newIndex)
     }))
   }
 
@@ -167,7 +159,6 @@ class Index extends Component {
       contractInstance,
       username,
       value,
-      items,
       registeredPlayers,
       roomCode
     } = this.state
@@ -217,11 +208,17 @@ class Index extends Component {
             />
             <Button title="Start" onClick={this.start} />
           </Card>
-          {/* <Input placeholder="secret" onChange={this.handleInput} /> */}
           {' '}
           {contractInstance && registeredPlayers.length > 0 && (
             <List items={registeredPlayers} onChange={this.rearrangeList} />
           )}
+          <p>Todo: reveal this button when voting can start</p>
+          <Button
+            title="Vote"
+            onClick={() => {
+              this.join(registeredPlayers)
+            }}
+          />
           {/* {contractInstance && (
             <button type="submit" onClick={() => this.getPlayersRegistered()}>
               test

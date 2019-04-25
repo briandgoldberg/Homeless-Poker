@@ -1,7 +1,10 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { sortableContainer, sortableElement, sortableHandle } from 'react-sortable-hoc'
-// // import get from 'lodash/get'
+import {
+  sortableContainer,
+  sortableElement,
+  sortableHandle
+} from 'react-sortable-hoc'
 
 import MuiList from '@material-ui/core/List'
 import MuiListItem from '@material-ui/core/ListItem'
@@ -35,7 +38,6 @@ function List(props) {
 }
 
 List.propTypes = {
-  //   children: PropTypes.any
   // eslint-disable-next-line react/forbid-prop-types
   items: PropTypes.array.isRequired,
   onChange: PropTypes.func.isRequired

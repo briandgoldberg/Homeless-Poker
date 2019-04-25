@@ -44,6 +44,7 @@ export default class Contract {
         .register(asciiToHex(username), asciiToHex(roomCode))
         .send({ from: msgSender, gas: 2000000, value: toWei(value) })
         .on('error', error => {
+          console.log('RoomCode: ', roomCode)
           console.log(error)
         })
         .on('receipt', receipt => {

@@ -79,7 +79,7 @@ class Index extends Component {
     account: null,
     contractAddress: null,
     contractInstance: null,
-    registeredPlayers: null,
+    registeredPlayers: [],
     username: null,
     roomCode: null,
     roomSize: null,
@@ -103,6 +103,7 @@ class Index extends Component {
       contract = new Contract(web3)
       await contract.deploy(account, username, value, roomSize)
       this.setState({ contractInstance: contract })
+      this.getPlayersRegistered()
     } catch (error) {
       alert(`Failed to load web3, accounts, or contract.`)
       console.error(error)
@@ -115,6 +116,7 @@ class Index extends Component {
       contract = new Contract(web3, address)
       await contract.register(address, account, userName, value, roomCode)
       this.setState({ contractInstance: contract })
+      this.getPlayersRegistered()
     } catch (error) {
       alert(`Failed to load web3, accounts, or contract.`)
       console.error(error)
@@ -166,6 +168,7 @@ class Index extends Component {
       username,
       value,
       items,
+      registeredPlayers,
       roomCode
     } = this.state
     const { classes } = this.props
@@ -216,12 +219,14 @@ class Index extends Component {
           </Card>
           {/* <Input placeholder="secret" onChange={this.handleInput} /> */}
           {' '}
-          <List items={items} onChange={this.rearrangeList} />
-          {contractInstance && (
+          {contractInstance && registeredPlayers.length > 0 && (
+            <List items={registeredPlayers} onChange={this.rearrangeList} />
+          )}
+          {/* {contractInstance && (
             <button type="submit" onClick={() => this.getPlayersRegistered()}>
               test
             </button>
-          )}
+          )} */}
           {' '}
         </Box>
       </Container>

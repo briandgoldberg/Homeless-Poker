@@ -6,7 +6,7 @@ import CssBaseline from '@material-ui/core/CssBaseline'
 import theme from '../src/theme'
 
 // import styles from './assets.scss'
-export default class Tech extends App {
+export default class HomelessPoker extends App {
   componentDidMount() {
     // Remove the server-side injected CSS.
     const jssStyles = document.querySelector('#jss-server-side')

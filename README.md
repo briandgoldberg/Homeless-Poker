@@ -45,22 +45,20 @@ Contract is live on Ropsten test network at
 0xa7cec45371adcd537b3aaa6117778ff781a9137d & 0x13c273cb47c7c1fE62865e5b2069C361C574a7F5
 https://ropsten.etherscan.io/address/0xa7cec45371adcd537b3aaa6117778ff781a9137d
 
-Public functions:
+#Contract functions:
 
-`constructor(username, roomSize)`
+`constructor(username, roomSize, roomSecret)`
 Deploying a constract
 
 `register(username, roomCode)`
-Users deposit to contract, first player controls the amount with `value` in wei.
+User registers by depositing to contract, first player controls the amount with `value` in wei.
 
 `vote(ballot)`
 `ballot`: array of addresses listed from first to last
+User votes for the winnig bracket
 
 `getPotiumSize()`
 The amount of players that has to be voted for.
 
-`getPrizeCalculation(place, potiumSize, prizePool)`
-
-`getPlayersVotedCount()`
-
-`getPlayerCount`
+`killswitch()`
+Kill the contract when ... tbd

@@ -70,11 +70,39 @@ export default class Contract {
       })
   }
 
+  // TODO: killswitch
+
   getBuyIn() {
     return this.contract.methods.buyIn.call()
   }
 
+  getPotiumSize() {
+    return this.contract.methods.potiumSize.call()
+  }
+
+  getRoomSize() {
+    return this.contract.methods.roomSize.call()
+  }
+
+  hasDistributionEnded() {
+    return this.contract.methods.distributionHasEnded.call()
+  }
+
+  hasMajorityVoted() {
+    return this.contract.methods.majorityVoted.call()
+  }
+
   getPlayersRegistered() {
     return this.contract.methods.getPlayersRegistered().call()
+  }
+
+  canVotingStart() {
+    return this.contract.methods.votingCanStart().call()
+  }
+
+  getPrizeForPlace(place, potiumSize, prizePool) {
+    return this.contract.methods
+      .getPrizeCalculation(place, potiumSize, prizePool)
+      .call()
   }
 }

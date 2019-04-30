@@ -154,6 +154,8 @@ contract HomelessPoker {
 
     function distributePrizes(address[] memory winners) private {
 
+        // TODO: send an event with the winning bracket
+
         refundDeposits();
 
         uint slot;

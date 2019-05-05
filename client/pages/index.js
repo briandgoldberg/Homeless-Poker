@@ -7,11 +7,7 @@ import { withStyles } from '@material-ui/core/styles'
 import Box from '@material-ui/core/Box'
 import Container from '@material-ui/core/Container'
 import Typography from '@material-ui/core/Typography'
-import MuiButton from '@material-ui/core/Button'
-import MuiInput from '@material-ui/core/Input'
-import MuiCard from '@material-ui/core/Card'
-import MuiCardContent from '@material-ui/core/CardContent'
-import List from 'components/List'
+import { Button, Card, Input, List } from 'components'
 import arrayMove from 'array-move'
 
 let web3
@@ -21,45 +17,6 @@ try {
   console.error(err)
 }
 let contract
-
-function Input(props) {
-  const { onChange, placeholder } = props
-  return <MuiInput placeholder={placeholder} onChange={e => onChange(e)} />
-}
-
-Input.propTypes = {
-  onChange: PropTypes.func.isRequired,
-  placeholder: PropTypes.string.isRequired
-}
-
-function Button(props) {
-  const { onClick, title } = props
-  return (
-    <MuiButton variant="contained" color="primary" onClick={() => onClick()}>
-      {title}
-    </MuiButton>
-  )
-}
-
-Button.propTypes = {
-  onClick: PropTypes.func.isRequired,
-  title: PropTypes.string.isRequired
-}
-
-function Card(props) {
-  const { children, classes } = props
-  return (
-    <MuiCard className={classes.card} color="primary">
-      <MuiCardContent>{children}</MuiCardContent>
-    </MuiCard>
-  )
-}
-
-Card.propTypes = {
-  children: PropTypes.array.isRequired,
-  // eslint-disable-next-line react/require-default-props
-  classes: PropTypes.object
-}
 
 const styles = {
   card: {

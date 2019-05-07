@@ -4,10 +4,11 @@ import Contract from 'utils/contract'
 import Web3 from 'utils/web3'
 import PropTypes from 'prop-types'
 import { withStyles } from '@material-ui/core/styles'
-import Box from '@material-ui/core/Box'
+import Grid from '@material-ui/core/Grid'
 import Container from '@material-ui/core/Container'
-import Typography from '@material-ui/core/Typography'
-import { Button, Card, Input, List } from 'components'
+// import Typography from '@material-ui/core/Typography'
+import { Button, List } from 'components'
+import Lobby from 'components/Lobby'
 import arrayMove from 'array-move'
 
 let web3
@@ -59,11 +60,18 @@ class Index extends Component {
     }
   }
 
-  join = async (address, userName, value, roomCode) => {
-    const { account } = this.state
+  join = async () => {
+    const { account, contractAddress, username, roomCode, value } = this.state
     try {
-      contract = new Contract(web3, address)
-      await contract.register(address, account, userName, value, roomCode)
+      contract = new Contract(web3, contractAddress)
+      console.log('join from address', account)
+      await contract.register(
+        contractAddress,
+        account,
+        username,
+        value,
+        roomCode
+      )
       this.setState({ contractInstance: contract })
       this.getPlayersRegistered()
     } catch (error) {
@@ -111,78 +119,45 @@ class Index extends Component {
   }
 
   render() {
-    const {
-      contractAddress,
-      contractInstance,
-      username,
-      value,
-      registeredPlayers,
-      roomCode
-    } = this.state
+    const { contractInstance, value /* , registeredPlayers */ } = this.state
+
+    // temp
+    const registeredPlayers = ['yolo', 'swage', 'lals']
     const { classes } = this.props
     if (!web3) {
       return <div>Loading Web3, accounts, and contract...</div>
     }
     return (
       <Container maxWidth="sm">
-        <Box my={4}>
-          <Typography variant="h4" component="h1" gutterBottom>
-            Homeless Poker
-          </Typography>
-          {/* <Link href="/about" color="secondary">
-            Go to the about page
-          </Link> */}
-          <Input
-            placeholder="username"
-            onChange={this.handleInput('username')}
-          />
-          <Input
-            placeholder="0.0001"
-            id="123"
-            name="345"
-            onChange={this.handleInput('value')}
-          />
-          <Card classes={classes}>
-            <Input
-              placeholder="address"
-              onChange={this.handleInput('address')}
+        <Grid container spacing={16}>
+          <Grid item xs={12} sm container>
+            <Lobby
+              classes={classes}
+              handleInput={this.handleInput}
+              join={this.join}
+              start={value && this.start}
             />
-            <Input
-              placeholder="roomCode"
-              onChange={this.handleInput('roomcode')}
-            />
-            <Button
-              title="Deposit ether"
-              onClick={() =>
-                value && this.join(contractAddress, username, value, roomCode)
-              }
-            />
-          </Card>
-          <Card classes={classes}>
-            <Input
-              placeholder="roomsize"
-              onChange={this.handleInput('roomsize')}
-            />
-            <Button title="Start" onClick={this.start} />
-          </Card>
-          {' '}
-          {contractInstance && registeredPlayers.length > 0 && (
+          </Grid>
+          <Grid item xs={12} container>
+            {/* {contractInstance && registeredPlayers.length > 0 && ( */}
             <List items={registeredPlayers} onChange={this.rearrangeList} />
-          )}
-          <p>Todo: reveal this button when voting can start</p>
-          <Button
-            title="Vote"
-            onClick={() => {
-              this.join(registeredPlayers)
-            }}
-          />
+            {/* )} */}
+          </Grid>
+          <Grid item xs={12} container>
+            <Button
+              title="Vote"
+              onClick={() => {
+                this.vote(registeredPlayers)
+              }}
+            />
+          </Grid>
           {/* {contractInstance && (
             <button type="submit" onClick={() => this.getPlayersRegistered()}>
               test
             </button>
           )} */}
           {' '}
-        </Box>
+        </Grid>
       </Container>
     )
   }

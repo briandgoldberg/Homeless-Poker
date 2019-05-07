@@ -1,4 +1,4 @@
-import { asciiToHex, toWei } from 'web3-utils'
+import { asciiToHex, fromWei, toWei } from 'web3-utils'
 import Artifacts from '../contracts/HomelessPoker.json'
 
 export default class Contract {
@@ -100,9 +100,10 @@ export default class Contract {
     return this.contract.methods.votingCanStart().call()
   }
 
-  getPrizeForPlace(place, potiumSize, prizePool) {
-    return this.contract.methods
-      .getPrizeCalculation(place, potiumSize, prizePool)
+  async getPrizeForPlace(place, potiumSize, prizePool) {
+    const amount = await this.contract.methods
+      .getPrizeCalculation(place, potiumSize, toWei(prizePool))
       .call()
+    return fromWei(amount.toString())
   }
 }

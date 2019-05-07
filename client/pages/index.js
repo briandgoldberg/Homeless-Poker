@@ -80,6 +80,14 @@ class Index extends Component {
     }
   }
 
+  getPrizeBreakdown = async () => {
+    const { contractInstance } = this.state
+    const place = 1
+    const potiumSize = 10
+    const prizePool = '0.5'
+    return (await contractInstance.getPrizeForPlace(place, potiumSize, prizePool)).toFixed(5)
+  }
+
   getPlayersRegistered = async () => {
     const { contractInstance } = this.state
     let registeredPlayers = null
@@ -129,7 +137,7 @@ class Index extends Component {
     }
     return (
       <Container maxWidth="sm">
-        <Grid container spacing={16}>
+        <Grid container spacing={8}>
           <Grid item xs={12} sm container>
             <Lobby
               classes={classes}
@@ -151,11 +159,16 @@ class Index extends Component {
               }}
             />
           </Grid>
-          {/* {contractInstance && (
-            <button type="submit" onClick={() => this.getPlayersRegistered()}>
-              test
-            </button>
-          )} */}
+          <Grid item xs={12} container>
+            {contractInstance && (
+              <>
+                <button type="submit" onClick={() => this.getPrizeBreakdown()}>
+                  test
+                </button>
+                <p>losads</p>
+              </>
+            )}
+          </Grid>
           {' '}
         </Grid>
       </Container>

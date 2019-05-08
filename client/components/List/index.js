@@ -46,7 +46,6 @@ const PotiumContainer = () => {
 
 function List(props) {
   const { items, onChange } = props
-
   return (
     // eslint-disable-next-line react/no-this-in-sfc
     <>

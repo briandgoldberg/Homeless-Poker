@@ -102,8 +102,8 @@ export default class Contract {
 
   async getPrizeForPlace(place, potiumSize, prizePool) {
     const amount = await this.contract.methods
-      .getPrizeCalculation(place, potiumSize, toWei(prizePool))
+      .getPrizeCalculation(place, potiumSize, prizePool)
       .call()
-    return fromWei(amount.toString())
+    return fromWei(`${amount}`)
   }
 }

@@ -62,3 +62,7 @@ The amount of players that has to be voted for.
 
 `killswitch()`
 Kill the contract when ... tbd
+
+Gotchas
+
+Wei is a BigNumber and has to be parse to string to be converted to ETH

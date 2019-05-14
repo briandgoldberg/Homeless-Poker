@@ -2,6 +2,7 @@
 import React, { Component } from 'react'
 import Contract from 'utils/contract'
 import Web3 from 'utils/web3'
+import Link from 'next/link'
 import PropTypes from 'prop-types'
 import { withStyles } from '@material-ui/core/styles'
 import Grid from '@material-ui/core/Grid'
@@ -10,6 +11,7 @@ import Container from '@material-ui/core/Container'
 import { Button, List } from 'components'
 import Lobby from 'components/Lobby'
 import arrayMove from 'array-move'
+import styles from '../styles/index.scss'
 
 let web3
 try {
@@ -19,11 +21,11 @@ try {
 }
 let contract
 
-const styles = {
-  card: {
-    maxWidth: 275
-  }
-}
+// const styles = {
+//   card: {
+//     maxWidth: 275
+//   }
+// }
 class Index extends Component {
   state = {
     account: null,
@@ -136,51 +138,64 @@ class Index extends Component {
     if (!web3) {
       return <div>Loading Web3, accounts, and contract...</div>
     }
+    console.log(styles)
     return (
-      <Container maxWidth="sm">
-        <Grid container spacing={8}>
-          <Grid item xs={12} sm container>
-            <Lobby
-              classes={classes}
-              handleInput={this.handleInput}
-              join={this.join}
-              start={value && this.start}
-            />
-          </Grid>
-          <Grid item xs={12} container>
-            {/* {contractInstance && registeredPlayers.length > 0 && ( */}
-            <List items={registeredPlayers} onChange={this.rearrangeList} />
-            {/* )} */}
-          </Grid>
-          <Grid item xs={12} container>
-            <Button
-              title="Vote"
-              onClick={() => {
-                this.vote(registeredPlayers)
-              }}
-            />
-          </Grid>
-          <Grid item xs={12} container>
-            {contractInstance && (
-              <>
-                <button
-                  type="submit"
-                  onClick={() => this.getPrizehandoutForPlace(1)}
-                >
-                  test
-                </button>
-                <p>losads</p>
-              </>
-            )}
-          </Grid>
-          {' '}
-        </Grid>
-      </Container>
+      <>
+        <div className={styles.container}>
+          <div className={styles.border}>
+            <h1>Title</h1>
+            <p> paragraph </p>
+            <Link href="/landing">
+              <Button className={styles.btn} title="Join" />
+            </Link>
+            <Button className={styles.btn} title="Create" />
+          </div>
+        </div>
+      </>
+      // <Container maxWidth="sm">
+      //   <Grid container spacing={8}>
+      //     <Grid item xs={12} sm container>
+      //       <Lobby
+      //         classes={classes}
+      //         handleInput={this.handleInput}
+      //         join={this.join}
+      //         start={value && this.start}
+      //       />
+      //     </Grid>
+      //     <Grid item xs={12} container>
+      //       {/* {contractInstance && registeredPlayers.length > 0 && ( */}
+      //       <List items={registeredPlayers} onChange={this.rearrangeList} />
+      //       {/* )} */}
+      //     </Grid>
+      //     <Grid item xs={12} container>
+      //       <Button
+      //         title="Vote"
+      //         onClick={() => {
+      //           this.vote(registeredPlayers)
+      //         }}
+      //       />
+      //     </Grid>
+      //     <Grid item xs={12} container>
+      //       {contractInstance && (
+      //         <>
+      //           <button
+      //             type="submit"
+      //             onClick={() => this.getPrizehandoutForPlace(1)}
+      //           >
+      //             test
+      //           </button>
+      //           <p>losads</p>
+      //         </>
+      //       )}
+      //     </Grid>
+      //     {' '}
+      //   </Grid>
+      // </Container>
     )
   }
 }
 
-export default withStyles(styles)(Index)
+export default Index
 
 Index.propTypes = {
   // eslint-disable-next-line react/require-default-props

@@ -66,3 +66,8 @@ Kill the contract when ... tbd
 Gotchas
 
 Wei is a BigNumber and has to be parse to string to be converted to ETH
+
+Known issues:
+`Error: the tx doesn't have the correct nonce. account has nonce of: 0 tx has nonce of: X`
+Reset the accounts transaction history.
+Go to MetaMask MyAccounts > Settings > Advanced > Reset Account

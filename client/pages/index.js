@@ -145,10 +145,24 @@ class Index extends Component {
           <div className={styles.border}>
             <h1>Title</h1>
             <p> paragraph </p>
-            <Link href="/landing">
-              <Button className={styles.btn} title="Join" />
+            <Link href="/join">
+              <a>
+                <Button
+                  className={styles.btn}
+                  title="Join"
+                  onClick={this.test}
+                />
+              </a>
             </Link>
-            <Button className={styles.btn} title="Create" />
+            <Link href="/create">
+              <a>
+                <Button
+                  className={styles.btn}
+                  title="Create"
+                  onClick={this.test}
+                />
+              </a>
+            </Link>
           </div>
         </div>
       </>

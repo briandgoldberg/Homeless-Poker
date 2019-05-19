@@ -18,8 +18,6 @@ const Join = () => {
   const [username, setUsername] = useState(null)
   const [roomCode, setRoomCode] = useState(null)
   const [contractAddress, setContractAddress] = useState(null)
-  // const [{ theme }, dispatch] = useWeb3()
-  // const [roomCode, setRoomCode] = useState(null)
   //   const [contractInstance, setContractInstance] = useState(null)
   //   const [web3Instance, setWeb3Instance] = useState()
 

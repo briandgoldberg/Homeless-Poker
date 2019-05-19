@@ -2,8 +2,16 @@ import React, { useEffect, useState } from 'react'
 import Contract from 'utils/contract'
 import Web3 from 'utils/web3'
 import { Button, Input } from 'components'
-import { useWeb3 } from '../providers/useWeb3'
+// import { useWeb3 } from '../providers/useWeb3'
 
+let web3
+let contract
+
+try {
+  web3 = Web3()
+} catch (err) {
+  console.error(err)
+}
 const Create = () => {
   const [account, setAccount] = useState(null)
   const [value, setValue] = useState(null)
@@ -12,16 +20,7 @@ const Create = () => {
   // const [{ theme }, dispatch] = useWeb3()
   // const [roomCode, setRoomCode] = useState(null)
   const [contractInstance, setContractInstance] = useState(null)
-  const [web3Instance, setWeb3Instance] = useState()
-
-  let web3
-  let contract
-
-  try {
-    web3 = Web3()
-  } catch (err) {
-    console.error(err)
-  }
+  // const [web3Instance, setWeb3Instance] = useState()
   async function getUserAccount() {
     try {
       const userAccount = (await web3.eth.getAccounts())[0]
@@ -40,10 +39,9 @@ const Create = () => {
   const start = async () => {
     try {
       contract = new Contract(web3)
-      console.log(account, 'thisaccount')
+      // TODO: Set a message: Please accept the transaction in (...Metamask), it doesnt always pop up.
       await contract.deploy(account, username, value, roomSize)
       setContractInstance(contract)
-
       // this.getPlayersRegistered()
     } catch (error) {
       alert(`Failed to load web3, accounts, or contract.`)
@@ -59,10 +57,6 @@ const Create = () => {
     } else if (type === 'roomsize') {
       setRoomSize(event.target.value)
     }
-    // } else if (type === 'address') {
-    //   this.setState({ contractAddress: event.target.value })
-    // } else if (type === 'roomcode') {
-    //   this.setState({ roomCode: event.target.value })
   }
 
   if (!web3) {
@@ -80,17 +74,6 @@ const Create = () => {
       />
       <Input placeholder="roomsize" onChange={handleInput('roomsize')} />
       <Button title="Start" onClick={start} />
-      {/* <button
-        type="submit"
-        onClick={() =>
-          dispatch({
-            type: 'testAction',
-            newTheme: { primary: 'lol' }
-          })
-        }
-      > 
-        Make me blue!
-      </button> */}
     </>
   )
 }

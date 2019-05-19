@@ -3,6 +3,15 @@ import { Button, Input } from 'components'
 import Contract from 'utils/contract'
 import Web3 from 'utils/web3'
 
+let web3
+let contract
+
+try {
+  web3 = Web3()
+  //   setWeb3Instance(web3) // re-render issue
+} catch (err) {
+  console.error(err)
+}
 const Join = () => {
   const [account, setAccount] = useState(null)
   const [value, setValue] = useState(null)
@@ -11,22 +20,13 @@ const Join = () => {
   const [contractAddress, setContractAddress] = useState(null)
   // const [{ theme }, dispatch] = useWeb3()
   // const [roomCode, setRoomCode] = useState(null)
-  const [contractInstance, setContractInstance] = useState(null)
-  const [web3Instance, setWeb3Instance] = useState()
+  //   const [contractInstance, setContractInstance] = useState(null)
+  //   const [web3Instance, setWeb3Instance] = useState()
 
-  let web3
-  let contract
-
-  try {
-    web3 = Web3()
-    //   setWeb3Instance(web3) // re-render issue
-  } catch (err) {
-    console.error(err)
-  }
   async function getUserAccount() {
     try {
       const userAccount = (await web3.eth.getAccounts())[0]
-      console.log(userAccount)
+      console.log('defaultAccount:', userAccount)
       setAccount(userAccount)
     } catch (error) {
       alert(`Failed to load web3.`)
@@ -45,7 +45,7 @@ const Join = () => {
       await contract
         .register(contractAddress, account, username, value, roomCode)
         .catch(err => console.error(err))
-      setContractInstance(contract)
+      //   setContractInstance(contract)
       //   this.getPlayersRegistered()
     } catch (error) {
       alert(`Failed to load web3, accounts, or contract.`)

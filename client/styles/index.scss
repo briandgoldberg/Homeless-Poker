@@ -1,0 +1,17 @@
+.container {
+  padding: 2vh;
+}
+
+.border {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #000000;
+  border-radius: 12px;
+  height: 100vh;
+}
+
+.btn {
+  flex: 1 0 0;
+
+  height: 20px;
+}

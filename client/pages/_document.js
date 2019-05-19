@@ -4,7 +4,6 @@ import { ServerStyleSheets } from '@material-ui/styles'
 import Document, { Head, Main, NextScript } from 'next/document'
 import flush from 'styled-jsx/server'
 import theme from '../src/theme'
-import styles from './assets.scss'
 
 class MyDocument extends Document {
   render() {
@@ -26,7 +25,7 @@ class MyDocument extends Document {
             href="https://cdnjs.cloudflare.com/ajax/libs/normalize/7.0.0/normalize.css"
           />
         </Head>
-        <body className={styles.body}>
+        <body className="App">
           <Main />
           <NextScript />
         </body>

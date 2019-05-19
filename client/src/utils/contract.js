@@ -1,4 +1,4 @@
-import { asciiToHex, toWei } from 'web3-utils'
+import { asciiToHex, fromWei, toWei } from 'web3-utils'
 import Artifacts from '../contracts/HomelessPoker.json'
 
 export default class Contract {
@@ -16,17 +16,19 @@ export default class Contract {
   }
 
   async deploy(msgSender, username, value, roomSize) {
+    const roomCode = this.generateRoomCode()
     await this.contract
       .deploy({
         data: Artifacts.bytecode,
-        arguments: [asciiToHex(username), roomSize, asciiToHex(this.generateRoomCode())]
+        arguments: [asciiToHex(username), roomSize, asciiToHex(roomCode)]
       })
-      .send({ from: msgSender, gas: 2000000, value: toWei(value) })
+      .send({ from: msgSender, gas: 3000000, value: toWei(value) })
       .on('error', error => {
         console.error(error)
       })
       .on('transactionHash', transactionHash => {
         console.log('TransactionHash: ', transactionHash)
+        console.log('RoomCode: ', roomCode)
       })
       .on('receipt', receipt => {
         console.log('ContractAddress: ', receipt.contractAddress)
@@ -42,6 +44,7 @@ export default class Contract {
         .register(asciiToHex(username), asciiToHex(roomCode))
         .send({ from: msgSender, gas: 2000000, value: toWei(value) })
         .on('error', error => {
+          console.log('RoomCode: ', roomCode)
           console.log(error)
         })
         .on('receipt', receipt => {
@@ -67,7 +70,40 @@ export default class Contract {
       })
   }
 
+  // TODO: killswitch
+
   getBuyIn() {
     return this.contract.methods.buyIn.call()
+  }
+
+  getPotiumSize() {
+    return this.contract.methods.potiumSize.call()
+  }
+
+  getRoomSize() {
+    return this.contract.methods.roomSize.call()
+  }
+
+  hasDistributionEnded() {
+    return this.contract.methods.distributionHasEnded.call()
+  }
+
+  hasMajorityVoted() {
+    return this.contract.methods.majorityVoted.call()
+  }
+
+  getPlayersRegistered() {
+    return this.contract.methods.getPlayersRegistered().call()
+  }
+
+  canVotingStart() {
+    return this.contract.methods.votingCanStart().call()
+  }
+
+  async getPrizeForPlace(place, potiumSize, prizePool) {
+    const amount = await this.contract.methods
+      .getPrizeCalculation(place, potiumSize, prizePool)
+      .call()
+    return fromWei(`${amount}`)
   }
 }

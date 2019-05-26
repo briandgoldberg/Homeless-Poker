@@ -53,7 +53,12 @@ const Join = () => {
         code: roomCode,
         instance: contract
       }
-      dispatch({ type: 'joinRoom', contractInfo })
+      const userInfo = {
+        address: account,
+        buyIn: value,
+        name: username
+      }
+      dispatch({ type: 'joinRoom', contractInfo, userInfo })
     } catch (error) {
       alert(`Failed to load web3, accounts, or contract.`)
       console.error(error)

@@ -45,7 +45,12 @@ const Create = () => {
         code: output.roomCode,
         instance: contract
       }
-      dispatch({ type: 'createRoom', contractInfo })
+      const userInfo = {
+        address: account,
+        buyIn: value,
+        name: username
+      }
+      dispatch({ type: 'createRoom', contractInfo, userInfo })
     } catch (error) {
       alert(`Failed to load web3, accounts, or contract.`)
       console.error(error)

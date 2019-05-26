@@ -38,6 +38,7 @@ export default class HomelessPoker extends App {
         instance: undefined
       },
       user: {
+        address: undefined,
         buyIn: undefined,
         name: undefined
       },
@@ -50,12 +51,14 @@ export default class HomelessPoker extends App {
         case 'createRoom':
           return {
             ...state,
-            contract: action.contractInfo
+            contract: action.contractInfo,
+            user: action.userInfo
           }
         case 'joinRoom':
           return {
             ...state,
-            contract: action.contractInfo
+            contract: action.contractInfo,
+            user: action.userInfo
           }
         default:
           console.log('-- default in reducer')

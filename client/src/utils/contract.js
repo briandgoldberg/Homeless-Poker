@@ -1,4 +1,4 @@
-import { asciiToHex, fromWei, toWei } from 'web3-utils'
+import { asciiToHex, fromWei, hexToAscii, toWei } from 'web3-utils'
 import Artifacts from '../contracts/HomelessPoker.json'
 
 export default class Contract {
@@ -112,5 +112,11 @@ export default class Contract {
       .getPrizeCalculation(place, potiumSize, prizePool)
       .call()
     return fromWei(`${amount}`)
+  }
+
+  async getUsername(address) {
+    console.log('the address', address)
+    const username = await this.contract.methods.getUsername(address).call()
+    return hexToAscii(`${username}`)
   }
 }

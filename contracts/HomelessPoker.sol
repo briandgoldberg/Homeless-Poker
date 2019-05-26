@@ -57,6 +57,10 @@ contract HomelessPoker {
         return playersRegistered.length == roomSize;
     }
 
+    function getUsername(address account) external view returns (bytes32) {
+        return player[account].username;
+    }
+
     function register(bytes32 name, bytes32 _roomSecret) public payable {
         require(roomSecret == _roomSecret, "You have to have the right secret for this room");
         require(name != 0, "You have to pick a username");

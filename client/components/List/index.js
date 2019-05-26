@@ -33,7 +33,8 @@ const PotiumContainer = () => {
   return (
     <MuiList>
       {awardAmount.map((value, index) => (
-        <MuiListItem divider selected>
+        // eslint-disable-next-line react/no-array-index-key
+        <MuiListItem key={index} divider selected>
           <ListItemText
             primary={`${index + 1}. place`}
             secondary={`${value} ETH`}

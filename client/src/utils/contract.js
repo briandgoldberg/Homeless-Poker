@@ -115,7 +115,6 @@ export default class Contract {
   }
 
   async getUsername(address) {
-    console.log('the address', address)
     const username = await this.contract.methods.getUsername(address).call()
     return hexToAscii(`${username}`)
   }

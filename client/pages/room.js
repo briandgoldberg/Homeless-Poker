@@ -33,8 +33,11 @@ const Room = () => {
     const registeredPlayers = await getPlayersRegistered()
     setListOrder(registeredPlayers)
 
-    // TODO:
-    console.log(listOrder.map(async address => getUsernameFromAddress(address)))
+    const names = await Promise.all(
+      registeredPlayers.map(address => getUsernameFromAddress(address))
+    )
+
+    console.log(names)
   }
 
   useEffect(() => {

@@ -41,10 +41,19 @@ const Join = () => {
     try {
       contract = new Contract(web3, contractAddress)
       console.log('join from address', account)
-      await contract
-        .register(contractAddress, account, username, value, roomCode)
-        .catch(err => console.error(err))
-      dispatch({ type: 'joinRoom', contractInstance: contract })
+      await contract.register(
+        contractAddress,
+        account,
+        username,
+        value,
+        roomCode
+      )
+      const contractInfo = {
+        address: contractAddress,
+        code: roomCode,
+        instance: contract
+      }
+      dispatch({ type: 'joinRoom', contractInfo })
     } catch (error) {
       alert(`Failed to load web3, accounts, or contract.`)
       console.error(error)

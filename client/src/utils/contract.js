@@ -17,14 +17,16 @@ export default class Contract {
 
   async deploy(msgSender, username, value, roomSize) {
     const roomCode = this.generateRoomCode()
+    let error
     await this.contract
       .deploy({
         data: Artifacts.bytecode,
         arguments: [asciiToHex(username), roomSize, asciiToHex(roomCode)]
       })
       .send({ from: msgSender, gas: 3000000, value: toWei(value) })
-      .on('error', error => {
-        console.error(error)
+      .on('error', _error => {
+        error = _error
+        console.error(_error)
       })
       .on('transactionHash', transactionHash => {
         console.log('TransactionHash: ', transactionHash)
@@ -34,6 +36,11 @@ export default class Contract {
         console.log('ContractAddress: ', receipt.contractAddress)
         this.contract.options.address = receipt.contractAddress
       })
+    return {
+      error,
+      contractAddress: this.contract.options.address,
+      roomCode
+    }
   }
 
   async register(address, msgSender, username, value, roomCode) {

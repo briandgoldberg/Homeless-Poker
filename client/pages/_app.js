@@ -32,6 +32,15 @@ export default class HomelessPoker extends App {
     const { Component, pageProps } = this.props
 
     const initialState = {
+      contract: {
+        address: undefined,
+        code: undefined,
+        instance: undefined
+      },
+      user: {
+        buyIn: undefined,
+        name: undefined
+      },
       contractInstance: undefined,
       web3Instance: undefined
     }
@@ -41,12 +50,12 @@ export default class HomelessPoker extends App {
         case 'createRoom':
           return {
             ...state,
-            contractInstance: action.contractInstance
+            contract: action.contractInfo
           }
         case 'joinRoom':
           return {
             ...state,
-            contractInstance: action.contractInstance
+            contract: action.contractInfo
           }
         default:
           console.log('-- default in reducer')

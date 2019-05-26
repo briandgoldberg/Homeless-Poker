@@ -38,8 +38,14 @@ const Create = () => {
     try {
       contract = new Contract(web3)
       // TODO: Set a message: Please accept the transaction in (...Metamask), it doesnt always pop up.
-      await contract.deploy(account, username, value, roomSize)
-      dispatch({ type: 'createRoom', contractInstance: contract })
+      const output = await contract.deploy(account, username, value, roomSize)
+      console.log('Deploy info', output)
+      const contractInfo = {
+        address: output.contractAddress,
+        code: output.roomCode,
+        instance: contract
+      }
+      dispatch({ type: 'createRoom', contractInfo })
     } catch (error) {
       alert(`Failed to load web3, accounts, or contract.`)
       console.error(error)
@@ -70,11 +76,11 @@ const Create = () => {
         onChange={handleInput('value')}
       />
       <Input placeholder="roomsize" onChange={handleInput('roomsize')} />
-      {/* <Link href="/room">
-        <a> */}
-      <Button title="Start" onClick={start} href="/room" />
-      {/* </a>
-      </Link> */}
+      <Link href="/room">
+        <a>
+          <Button title="Start" onClick={start} />
+        </a>
+      </Link>
     </>
   )
 }

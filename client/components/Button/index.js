@@ -1,11 +1,17 @@
 import React from 'react'
+// import Link from 'next/link'
 import PropTypes from 'prop-types'
 import MuiButton from '@material-ui/core/Button'
 
 function Button(props) {
   const { onClick, title } = props
   return (
-    <MuiButton variant="contained" color="primary" onClick={() => onClick()}>
+    <MuiButton
+      variant="contained"
+      color="primary"
+      onClick={() => onClick()}
+      {...props}
+    >
       {title}
     </MuiButton>
   )

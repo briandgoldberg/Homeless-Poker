@@ -71,3 +71,6 @@ Known issues:
 `Error: the tx doesn't have the correct nonce. account has nonce of: 0 tx has nonce of: X`
 Reset the accounts transaction history.
 Go to MetaMask MyAccounts > Settings > Advanced > Reset Account
+
+Hook structure:
+https://medium.com/simply/state-management-with-react-hooks-and-context-api-at-10-lines-of-code-baf6be8302c

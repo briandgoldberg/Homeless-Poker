@@ -1,4 +1,4 @@
-import { asciiToHex, fromWei, toWei } from 'web3-utils'
+import { asciiToHex, fromWei, hexToAscii, toWei } from 'web3-utils'
 import Artifacts from '../contracts/HomelessPoker.json'
 
 export default class Contract {
@@ -11,20 +11,22 @@ export default class Contract {
     return Math.random()
       .toString(36)
       .replace(/[^a-z]+/g, '')
-      .substr(0, 5)
+      .substr(0, 4)
       .toUpperCase()
   }
 
   async deploy(msgSender, username, value, roomSize) {
     const roomCode = this.generateRoomCode()
+    let error
     await this.contract
       .deploy({
         data: Artifacts.bytecode,
         arguments: [asciiToHex(username), roomSize, asciiToHex(roomCode)]
       })
       .send({ from: msgSender, gas: 3000000, value: toWei(value) })
-      .on('error', error => {
-        console.error(error)
+      .on('error', _error => {
+        error = _error
+        console.error(_error)
       })
       .on('transactionHash', transactionHash => {
         console.log('TransactionHash: ', transactionHash)
@@ -34,6 +36,11 @@ export default class Contract {
         console.log('ContractAddress: ', receipt.contractAddress)
         this.contract.options.address = receipt.contractAddress
       })
+    return {
+      error,
+      contractAddress: this.contract.options.address,
+      roomCode
+    }
   }
 
   async register(address, msgSender, username, value, roomCode) {
@@ -105,5 +112,11 @@ export default class Contract {
       .getPrizeCalculation(place, potiumSize, prizePool)
       .call()
     return fromWei(`${amount}`)
+  }
+
+  async getUsername(address) {
+    console.log('the address', address)
+    const username = await this.contract.methods.getUsername(address).call()
+    return hexToAscii(`${username}`)
   }
 }

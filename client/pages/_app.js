@@ -32,18 +32,36 @@ export default class HomelessPoker extends App {
     const { Component, pageProps } = this.props
 
     const initialState = {
-      theme: { primary: 'teststrng' }
+      contract: {
+        address: undefined,
+        code: undefined,
+        instance: undefined
+      },
+      user: {
+        address: undefined,
+        buyIn: undefined,
+        name: undefined
+      },
+      contractInstance: undefined,
+      web3Instance: undefined
     }
 
     const reducer = (state, action) => {
       switch (action.type) {
-        case 'testAction':
+        case 'createRoom':
           return {
             ...state,
-            theme: action.newTheme
+            contract: action.contractInfo,
+            user: action.userInfo
           }
-
+        case 'joinRoom':
+          return {
+            ...state,
+            contract: action.contractInfo,
+            user: action.userInfo
+          }
         default:
+          console.log('-- default in reducer')
           return state
       }
     }

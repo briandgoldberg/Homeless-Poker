@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react'
 import { Button, Input } from 'components'
 import Contract from 'utils/contract'
+import Link from 'next/link'
 import Web3 from 'utils/web3'
+import { useWeb3 } from '../providers/useWeb3'
 
 let web3
 let contract
@@ -18,8 +20,7 @@ const Join = () => {
   const [username, setUsername] = useState(null)
   const [roomCode, setRoomCode] = useState(null)
   const [contractAddress, setContractAddress] = useState(null)
-  //   const [contractInstance, setContractInstance] = useState(null)
-  //   const [web3Instance, setWeb3Instance] = useState()
+  const [, dispatch] = useWeb3()
 
   async function getUserAccount() {
     try {
@@ -40,11 +41,24 @@ const Join = () => {
     try {
       contract = new Contract(web3, contractAddress)
       console.log('join from address', account)
-      await contract
-        .register(contractAddress, account, username, value, roomCode)
-        .catch(err => console.error(err))
-      //   setContractInstance(contract)
-      //   this.getPlayersRegistered()
+      await contract.register(
+        contractAddress,
+        account,
+        username,
+        value,
+        roomCode
+      )
+      const contractInfo = {
+        address: contractAddress,
+        code: roomCode,
+        instance: contract
+      }
+      const userInfo = {
+        address: account,
+        buyIn: value,
+        name: username
+      }
+      dispatch({ type: 'joinRoom', contractInfo, userInfo })
     } catch (error) {
       alert(`Failed to load web3, accounts, or contract.`)
       console.error(error)
@@ -76,7 +90,11 @@ const Join = () => {
       />
       <Input placeholder="address" onChange={handleInput('address')} />
       <Input placeholder="roomCode" onChange={handleInput('roomcode')} />
-      <Button title="Deposit ether" onClick={join} />
+      <Link href="/room">
+        <a>
+          <Button title="Deposit ether" onClick={join} />
+        </a>
+      </Link>
     </>
   )
 }

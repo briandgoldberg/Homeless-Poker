@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react'
 import Contract from 'utils/contract'
 import Web3 from 'utils/web3'
+import Link from 'next/link'
 import { Button, Input } from 'components'
-// import { useWeb3 } from '../providers/useWeb3'
+import { useWeb3 } from '../providers/useWeb3'
 
 let web3
 let contract
@@ -17,10 +18,8 @@ const Create = () => {
   const [value, setValue] = useState(null)
   const [username, setUsername] = useState(null)
   const [roomSize, setRoomSize] = useState(null)
-  // const [{ theme }, dispatch] = useWeb3()
-  // const [roomCode, setRoomCode] = useState(null)
-  const [contractInstance, setContractInstance] = useState(null)
-  // const [web3Instance, setWeb3Instance] = useState()
+  const [, dispatch] = useWeb3()
+
   async function getUserAccount() {
     try {
       const userAccount = (await web3.eth.getAccounts())[0]
@@ -35,14 +34,23 @@ const Create = () => {
   useEffect(() => {
     getUserAccount()
   }, [])
-
   const start = async () => {
     try {
       contract = new Contract(web3)
       // TODO: Set a message: Please accept the transaction in (...Metamask), it doesnt always pop up.
-      await contract.deploy(account, username, value, roomSize)
-      setContractInstance(contract)
-      // this.getPlayersRegistered()
+      const output = await contract.deploy(account, username, value, roomSize)
+      console.log('Deploy info', output)
+      const contractInfo = {
+        address: output.contractAddress,
+        code: output.roomCode,
+        instance: contract
+      }
+      const userInfo = {
+        address: account,
+        buyIn: value,
+        name: username
+      }
+      dispatch({ type: 'createRoom', contractInfo, userInfo })
     } catch (error) {
       alert(`Failed to load web3, accounts, or contract.`)
       console.error(error)
@@ -73,7 +81,11 @@ const Create = () => {
         onChange={handleInput('value')}
       />
       <Input placeholder="roomsize" onChange={handleInput('roomsize')} />
-      <Button title="Start" onClick={start} />
+      <Link href="/room">
+        <a>
+          <Button title="Start" onClick={start} />
+        </a>
+      </Link>
     </>
   )
 }

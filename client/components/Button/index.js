@@ -1,4 +1,5 @@
 import React from 'react'
+import Link from 'next/link'
 import PropTypes from 'prop-types'
 import MuiButton from '@material-ui/core/Button'
 
@@ -15,4 +16,5 @@ Button.propTypes = {
   onClick: PropTypes.func.isRequired,
   title: PropTypes.string.isRequired
 }
+
 export default Button

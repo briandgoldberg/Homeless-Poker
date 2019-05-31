@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import Contract from 'utils/contract'
 import Web3 from 'utils/web3'
 import Link from 'next/link'
-import { Button, Input } from 'components'
+import { Button, Container, Input } from 'components'
 import { useWeb3 } from '../providers/useWeb3'
 
 let web3
@@ -72,20 +72,22 @@ const Create = () => {
   }
   return (
     <>
-      <p>create</p>
-      <Input placeholder="username" onChange={handleInput('username')} />
-      <Input
-        placeholder="0.0001"
-        id="123"
-        name="345"
-        onChange={handleInput('value')}
-      />
-      <Input placeholder="roomsize" onChange={handleInput('roomsize')} />
-      <Link href="/room">
-        <a>
-          <Button title="Start" onClick={start} />
-        </a>
-      </Link>
+      <Container>
+        <h1>create</h1>
+        <Input placeholder="username" onChange={handleInput('username')} />
+        <Input
+          placeholder="0.0001"
+          id="123"
+          name="345"
+          onChange={handleInput('value')}
+        />
+        <Input placeholder="roomsize" onChange={handleInput('roomsize')} />
+        <Link href="/room">
+          <a>
+            <Button title="Start" onClick={start} />
+          </a>
+        </Link>
+      </Container>
     </>
   )
 }

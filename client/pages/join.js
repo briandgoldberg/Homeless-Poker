@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Button, Input } from 'components'
+import { Button, Container, Input } from 'components'
 import Contract from 'utils/contract'
 import Link from 'next/link'
 import Web3 from 'utils/web3'
@@ -81,20 +81,22 @@ const Join = () => {
   }
   return (
     <>
-      <Input placeholder="username" onChange={handleInput('username')} />
-      <Input
-        placeholder="0.0001"
-        id="123"
-        name="345"
-        onChange={handleInput('value')}
-      />
-      <Input placeholder="address" onChange={handleInput('address')} />
-      <Input placeholder="roomCode" onChange={handleInput('roomcode')} />
-      <Link href="/room">
-        <a>
-          <Button title="Deposit ether" onClick={join} />
-        </a>
-      </Link>
+      <Container>
+        <Input placeholder="username" onChange={handleInput('username')} />
+        <Input
+          placeholder="0.0001"
+          id="123"
+          name="345"
+          onChange={handleInput('value')}
+        />
+        <Input placeholder="address" onChange={handleInput('address')} />
+        <Input placeholder="roomCode" onChange={handleInput('roomcode')} />
+        <Link href="/room">
+          <a>
+            <Button title="Deposit ether" onClick={join} />
+          </a>
+        </Link>
+      </Container>
     </>
   )
 }

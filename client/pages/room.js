@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Button, List } from 'components'
+import { Button, Container, List } from 'components'
 import arrayMove from 'array-move'
 import { useWeb3 } from '../providers/useWeb3'
 
@@ -42,15 +42,28 @@ const Room = () => {
 
   useEffect(() => {
     state.contract.instance && getRoomInfo()
-  }, [state.contract.instance])
+    console.log('state change')
+    console.log('state change', state)
+  }, [state.contract.instance, state])
 
   const rearrangeList = ({ oldIndex, newIndex }) => {
     setListOrder(arrayMove(listOrder, oldIndex, newIndex))
   }
   return (
     <>
-      <List items={listOrder} onChange={rearrangeList} />
-      <Button title="Vote" onClick={() => console.log('vote')} />
+      <Container>
+        <p>
+          Please submit who who the tournament. $X will be returned to you if
+          you vote with the consensus. We think this is enough of an incentive
+          to submit accurate results.
+        </p>
+        {/* 
+           I should create an event that is triggered when the deposit is finished on the contract side:
+           so I can let the user know that the transfer is on it's way, will be in the next block
+           */}
+        <List items={listOrder} onChange={rearrangeList} />
+        <Button title="Vote" onClick={() => console.log('vote')} />
+      </Container>
     </>
   )
 }

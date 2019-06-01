@@ -5,6 +5,7 @@ import { ThemeProvider } from '@material-ui//styles'
 import CssBaseline from '@material-ui/core/CssBaseline'
 import theme from '../src/theme'
 import { Web3Provider } from '../providers/useWeb3'
+import '../styles/main.scss'
 
 // import styles from './assets.scss'
 export default class HomelessPoker extends App {

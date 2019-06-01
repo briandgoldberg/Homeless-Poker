@@ -7,6 +7,7 @@ import Contract from 'utils/contract'
 import Link from 'next/link'
 import Web3 from 'utils/web3'
 import { useWeb3 } from '../providers/useWeb3'
+import '../styles/main.scss'
 
 let web3
 let contract
@@ -22,8 +23,8 @@ const Join = props => {
   const [account, setAccount] = useState(null)
   const [value, setValue] = useState(null)
   const [username, setUsername] = useState(null)
-  const [roomCode, setRoomCode] = useState(null)
-  const [contractAddress, setContractAddress] = useState(null)
+  const [roomCode, setRoomCode] = useState(props.queryCode)
+  const [contractAddress, setContractAddress] = useState(props.queryAddress)
   const [, dispatch] = useWeb3()
 
   async function getUserAccount() {

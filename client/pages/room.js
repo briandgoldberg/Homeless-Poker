@@ -8,6 +8,7 @@ let transactionConfirmed = false
 const Room = () => {
   const [state] = useWeb3()
   const [listOrder, setListOrder] = useState(initialPlayerList)
+  const [players, setPlayers] = useState(undefined)
 
   const getPlayersRegistered = async () => {
     const { instance } = state.contract
@@ -18,7 +19,10 @@ const Room = () => {
     const { instance } = state.contract
     console.log('address', address)
     const name = await instance.getUsername(address)
-    return name
+    return {
+      address,
+      name
+    }
   }
 
   // const getPrizehandoutForPlace = async place => {
@@ -34,11 +38,11 @@ const Room = () => {
     const registeredPlayers = await getPlayersRegistered()
     setListOrder(registeredPlayers)
 
-    const names = await Promise.all(
+    const playerInfo = await Promise.all(
       registeredPlayers.map(address => getUsernameFromAddress(address))
     )
-
-    console.log(names)
+    setPlayers(playerInfo)
+    console.log(playerInfo)
   }
 
   useEffect(() => {
@@ -64,9 +68,13 @@ const Room = () => {
            so I can let the user know that the transfer is on it's way, will be in the next block
            */}
         {/* TODO: link to be copied to join this room */}
-
-        {transactionConfirmed ? (
-          <List items={listOrder} onChange={rearrangeList} />
+        <p>
+          {`http://localhost:3000/join?address=${state.contract.address}&code=${
+            state.contract.code
+          }`}
+        </p>
+        {transactionConfirmed && players ? (
+          <List items={players} onChange={rearrangeList} />
         ) : (
           <p>Waiting for confirmation, add a spinner here or similar</p>
         )}

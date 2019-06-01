@@ -13,10 +13,10 @@ import { Reorder } from '@material-ui/icons'
 
 const DragHandle = sortableHandle(() => <Reorder color="disabled" />)
 
-const SortableItem = sortableElement(({ value }) => (
+const SortableItem = sortableElement(({ value: { address, name } }) => (
   <MuiListItem button divider>
     <DragHandle />
-    <ListItemText primary={value} secondary="0xADDRESS0123567" />
+    <ListItemText primary={name} secondary={address} />
   </MuiListItem>
 ))
 

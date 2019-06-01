@@ -17,7 +17,9 @@ export default class Contract {
 
   async deploy(msgSender, username, value, roomSize) {
     const roomCode = this.generateRoomCode()
-    let error
+    // let error
+    let transactionHash
+    this.contract.transactionConfirmationBlocks = 1 // only one confirmation to speed up the hang time
     await this.contract
       .deploy({
         data: Artifacts.bytecode,
@@ -25,20 +27,23 @@ export default class Contract {
       })
       .send({ from: msgSender, gas: 3000000, value: toWei(value) })
       .on('error', _error => {
-        error = _error
+        // error = _error
         console.error(_error)
       })
-      .on('transactionHash', transactionHash => {
-        console.log('TransactionHash: ', transactionHash)
+      .on('transactionHash', _transactionHash => {
+        transactionHash = _transactionHash
+        console.log('TransactionHash: ', _transactionHash)
         console.log('RoomCode: ', roomCode)
       })
-      .on('receipt', receipt => {
+      .once('reciept', receipt => {
         console.log('ContractAddress: ', receipt.contractAddress)
         this.contract.options.address = receipt.contractAddress
       })
+
     return {
-      error,
+      // error,
       contractAddress: this.contract.options.address,
+      transactionHash,
       roomCode
     }
   }

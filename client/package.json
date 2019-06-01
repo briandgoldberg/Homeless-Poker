@@ -19,8 +19,8 @@
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
     "styled-jsx": "^3.2.1",
-    "web3": "^1.0.0-beta.55",
-    "web3-utils": "^1.0.0-beta.55"
+    "web3": "1.0.0-beta.48",
+    "web3-utils": "1.0.0-beta.52"
   },
   "scripts": {
     "api": "nodemon ./api",
@@ -58,9 +58,11 @@
     "eslint-plugin-react": "^7.12.4",
     "nodemon": "^1.18.10",
     "prettier": "^1.16.4",
-    "react-sortable-hoc": "^1.8.3"
+    "react-sortable-hoc": "^1.8.3",
+    "web3": "1.0.0-beta.48"
   },
   "peerDependencies": {
-    "scrypt": "egorgripasov/node-scrypt"
+    "scrypt": "egorgripasov/node-scrypt",
+    "web3": "1.0.0-beta.48"
   }
 }

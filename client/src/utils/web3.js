@@ -3,7 +3,15 @@ import Web3 from 'web3'
 export default () => {
   const { ethereum, web3 } = window
   let provider
+
+  // These options are for web3 > beta.48, but as of now beta.55, deploying contracts doesn't resolve properly.
+  // const options = {
+  //   transactionConfirmationBlocks: 1,
+  //   transactionBlockTimeout: 1
+  // }
+
   if (ethereum) {
+    // provider = new Web3(ethereum, undefined, options) // Modern dapp browsers.
     provider = new Web3(ethereum) // Modern dapp browsers.
     const resolveEthereum = async () => {
       await ethereum.enable()

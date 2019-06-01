@@ -4,9 +4,11 @@ import arrayMove from 'array-move'
 import { useWeb3 } from '../providers/useWeb3'
 
 const initialPlayerList = []
+let transactionConfirmed = false
 const Room = () => {
   const [state] = useWeb3()
   const [listOrder, setListOrder] = useState(initialPlayerList)
+  const [test, setTest] = useState('1')
 
   const getPlayersRegistered = async () => {
     const { instance } = state.contract
@@ -42,9 +44,11 @@ const Room = () => {
 
   useEffect(() => {
     state.contract.instance && getRoomInfo()
-    console.log('state change')
-    console.log('state change', state)
-  }, [state.contract.instance, state])
+    if (state.transactionHash) {
+      transactionConfirmed = true
+    }
+    console.log(state.transactionHash, 'tram')
+  }, [state.contract.instance, state.transactionHash])
 
   const rearrangeList = ({ oldIndex, newIndex }) => {
     setListOrder(arrayMove(listOrder, oldIndex, newIndex))
@@ -61,8 +65,15 @@ const Room = () => {
            I should create an event that is triggered when the deposit is finished on the contract side:
            so I can let the user know that the transfer is on it's way, will be in the next block
            */}
-        <List items={listOrder} onChange={rearrangeList} />
-        <Button title="Vote" onClick={() => console.log('vote')} />
+        {transactionConfirmed ? (
+          <List items={listOrder} onChange={rearrangeList} />
+        ) : (
+          <p>Waiting for confirmation, add a spinner here or similar</p>
+        )}
+        <Button
+          title="Vote"
+          onClick={() => console.log('vote', test) && setTest('lol')}
+        />
       </Container>
     </>
   )

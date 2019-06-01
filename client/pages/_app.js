@@ -42,7 +42,7 @@ export default class HomelessPoker extends App {
         buyIn: undefined,
         name: undefined
       },
-      contractInstance: undefined,
+      transactionHash: undefined,
       web3Instance: undefined
     }
 
@@ -52,7 +52,8 @@ export default class HomelessPoker extends App {
           return {
             ...state,
             contract: action.contractInfo,
-            user: action.userInfo
+            user: action.userInfo,
+            transactionHash: action.transactionHash
           }
         case 'joinRoom':
           return {

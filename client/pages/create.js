@@ -38,7 +38,6 @@ const Create = () => {
     try {
       contract = new Contract(web3)
       // TODO: Set a message: Please accept the transaction in (...Metamask), it doesnt always pop up.
-      // TODO: This doesn't really work for longer blocktimes, just hangs,
       const output = await contract.deploy(account, username, value, roomSize)
       console.log('Deploy info', output)
 
@@ -58,9 +57,6 @@ const Create = () => {
         userInfo,
         transactionHash: output.transactionHash
       })
-      // if (!output.error) {
-      //   Router.push('/room')
-      // }
     } catch (error) {
       alert(`Failed to load web3, accounts, or contract.`)
       console.error(error)

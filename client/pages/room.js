@@ -8,7 +8,6 @@ let transactionConfirmed = false
 const Room = () => {
   const [state] = useWeb3()
   const [listOrder, setListOrder] = useState(initialPlayerList)
-  const [test, setTest] = useState('1')
 
   const getPlayersRegistered = async () => {
     const { instance } = state.contract
@@ -47,7 +46,6 @@ const Room = () => {
     if (state.transactionHash) {
       transactionConfirmed = true
     }
-    console.log(state.transactionHash, 'tram')
   }, [state.contract.instance, state.transactionHash])
 
   const rearrangeList = ({ oldIndex, newIndex }) => {

@@ -1,4 +1,7 @@
+/* eslint-disable react/destructuring-assignment */
+/* eslint-disable react/no-this-in-sfc */
 import React, { useEffect, useState } from 'react'
+import PropTypes from 'prop-types'
 import { Button, Container, Input } from 'components'
 import Contract from 'utils/contract'
 import Link from 'next/link'
@@ -14,7 +17,8 @@ try {
 } catch (err) {
   console.error(err)
 }
-const Join = () => {
+
+const Join = props => {
   const [account, setAccount] = useState(null)
   const [value, setValue] = useState(null)
   const [username, setUsername] = useState(null)
@@ -41,7 +45,7 @@ const Join = () => {
     try {
       contract = new Contract(web3, contractAddress)
       console.log('join from address', account)
-      await contract.register(
+      const output = await contract.register(
         contractAddress,
         account,
         username,
@@ -58,7 +62,12 @@ const Join = () => {
         buyIn: value,
         name: username
       }
-      dispatch({ type: 'joinRoom', contractInfo, userInfo })
+      dispatch({
+        type: 'joinRoom',
+        contractInfo,
+        userInfo,
+        transactionHash: output.transactionHash
+      })
     } catch (error) {
       alert(`Failed to load web3, accounts, or contract.`)
       console.error(error)
@@ -89,8 +98,16 @@ const Join = () => {
           name="345"
           onChange={handleInput('value')}
         />
-        <Input placeholder="address" onChange={handleInput('address')} />
-        <Input placeholder="roomCode" onChange={handleInput('roomcode')} />
+        <Input
+          placeholder="address"
+          onChange={handleInput('address')}
+          value={props.queryAddress}
+        />
+        <Input
+          placeholder="roomCode"
+          onChange={handleInput('roomcode')}
+          value={props.queryCode}
+        />
         <Link href="/room">
           <a>
             <Button title="Deposit ether" onClick={join} />
@@ -101,9 +118,31 @@ const Join = () => {
   )
 }
 
+Join.getInitialProps = context => {
+  let queryAddress
+  let queryCode
+  if (typeof window === 'undefined') {
+    if (context.query && context.query.address && context.query.code) {
+      queryAddress = context.query.address
+      queryCode = context.query.code
+    }
+    console.log('Server Side Router Query', queryAddress, queryCode)
+  } else {
+    console.log('Client side Router Query', context.query)
+  }
+  return { queryAddress, queryCode }
+}
+
 export default Join
 
 Join.propTypes = {
+  queryAddress: PropTypes.string,
+  queryCode: PropTypes.string
   // eslint-disable-next-line react/require-default-props
   //   classes: PropTypes.object
+}
+
+Join.defaultProps = {
+  queryAddress: '',
+  queryCode: ''
 }

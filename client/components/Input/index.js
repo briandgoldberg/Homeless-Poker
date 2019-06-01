@@ -4,7 +4,13 @@ import MuiInput from '@material-ui/core/Input'
 
 function Input(props) {
   const { onChange, placeholder } = props
-  return <MuiInput placeholder={placeholder} onChange={e => onChange(e)} />
+  return (
+    <MuiInput
+      placeholder={placeholder}
+      onChange={e => onChange(e)}
+      {...props}
+    />
+  )
 }
 
 Input.propTypes = {

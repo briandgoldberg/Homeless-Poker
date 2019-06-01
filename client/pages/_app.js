@@ -59,7 +59,8 @@ export default class HomelessPoker extends App {
           return {
             ...state,
             contract: action.contractInfo,
-            user: action.userInfo
+            user: action.userInfo,
+            transactionHash: action.transactionHash
           }
         default:
           console.log('-- default in reducer')

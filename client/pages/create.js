@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import Contract from 'utils/contract'
 import Web3 from 'utils/web3'
 import Link from 'next/link'
+import Router from 'next/router'
 import { Button, Container, Input } from 'components'
 import { useWeb3 } from '../providers/useWeb3'
 
@@ -57,6 +58,15 @@ const Create = () => {
         userInfo,
         transactionHash: output.transactionHash
       })
+      // output.unsubscribe(function(error, success) {
+      //   if (success) console.log('Successfully unsubscribed!')
+      // })
+
+      if (!output.error) {
+        Router.push('/room')
+      } else {
+        console.log('ERRORRRRRRRRR', output.error)
+      }
     } catch (error) {
       alert(`Failed to load web3, accounts, or contract.`)
       console.error(error)
@@ -88,11 +98,12 @@ const Create = () => {
           onChange={handleInput('value')}
         />
         <Input placeholder="roomsize" onChange={handleInput('roomsize')} />
-        <Link href="/room">
-          <a>
-            <Button title="Start" onClick={start} />
-          </a>
-        </Link>
+        {/* <Link href="/room">
+          <a> */}
+        <Button title="Start" onClick={start} />
+        {/* TODO: when button has been clicked and we're waitiing for confirmation, show message */}
+        {/* </a>
+        </Link> */}
       </Container>
     </>
   )

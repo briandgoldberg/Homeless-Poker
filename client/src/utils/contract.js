@@ -5,6 +5,7 @@ export default class Contract {
   constructor(web3, address = '') {
     this.web3 = web3
     this.contract = new web3.eth.Contract(Artifacts.abi, address)
+    this.contract.transactionConfirmationBlocks = 1 // only wait for one confirmation to speed up the hang time
   }
 
   generateRoomCode() {
@@ -17,9 +18,8 @@ export default class Contract {
 
   async deploy(msgSender, username, value, roomSize) {
     const roomCode = this.generateRoomCode()
-    // let error
+    let error
     let transactionHash
-    this.contract.transactionConfirmationBlocks = 1 // only one confirmation to speed up the hang time
     await this.contract
       .deploy({
         data: Artifacts.bytecode,
@@ -27,7 +27,7 @@ export default class Contract {
       })
       .send({ from: msgSender, gas: 3000000, value: toWei(value) })
       .on('error', _error => {
-        // error = _error
+        error = _error
         console.error(_error)
       })
       .on('transactionHash', _transactionHash => {
@@ -35,13 +35,19 @@ export default class Contract {
         console.log('TransactionHash: ', _transactionHash)
         console.log('RoomCode: ', roomCode)
       })
-      .once('reciept', receipt => {
+      .once('receipt', receipt => {
+        // not needed
         console.log('ContractAddress: ', receipt.contractAddress)
         this.contract.options.address = receipt.contractAddress
       })
+      .then(res => res && console.log('re'))
+      .catch(err => {
+        error = err
+        console.log('deploy contract error', err)
+      })
 
     return {
-      // error,
+      error,
       contractAddress: this.contract.options.address,
       transactionHash,
       roomCode
@@ -51,6 +57,7 @@ export default class Contract {
   async register(address, msgSender, username, value, roomCode) {
     console.log('address:', address)
     this.contract.options.address = address
+    let transactionHash
     try {
       await this.contract.methods
         .register(asciiToHex(username), asciiToHex(roomCode))
@@ -58,6 +65,11 @@ export default class Contract {
         .on('error', error => {
           console.log('RoomCode: ', roomCode)
           console.log(error)
+        })
+        .on('transactionHash', _transactionHash => {
+          transactionHash = _transactionHash
+          console.log('TransactionHash: ', _transactionHash)
+          console.log('RoomCode: ', roomCode)
         })
         .on('receipt', receipt => {
           console.log(receipt)
@@ -67,6 +79,12 @@ export default class Contract {
       if (!address) {
         console.error('Missing address')
       }
+    }
+    return {
+      // error,
+      // contractAddress: this.contract.options.address,
+      transactionHash
+      // roomCode
     }
   }
 

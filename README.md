@@ -63,6 +63,9 @@ The amount of players that has to be voted for.
 `killswitch()`
 Kill the contract when ... tbd
 
+Join page can be opened with query params like so:
+`/join?address={address}&code={roomCode}`
+
 Gotchas
 
 Wei is a BigNumber and has to be parse to string to be converted to ETH

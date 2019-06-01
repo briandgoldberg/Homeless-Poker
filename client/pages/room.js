@@ -68,12 +68,10 @@ const Room = () => {
         ) : (
           <p>Waiting for confirmation, add a spinner here or similar</p>
         )}
-        <Button
-          title="Vote"
-          onClick={() => console.log('vote', test) && setTest('lol')}
-        />
+        <Button title="Vote" onClick={() => console.log('vote')} />
       </Container>
     </>
   )
 }
+
 export default Room

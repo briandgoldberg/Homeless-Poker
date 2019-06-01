@@ -36,7 +36,8 @@ export default class Contract {
         console.log('RoomCode: ', roomCode)
       })
       .once('receipt', receipt => {
-        // not needed
+        // probably not needed, might be able to solve the >beta.48 bug if removed
+        // https://github.com/ethereum/web3.js/issues/2661#issuecomment-480881441
         console.log('ContractAddress: ', receipt.contractAddress)
         this.contract.options.address = receipt.contractAddress
       })

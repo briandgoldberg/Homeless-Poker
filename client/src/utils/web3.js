@@ -6,8 +6,7 @@ export default () => {
 
   // These options are for web3 > beta.48, but as of now beta.55, deploying contracts doesn't resolve properly.
   // const options = {
-  //   transactionConfirmationBlocks: 1,
-  //   transactionBlockTimeout: 1
+  //   transactionConfirmationBlocks: 1
   // }
 
   if (ethereum) {

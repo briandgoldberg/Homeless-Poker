@@ -4,7 +4,7 @@ const withSass = require('@zeit/next-sass')
 const webpack = require('webpack')
 
 module.exports = withPlugins([[withCSS], [withSass]], {
-  // target: 'serverless',
+  target: 'serverless',
   ssr: true,
   cssModules: true,
   cssLoaderOptions: {

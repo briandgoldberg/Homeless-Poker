@@ -77,3 +77,9 @@ Go to MetaMask MyAccounts > Settings > Advanced > Reset Account
 
 Hook structure:
 https://medium.com/simply/state-management-with-react-hooks-and-context-api-at-10-lines-of-code-baf6be8302c
+
+Web3.beta37 because of:
+https://github.com/MetaMask/metamask-extension/issues/6080
+
+Production build running on:
+https://homeless-poker.einar2.now.sh/

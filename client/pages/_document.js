@@ -15,15 +15,16 @@ class MyDocument extends Document {
             name="viewport"
             content="minimum-scale=1, initial-scale=1, width=device-width, shrink-to-fit=no"
           />
-          <meta name="theme-color" content={theme.palette.primary.main} />
-          <link
+          {/* <meta name="theme-color" content={theme.palette.primary.main} /> */}
+          <link rel="icon" type="image/x-icon" href="../static/favicon.ico" />
+          {/* <link
             rel="stylesheet"
             href="https://fonts.googleapis.com/css?family=Roboto:300,400,500"
-          />
-          <link
+          /> */}
+          {/* <link
             rel="stylesheet"
             href="https://cdnjs.cloudflare.com/ajax/libs/normalize/7.0.0/normalize.css"
-          />
+          /> */}
         </Head>
         <body className="App">
           <Main />

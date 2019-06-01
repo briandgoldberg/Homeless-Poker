@@ -63,6 +63,8 @@ const Room = () => {
            I should create an event that is triggered when the deposit is finished on the contract side:
            so I can let the user know that the transfer is on it's way, will be in the next block
            */}
+        {/* TODO: link to be copied to join this room */}
+
         {transactionConfirmed ? (
           <List items={listOrder} onChange={rearrangeList} />
         ) : (

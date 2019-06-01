@@ -1508,7 +1508,7 @@
   resolved "https://registry.yarnpkg.com/@xtuc/long/-/long-4.2.2.tgz#d291c6a4e97989b5c61d9acf396ae4fe133a718d"
   integrity sha512-NuHqBY1PB/D8xU6s/thBgOAiAP7HOYDQ32+BFZILJ8ivkUkAHQnWfn6WhL79Owj1qmUnoN/YPhktdIoucipkAQ==
 
-"@zeit/next-css@1.0.2-canary.2", "@zeit/next-css@^1.0.2-canary.1":
+"@zeit/next-css@1.0.2-canary.2":
   version "1.0.2-canary.2"
   resolved "https://registry.yarnpkg.com/@zeit/next-css/-/next-css-1.0.2-canary.2.tgz#0eeb877e7469892b65471c1ec7c14346b8f240df"
   integrity sha512-3zNmZy9jw+BZqzfmsXa14zH7pCs4VLj7Y9rqukWciSE5OBbTwoSCBa2+JeRSgorhmGd4sq3vqeoG24iHbgWiGQ==
@@ -1521,7 +1521,7 @@
     optimize-css-assets-webpack-plugin "^5.0.1"
     postcss-loader "3.0.0"
 
-"@zeit/next-sass@^1.0.2-canary.2":
+"@zeit/next-sass@next":
   version "1.0.2-canary.2"
   resolved "https://registry.yarnpkg.com/@zeit/next-sass/-/next-sass-1.0.2-canary.2.tgz#5e4f238328d7e783fd8f3b30b382d62274f0f51f"
   integrity sha512-/hJ9JJ31dIQs5R4GXxk9NpdAFn2SrqozmY1PnQU98g5xk9iL62BbK7lyqroOhjbFiIj1KtVaTO+2MWlQhoLYzw==

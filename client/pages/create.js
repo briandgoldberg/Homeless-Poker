@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import Contract from 'utils/contract'
 import Web3 from 'utils/web3'
-import Link from 'next/link'
+// import Link from 'next/link'
 import Router from 'next/router'
 import { Button, Container, Input } from 'components'
 import { useWeb3 } from '../providers/useWeb3'

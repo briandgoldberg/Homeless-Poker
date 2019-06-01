@@ -44,12 +44,12 @@ class Index extends Component {
           </p>
           <Link href="/create">
             <a>
-              <Button title="Create" />
+              <Button title="Create" onClick={() => {}} />
             </a>
           </Link>
           <Link href="/join">
             <a>
-              <Button title="Join" />
+              <Button title="Join" onClick={() => {}} />
             </a>
           </Link>
         </Container>

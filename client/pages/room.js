@@ -20,6 +20,7 @@ const Room = () => {
   const [players, setPlayers] = useState([])
   const [errorMessage, setErrorMessage] = useState(null)
   const [message, setMessage] = useState(null)
+  const [potiumAwards, setPotiumAwards] = useState(null)
 
   const getPlayersRegistered = async () => {
     const { instance } = state.contract
@@ -38,6 +39,25 @@ const Room = () => {
   useEffect(() => {
     console.log(errorMessage)
   }, errorMessage)
+
+  const getPrizehandout = async () => {
+    const { instance } = state.contract
+
+    const potiumSize = (await instance.getPotiumSize()).toString()
+    const prizePool =
+      (await instance.getRoomSize()) * (await instance.getBuyIn())
+    const potium = []
+
+    for (let i = 0; i < potiumSize; i += 1) {
+      potium.push(
+        instance.getPrizeForPlace(i + 1, potiumSize, prizePool.toString())
+      )
+    }
+
+    const prizes = await Promise.all(potium).then(res => res)
+    return prizes.map(x => x.slice(0, 6))
+  }
+
   const vote = async ballot => {
     console.log(ballot)
     try {
@@ -55,20 +75,13 @@ const Room = () => {
       console.error(error)
     }
   }
-  // const getPrizehandoutForPlace = async place => {
-  //   const { instance } = state.contract
-  //   const potiumSize = await instance.getPotiumSize()
-
-  //   const prizePool =
-  //     (await instance.getRoomSize()) * (await instance.getBuyIn())
-  //   return instance.getPrizeForPlace(place, potiumSize, `${prizePool}`)
-  // }
 
   const getRoomInfo = async () => {
     const registeredPlayers = await getPlayersRegistered()
     const playerInfo = await Promise.all(
       registeredPlayers.map(address => getUsernameFromAddress(address))
     )
+    setPotiumAwards(await getPrizehandout())
     setPlayers(playerInfo)
   }
 
@@ -101,7 +114,11 @@ const Room = () => {
           }`}
         </p>
         {transactionConfirmed && players ? (
-          <List items={players} onChange={rearrangeList} />
+          <List
+            items={players}
+            potium={potiumAwards}
+            onChange={rearrangeList}
+          />
         ) : (
           <p>Waiting for confirmation, add a spinner here or similar</p>
         )}

@@ -1,3 +1,4 @@
+/* eslint-disable react/forbid-prop-types */
 import React from 'react'
 import PropTypes from 'prop-types'
 import {
@@ -28,12 +29,11 @@ const SortableContainer = sortableContainer(({ children }) => {
     </>
   )
 })
-const PotiumContainer = () => {
-  const fakeAmount = ['1.2', '0.56', '0.23']
-  const awardAmount = fakeAmount
+const PotiumContainer = props => {
+  const { potium } = props
   return (
     <MuiList>
-      {awardAmount.map((value, index) => (
+      {potium.map((value, index) => (
         // eslint-disable-next-line react/no-array-index-key
         <MuiListItem key={index} divider selected>
           <ListItemText primary=" " secondary={`${value} ETH`} />
@@ -44,12 +44,12 @@ const PotiumContainer = () => {
 }
 
 function List(props) {
-  const { items, onChange } = props
+  const { items, onChange, potium } = props
   return (
     // eslint-disable-next-line react/no-this-in-sfc
     <div className={styles.container}>
       <div className={styles.potium}>
-        <PotiumContainer />
+        <PotiumContainer potium={potium} />
       </div>
       <div className={styles.players}>
         <SortableContainer onSortEnd={e => onChange(e)}>
@@ -64,9 +64,9 @@ function List(props) {
 }
 
 List.propTypes = {
-  // eslint-disable-next-line react/forbid-prop-types
   items: PropTypes.array.isRequired,
-  onChange: PropTypes.func.isRequired
+  onChange: PropTypes.func.isRequired,
+  potium: PropTypes.array.isRequired
 }
 
 export default List

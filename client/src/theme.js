@@ -1,5 +1,7 @@
-import { createMuiTheme } from '@material-ui/core/styles';
-import red from '@material-ui/core/colors/red';
+import { createMuiTheme } from '@material-ui/core/styles'
+import red from '@material-ui/core/colors/red'
+
+// This is not being used
 
 // Create a theme instance.
 const theme = createMuiTheme({
@@ -17,6 +19,6 @@ const theme = createMuiTheme({
       default: '#fff'
     }
   }
-});
+})
 
-export default theme;
+export default theme

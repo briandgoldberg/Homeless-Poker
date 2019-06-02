@@ -1,14 +1,25 @@
 import React, { useEffect, useState } from 'react'
 import { Button, Container, List } from 'components'
 import arrayMove from 'array-move'
+import Web3 from 'utils/web3'
+import Contract from 'utils/contract'
 import { useWeb3 } from '../providers/useWeb3'
 
-const initialPlayerList = []
+let web3
+let contract
+
+try {
+  web3 = Web3()
+  //   setWeb3Instance(web3) // re-render issue
+} catch (err) {
+  console.error(err)
+}
 let transactionConfirmed = false
 const Room = () => {
   const [state] = useWeb3()
-  const [listOrder, setListOrder] = useState(initialPlayerList)
-  const [players, setPlayers] = useState(undefined)
+  const [players, setPlayers] = useState([])
+  const [errorMessage, setErrorMessage] = useState(null)
+  const [message, setMessage] = useState(null)
 
   const getPlayersRegistered = async () => {
     const { instance } = state.contract
@@ -24,7 +35,26 @@ const Room = () => {
       name
     }
   }
+  useEffect(() => {
+    console.log(errorMessage)
+  }, errorMessage)
+  const vote = async ballot => {
+    console.log(ballot)
+    try {
+      contract = new Contract(web3, state.contract.address)
+      const output = await contract.vote(state.user.address, ballot)
 
+      if (output.error) {
+        setErrorMessage(output.error)
+      } else {
+        setMessage('You have voted.')
+      }
+    } catch (error) {
+      alert(`Failed to load web3, accounts, or contract.`)
+      setErrorMessage(error)
+      console.error(error)
+    }
+  }
   // const getPrizehandoutForPlace = async place => {
   //   const { instance } = state.contract
   //   const potiumSize = await instance.getPotiumSize()
@@ -36,13 +66,10 @@ const Room = () => {
 
   const getRoomInfo = async () => {
     const registeredPlayers = await getPlayersRegistered()
-    setListOrder(registeredPlayers)
-
     const playerInfo = await Promise.all(
       registeredPlayers.map(address => getUsernameFromAddress(address))
     )
     setPlayers(playerInfo)
-    console.log(playerInfo)
   }
 
   useEffect(() => {
@@ -53,7 +80,7 @@ const Room = () => {
   }, [state.contract.instance, state.transactionHash])
 
   const rearrangeList = ({ oldIndex, newIndex }) => {
-    setListOrder(arrayMove(listOrder, oldIndex, newIndex))
+    setPlayers(arrayMove(players, oldIndex, newIndex))
   }
   return (
     <>
@@ -78,7 +105,16 @@ const Room = () => {
         ) : (
           <p>Waiting for confirmation, add a spinner here or similar</p>
         )}
-        <Button title="Vote" onClick={() => console.log('vote')} />
+        <Button
+          title="Vote"
+          onClick={() => vote(players.map(p => p.address))}
+        />
+        {errorMessage ? (
+          <h2 style={{ color: 'red' }}>{`${errorMessage}`}</h2>
+        ) : (
+          ''
+        )}
+        {message ? <h2>{`${message}`}</h2> : ''}
       </Container>
     </>
   )

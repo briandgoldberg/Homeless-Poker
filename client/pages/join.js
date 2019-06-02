@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react'
 import PropTypes from 'prop-types'
 import { Button, Container, Input } from 'components'
 import Contract from 'utils/contract'
+import Router from 'next/router'
 import Link from 'next/link'
 import Web3 from 'utils/web3'
 import { useWeb3 } from '../providers/useWeb3'
@@ -25,6 +26,8 @@ const Join = props => {
   const [username, setUsername] = useState(null)
   const [roomCode, setRoomCode] = useState(props.queryCode)
   const [contractAddress, setContractAddress] = useState(props.queryAddress)
+  const [errorMessage, setErrorMessage] = useState(null)
+  const [message, setMessage] = useState(null)
   const [, dispatch] = useWeb3()
 
   async function getUserAccount() {
@@ -46,13 +49,13 @@ const Join = props => {
     try {
       contract = new Contract(web3, contractAddress)
       console.log('join from address', account)
-      const output = await contract.register(
-        contractAddress,
-        account,
-        username,
-        value,
-        roomCode
-      )
+      const output = await contract
+        .register(contractAddress, account, username, value, roomCode)
+        .then(
+          setMessage('Please wait for confirmation, should take around 20s')
+        )
+
+      console.log('Join info', output)
       const contractInfo = {
         address: contractAddress,
         code: roomCode,
@@ -69,8 +72,14 @@ const Join = props => {
         userInfo,
         transactionHash: output.transactionHash
       })
+      if (!output.error) {
+        Router.push('/room')
+      } else {
+        setErrorMessage(output.error)
+      }
     } catch (error) {
       alert(`Failed to load web3, accounts, or contract.`)
+      setErrorMessage(error)
       console.error(error)
     }
   }
@@ -94,7 +103,7 @@ const Join = props => {
       <Container>
         <Input
           label="Username"
-          placeholder="Sóparinns"
+          placeholder="Sóparinn"
           onChange={handleInput('username')}
         />
         <Input
@@ -116,11 +125,13 @@ const Join = props => {
           onChange={handleInput('roomcode')}
           value={props.queryCode}
         />
-        <Link href="/room">
-          <a>
-            <Button title="Deposit ether" onClick={join} />
-          </a>
-        </Link>
+        <Button title="Deposit ether" onClick={join} />
+        {message ? <h2>{`${message}`}</h2> : ''}
+        {errorMessage ? (
+          <h2 style={{ color: 'red' }}>{`${errorMessage}`}</h2>
+        ) : (
+          ''
+        )}
       </Container>
     </>
   )

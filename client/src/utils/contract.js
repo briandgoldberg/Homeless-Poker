@@ -26,10 +26,6 @@ export default class Contract {
         arguments: [asciiToHex(username), roomSize, asciiToHex(roomCode)]
       })
       .send({ from: msgSender, gas: 3000000, value: toWei(value) })
-      .on('error', _error => {
-        error = _error
-        console.error(_error)
-      })
       .on('transactionHash', _transactionHash => {
         transactionHash = _transactionHash
         console.log('TransactionHash: ', _transactionHash)
@@ -42,7 +38,6 @@ export default class Contract {
       .then(res => res)
       .catch(err => {
         error = err
-        console.log('deploy contract error', err)
       })
 
     return {
@@ -57,47 +52,49 @@ export default class Contract {
     console.log('address:', address)
     this.contract.options.address = address
     let transactionHash
-    try {
-      await this.contract.methods
-        .register(asciiToHex(username), asciiToHex(roomCode))
-        .send({ from: msgSender, gas: 2000000, value: toWei(value) })
-        .on('error', error => {
-          console.log('RoomCode: ', roomCode)
-          console.log(error)
-        })
-        .on('transactionHash', _transactionHash => {
-          transactionHash = _transactionHash
-          console.log('TransactionHash: ', _transactionHash)
-          console.log('RoomCode: ', roomCode)
-        })
-        // .on('confirmation', (confNumber, receipt) => {
-        //   this.contract.options.address = receipt.contractAddress
-        // })
-        .then(res => res)
-    } catch (error) {
-      console.error('Failed to register')
-      if (!address) {
-        console.error('Missing address')
-      }
-    }
+    let error
+    await this.contract.methods
+      .register(asciiToHex(username), asciiToHex(roomCode))
+      .send({ from: msgSender, gas: 2000000, value: toWei(value) })
+      .on('transactionHash', _transactionHash => {
+        transactionHash = _transactionHash
+        console.log('TransactionHash: ', _transactionHash)
+        console.log('RoomCode: ', roomCode)
+      })
+      .on('confirmation', (confNumber, receipt) => {
+        console.log('reciept', receipt)
+      })
+      .then(res => res)
+      .catch(_error => {
+        error = _error
+        console.error(_error)
+      })
     return {
-      // error,
-      // contractAddress: this.contract.options.address,
+      error,
       transactionHash
-      // roomCode
     }
   }
 
   async vote(msgSender, ballot) {
+    let transactionHash
+    let error
     await this.contract.methods
       .vote(ballot)
       .send({ from: msgSender, gas: 2000000 })
-      .on('error', error => {
-        console.log(error)
+      .on('transactionHash', _transactionHash => {
+        transactionHash = _transactionHash
+        console.log('TransactionHash: ', _transactionHash)
       })
-      .on('receipt', receipt => {
-        console.log(receipt)
+      .then(res => res)
+      .catch(_error => {
+        // eslint-disable-next-line prefer-destructuring
+        error = _error
       })
+
+    return {
+      error,
+      transactionHash
+    }
   }
 
   // TODO: killswitch

@@ -39,13 +39,15 @@ Migrate the contract to the test network (RPC has to be running)
 `yarn migrate`
 
 Start the client
-`yarn start`
+`cd client && yarn dev`
 
-Contract is live on Ropsten test network at
-0xa7cec45371adcd537b3aaa6117778ff781a9137d & 0x13c273cb47c7c1fE62865e5b2069C361C574a7F5
-https://ropsten.etherscan.io/address/0xa7cec45371adcd537b3aaa6117778ff781a9137d
+Build client
+`cd client && yarn build`
 
-#Contract functions:
+Deploy to NOW
+`cd client && yarn now`
+
+# Contract functions:
 
 `constructor(username, roomSize, roomSecret)`
 Deploying a constract
@@ -66,7 +68,7 @@ Kill the contract when ... tbd
 Join page can be opened with query params like so:
 `/join?address={address}&code={roomCode}`
 
-Gotchas
+### Gotchas
 
 Wei is a BigNumber and has to be parse to string to be converted to ETH
 
@@ -77,9 +79,6 @@ Go to MetaMask MyAccounts > Settings > Advanced > Reset Account
 
 Hook structure:
 https://medium.com/simply/state-management-with-react-hooks-and-context-api-at-10-lines-of-code-baf6be8302c
-
-Web3.beta37 because of:
-https://github.com/MetaMask/metamask-extension/issues/6080
 
 Production build running on:
 https://homeless-poker.einar2.now.sh/

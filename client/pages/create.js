@@ -19,6 +19,8 @@ const Create = () => {
   const [value, setValue] = useState(null)
   const [username, setUsername] = useState(null)
   const [roomSize, setRoomSize] = useState(null)
+  const [errorMessage, setErrorMessage] = useState(null)
+  const [message, setMessage] = useState(null)
   const [, dispatch] = useWeb3()
 
   async function getUserAccount() {
@@ -39,7 +41,11 @@ const Create = () => {
     try {
       contract = new Contract(web3)
       // TODO: Set a message: Please accept the transaction in (...Metamask), it doesnt always pop up.
-      const output = await contract.deploy(account, username, value, roomSize)
+      const output = await contract
+        .deploy(account, username, value, roomSize)
+        .then(
+          setMessage('Please wait for confirmation, should take around 20s')
+        )
       console.log('Deploy info', output)
 
       const contractInfo = {
@@ -58,17 +64,15 @@ const Create = () => {
         userInfo,
         transactionHash: output.transactionHash
       })
-      // output.unsubscribe(function(error, success) {
-      //   if (success) console.log('Successfully unsubscribed!')
-      // })
 
       if (!output.error) {
         Router.push('/room')
       } else {
-        console.log('ERRORRRRRRRRR', output.error)
+        setErrorMessage(output.error)
       }
     } catch (error) {
       alert(`Failed to load web3, accounts, or contract.`)
+      setErrorMessage(error)
       console.error(error)
     }
   }
@@ -106,12 +110,13 @@ const Create = () => {
           placeholder="5"
           onChange={handleInput('roomsize')}
         />
-        {/* <Link href="/room">
-          <a> */}
         <Button title="Start" onClick={start} />
-        {/* TODO: when button has been clicked and we're waitiing for confirmation, show message */}
-        {/* </a>
-        </Link> */}
+        {message ? <h2>{`${message}`}</h2> : ''}
+        {errorMessage ? (
+          <h2 style={{ color: 'red' }}>{`${errorMessage}`}</h2>
+        ) : (
+          ''
+        )}
       </Container>
     </>
   )

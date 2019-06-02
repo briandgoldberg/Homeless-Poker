@@ -31,12 +31,13 @@ class Index extends Component {
           </p>
           <Link href="/create">
             <a>
-              <Button title="Create" onClick={() => {}} />
+              <Button title="Create a room" />
             </a>
           </Link>
+          {' '}
           <Link href="/join">
             <a>
-              <Button title="Join" onClick={() => {}} />
+              <Button title="Join a room" />
             </a>
           </Link>
         </Container>

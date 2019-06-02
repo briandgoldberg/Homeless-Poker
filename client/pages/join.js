@@ -7,7 +7,7 @@ import Contract from 'utils/contract'
 import Link from 'next/link'
 import Web3 from 'utils/web3'
 import { useWeb3 } from '../providers/useWeb3'
-import '../styles/main.scss'
+// import '../styles/main.scss'
 
 let web3
 let contract
@@ -92,20 +92,27 @@ const Join = props => {
   return (
     <>
       <Container>
-        <Input placeholder="username" onChange={handleInput('username')} />
         <Input
+          label="Username"
+          placeholder="Sóparinns"
+          onChange={handleInput('username')}
+        />
+        <Input
+          label="ETH amount"
           placeholder="0.0001"
           id="123"
           name="345"
           onChange={handleInput('value')}
         />
         <Input
-          placeholder="address"
+          label="Contract address"
+          placeholder="0x01234ADDRESS"
           onChange={handleInput('address')}
           value={props.queryAddress}
         />
         <Input
-          placeholder="roomCode"
+          label="4 letter room code"
+          placeholder="C0D3"
           onChange={handleInput('roomcode')}
           value={props.queryCode}
         />

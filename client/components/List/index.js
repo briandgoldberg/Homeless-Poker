@@ -10,13 +10,14 @@ import MuiList from '@material-ui/core/List'
 import MuiListItem from '@material-ui/core/ListItem'
 import ListItemText from '@material-ui/core/ListItemText'
 import { Reorder } from '@material-ui/icons'
+import styles from './List.scss'
 
 const DragHandle = sortableHandle(() => <Reorder color="disabled" />)
 
-const SortableItem = sortableElement(({ value }) => (
+const SortableItem = sortableElement(({ value: { address, name } }) => (
   <MuiListItem button divider>
     <DragHandle />
-    <ListItemText primary={value} secondary="0xADDRESS0123567" />
+    <ListItemText primary={name} secondary={address} />
   </MuiListItem>
 ))
 
@@ -35,10 +36,7 @@ const PotiumContainer = () => {
       {awardAmount.map((value, index) => (
         // eslint-disable-next-line react/no-array-index-key
         <MuiListItem key={index} divider selected>
-          <ListItemText
-            primary={`${index + 1}. place`}
-            secondary={`${value} ETH`}
-          />
+          <ListItemText primary=" " secondary={`${value} ETH`} />
         </MuiListItem>
       ))}
     </MuiList>
@@ -49,15 +47,19 @@ function List(props) {
   const { items, onChange } = props
   return (
     // eslint-disable-next-line react/no-this-in-sfc
-    <>
-      <PotiumContainer />
-      <SortableContainer onSortEnd={e => onChange(e)}>
-        {items.map((value, index) => (
-          // eslint-disable-next-line react/no-array-index-key
-          <SortableItem key={`item-${index}`} index={index} value={value} />
-        ))}
-      </SortableContainer>
-    </>
+    <div className={styles.container}>
+      <div className={styles.potium}>
+        <PotiumContainer />
+      </div>
+      <div className={styles.players}>
+        <SortableContainer onSortEnd={e => onChange(e)}>
+          {items.map((value, index) => (
+            // eslint-disable-next-line react/no-array-index-key
+            <SortableItem key={`item-${index}`} index={index} value={value} />
+          ))}
+        </SortableContainer>
+      </div>
+    </div>
   )
 }
 

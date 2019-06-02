@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import Contract from 'utils/contract'
 import Web3 from 'utils/web3'
-import Link from 'next/link'
+// import Link from 'next/link'
 import Router from 'next/router'
 import { Button, Container, Input } from 'components'
 import { useWeb3 } from '../providers/useWeb3'
@@ -90,14 +90,22 @@ const Create = () => {
     <>
       <Container>
         <h1>create</h1>
-        <Input placeholder="username" onChange={handleInput('username')} />
         <Input
+          label="Username"
+          placeholder="Satoshison"
+          onChange={handleInput('username')}
+        />
+        <Input
+          label="ETH amount"
           placeholder="0.0001"
           id="123"
-          name="345"
           onChange={handleInput('value')}
         />
-        <Input placeholder="roomsize" onChange={handleInput('roomsize')} />
+        <Input
+          label="Room size"
+          placeholder="5"
+          onChange={handleInput('roomsize')}
+        />
         {/* <Link href="/room">
           <a> */}
         <Button title="Start" onClick={start} />

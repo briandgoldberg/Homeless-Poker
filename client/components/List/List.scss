@@ -1,0 +1,19 @@
+.container {
+  display: grid;
+
+  grid-template-columns: 1fr 8fr;
+
+  grid-template-rows: 1fr;
+
+  grid-column-gap: 0px;
+
+  grid-row-gap: 0px;
+
+  .potium {
+    grid-area: 1 / 1 / 2 / 2;
+  }
+
+  .players {
+    grid-area: 1 / 2 / 2 / 3;
+  }
+}

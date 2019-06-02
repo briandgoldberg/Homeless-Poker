@@ -3,10 +3,13 @@ import PropTypes from 'prop-types'
 import styles from './Container.scss'
 
 function Container(props) {
+  // const classes = useStyles()
   const { children } = props
   return (
-    <div className={styles.container}>
-      <div className={styles.content}>{children}</div>
+    <div>
+      <div className={styles.container}>
+        <div className={styles.content}>{children}</div>
+      </div>
     </div>
   )
 }

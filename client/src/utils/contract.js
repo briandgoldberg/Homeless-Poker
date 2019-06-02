@@ -35,13 +35,11 @@ export default class Contract {
         console.log('TransactionHash: ', _transactionHash)
         console.log('RoomCode: ', roomCode)
       })
-      .once('receipt', receipt => {
-        // probably not needed, might be able to solve the >beta.48 bug if removed
-        // https://github.com/ethereum/web3.js/issues/2661#issuecomment-480881441
-        console.log('ContractAddress: ', receipt.contractAddress)
+      .on('confirmation', (confNumber, receipt) => {
+        console.log('contractAddress: ', receipt.contractAddress)
         this.contract.options.address = receipt.contractAddress
       })
-      .then(res => res && console.log('re'))
+      .then(res => res)
       .catch(err => {
         error = err
         console.log('deploy contract error', err)
@@ -72,9 +70,10 @@ export default class Contract {
           console.log('TransactionHash: ', _transactionHash)
           console.log('RoomCode: ', roomCode)
         })
-        .on('receipt', receipt => {
-          console.log(receipt)
-        })
+        // .on('confirmation', (confNumber, receipt) => {
+        //   this.contract.options.address = receipt.contractAddress
+        // })
+        .then(res => res)
     } catch (error) {
       console.error('Failed to register')
       if (!address) {

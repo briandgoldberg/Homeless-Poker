@@ -21,25 +21,34 @@ class Index extends Component {
     if (!web3) {
       return <div>Loading Web3, accounts, and contract...</div>
     }
+    if (!web3.givenProvider) {
+      return (
+        <div>Found no Web3 provider, try installing the Metamask extension</div>
+      )
+    }
     return (
       <>
         <Container>
-          <h1>Homeless Poker: No need for a house </h1>
-          <p>
-            Distribute poker tournament earnings without a “house” or middleman
-            using blockchain technology.
-          </p>
-          <Link href="/create">
-            <a>
-              <Button title="Create a room" />
-            </a>
-          </Link>
-          {' '}
-          <Link href="/join">
-            <a>
-              <Button title="Join a room" />
-            </a>
-          </Link>
+          <Header
+            title="(H1) Homeless Poker: No need for a house"
+            subtitle="(H2) No Need for a house"
+          >
+            <p>What should we call you?</p>
+            <Input type="Username" />
+          </Header>
+          <ActionForm type="Create">
+            <div className="informationSection">
+              <h3>Title</h3>
+              <InformationBox>
+                <p>Information about this section</p>
+              </InformationBox>
+            </div>
+            <div className="inputSection">
+              <Input />
+              <Input />
+            </div>
+            <Button />
+          </ActionForm>
         </Container>
       </>
     )

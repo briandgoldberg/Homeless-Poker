@@ -36,19 +36,9 @@ class Index extends Component {
             <p>What should we call you?</p>
             <Input type="Username" />
           </Header>
-          <ActionForm type="Create">
-            <div className="informationSection">
-              <h3>Title</h3>
-              <InformationBox>
-                <p>Information about this section</p>
-              </InformationBox>
-            </div>
-            <div className="inputSection">
-              <Input />
-              <Input />
-            </div>
-            <Button />
-          </ActionForm>
+          {/* TODO: Show error messages here if web3 not found */}
+          <ActionForm type="Create" />
+          <ActionForm type="Join" />
         </Container>
       </>
     )

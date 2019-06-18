@@ -25,6 +25,15 @@ class MyDocument extends Document {
             rel="stylesheet"
             href="https://cdnjs.cloudflare.com/ajax/libs/normalize/7.0.0/normalize.css"
           />
+          {process.env.NODE_ENV !== 'production' && (
+            // Cache burst workaround for the css styles not loading on page load in dev mode.
+            // https://github.com/zeit/next-plugins/issues/282
+            <link
+              rel="stylesheet"
+              type="text/css"
+              href={`/_next/static/css/styles.chunk.css?v=${Date.now()}`}
+            />
+          )}
         </Head>
         <body className="App">
           <Main />

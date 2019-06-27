@@ -3,19 +3,23 @@
 /* eslint-disable react/forbid-prop-types */
 import React, { Component } from 'react'
 import Web3 from 'utils/web3'
-import Link from 'next/link'
+// import Link from 'next/link'
 
-import { Button, Container } from 'components'
+import { Container, Header, Panel } from 'components'
 import styles from '../styles/index.scss'
 
 let web3
-try {
-  web3 = Web3()
-} catch (err) {
-  console.error(err)
-}
 
 class Index extends Component {
+  componentWillMount () {
+    // only fetch web3 on client side, because it depends on 'window'.
+    try {
+      web3 = Web3()
+    } catch (err) {
+      console.error(err)
+    }
+  }
+
   render() {
     console.log(styles)
     if (!web3) {
@@ -24,7 +28,45 @@ class Index extends Component {
     return (
       <>
         <Container>
-          <h1>Homeless Poker: No need for a house </h1>
+          <Header
+            title="Header"
+            subtitle="subtitle" 
+          >
+            <p>children</p>
+          </Header>
+          <Panel 
+            action="Create"
+            informationText="Lorem ipsum"
+            informationType="ERROR"
+            inputs={[
+              {
+                type: "buyin",
+                placeholder: "0.0001",
+                label: "Set buy-in amount"
+              }, {
+                type: "size",
+                placeholder: "5",
+                label: "Set room size"
+              }
+            ]}
+          />
+          <Panel 
+            action="Join"
+            informationText="Lorem ipsum"
+            informationType="ERROR"
+            inputs={[
+              {
+                type: "address",
+                placeholder: "0X123456789",
+                label: "Contract address"
+              }, {
+                type: "code",
+                placeholder: "C0D3",
+                label: "Room code"
+              }
+            ]}
+          />
+          {/* <h1>Homeless Poker: No need for a house </h1>
           <p>
             Distribute poker tournament earnings without a “house” or middleman
             using blockchain technology.
@@ -39,7 +81,7 @@ class Index extends Component {
             <a>
               <Button title="Join a room" />
             </a>
-          </Link>
+          </Link> */}
         </Container>
       </>
     )

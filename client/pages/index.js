@@ -5,7 +5,7 @@ import React, { Component } from 'react'
 import Web3 from 'utils/web3'
 import Link from 'next/link'
 
-import { Button, Container } from 'components'
+import { ActionForm, Button, Container, Header, Input } from 'components'
 import styles from '../styles/index.scss'
 
 let web3

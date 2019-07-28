@@ -1,7 +1,31 @@
-.container {
-  background-color: red;
+.action_container {
+  background-color: lightblue;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  width: 100%;
+  margin: 0 auto;
+}
 
-  .content {
-    background-color: blue;
+.information_section {
+  flex: 1;
+
+  display: flex;
+  flex-direction: column;
+  .title {
+    height: 20px;
   }
+  min-width: 160px;
+}
+
+.input_section {
+  flex: 1;
+
+  display: flex;
+  flex-direction: column;
+  min-width: 160px;
+}
+
+.button {
+  width: 100%;
 }

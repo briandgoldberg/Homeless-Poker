@@ -3,7 +3,6 @@ import PropTypes from 'prop-types'
 import styles from './Header.scss'
 
 function Header(props) {
-  // const classes = useStyles()
   const { children, title, subtitle } = props
   return (
     <>

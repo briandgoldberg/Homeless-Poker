@@ -12,28 +12,41 @@ function ActionForm(props) {
   return (
     <>
       <div className={styles.action_container}>
+        <h3 className={styles.title}>{type}</h3>
         <div className={styles.information_section}>
-          <h3 className={styles.title}>Title</h3>
           <InformationBox>
             <p>Information about this section</p>
           </InformationBox>
         </div>
         <div className={styles.input_section}>
-          <Input />
-          <Input />
+          {type === 'Create' && (
+            <>
+              <Input label="Amount" placeholder="0.0001" />
+              <Input label="Room Size" placeholder="6" />
+            </>
+          )}
+          {type === 'Join' && (
+            <>
+              <Input label="Room Address" placeholder="0xDEADB33F" />
+              <Input label="Room Code" placeholder="LOVE" />
+            </>
+          )}
+        </div>
+        <div className={styles.button_section}>
+          <Button
+            className={styles.button}
+            title={"Let's go"}
+            handleClick={createGame()}
+          />
         </div>
       </div>
-      <Button
-        className={styles.button}
-        title={"Let's go"}
-        handleClick={createGame()}
-      />
     </>
   )
 }
 
 ActionForm.propTypes = {
-  children: PropTypes.node.isRequired
+  children: PropTypes.node.isRequired,
+  type: PropTypes.oneOf(['Create', 'Join']).isRequired
 }
 
 export default ActionForm

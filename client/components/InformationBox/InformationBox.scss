@@ -1,5 +1,14 @@
 .container {
-  background-color: red;
+  border: 1px solid blue;
+  background: lightblue;
+  margin: 0 30px 15px 0;
+  border-style: round;
+
+  padding: 15px 15px;
+
+  p {
+    margin: 0;
+  }
 
   .content {
     background-color: blue;

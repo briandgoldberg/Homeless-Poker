@@ -29,12 +29,14 @@ class Index extends Component {
     return (
       <>
         <Container>
-          <Header
-            title="(H1) Homeless Poker: No need for a house"
-            subtitle="(H2) No Need for a house"
-          >
+          <Header title="Homeless Poker" subtitle="No Need for a house">
             <p>What should we call you?</p>
-            <Input type="Username" />
+            <Input
+              className={styles.input_user}
+              placeholder="Satoshison"
+              label="Username"
+              type="Username"
+            />
           </Header>
           {/* TODO: Show error messages here if web3 not found */}
           <ActionForm type="Create" />

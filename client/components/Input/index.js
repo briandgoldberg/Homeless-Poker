@@ -9,6 +9,7 @@ function Input(props) {
   return (
     // <div>
     <TextField
+      className={props.className}
       placeholder={placeholder}
       onChange={e => onChange(e)}
       {...props}

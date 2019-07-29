@@ -6,9 +6,9 @@ function InformationBox(props) {
   // const classes = useStyles()
   const { children, type } = props
   return (
-    <>
+    <div className={styles.container}>
       <p>Information about this section</p>
-    </>
+    </div>
   )
 }
 

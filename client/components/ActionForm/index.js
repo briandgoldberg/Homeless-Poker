@@ -1,6 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { Button, InformationBox, Input } from 'components'
+import InputAdornment from '@material-ui/core/InputAdornment'
 import styles from './ActionForm.scss'
 
 function ActionForm(props) {
@@ -21,14 +22,22 @@ function ActionForm(props) {
         <div className={styles.input_section}>
           {type === 'Create' && (
             <>
-              <Input label="Amount" placeholder="0.0001" />
+              <Input
+                label="Amount"
+                placeholder="0.0001"
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">ETH</InputAdornment>
+                  )
+                }}
+              />
               <Input label="Room Size" placeholder="6" />
             </>
           )}
           {type === 'Join' && (
             <>
               <Input label="Room Address" placeholder="0xDEADB33F" />
-              <Input label="Room Code" placeholder="LOVE" />
+              <Input label="Room Code" placeholder="LOVE" defaultValue="" />
             </>
           )}
         </div>

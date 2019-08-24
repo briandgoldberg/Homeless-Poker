@@ -9,10 +9,10 @@ function ActionForm(props) {
   const createGame = () => {
     console.log('create games')
   }
-  const { children, type } = props
+  const { children, handleInput, onSubmit, type } = props
   return (
     <>
-      <div className={styles.action_container}>
+      <div className={`${styles.action_container} ${styles[type]}`}>
         <h3 className={styles.title}>{type}</h3>
         <div className={styles.information_section}>
           <InformationBox>
@@ -20,24 +20,38 @@ function ActionForm(props) {
           </InformationBox>
         </div>
         <div className={styles.input_section}>
-          {type === 'Create' && (
+          {type === 'create' && (
             <>
               <Input
                 label="Amount"
                 placeholder="0.0001"
+                onChange={handleInput('value')}
                 InputProps={{
                   endAdornment: (
                     <InputAdornment position="end">ETH</InputAdornment>
                   )
                 }}
               />
-              <Input label="Room Size" placeholder="6" />
+              <Input
+                onChange={handleInput('roomsize')}
+                label="Room Size"
+                placeholder="6"
+              />
             </>
           )}
-          {type === 'Join' && (
+          {type === 'join' && (
             <>
-              <Input label="Room Address" placeholder="0xDEADB33F" />
-              <Input label="Room Code" placeholder="LOVE" defaultValue="" />
+              <Input
+                label="Room Address"
+                onChange={handleInput('address')}
+                placeholder="0xDEADB33F"
+              />
+              <Input
+                label="Room Code"
+                onChange={handleInput('roomcode')}
+                placeholder="LOVE"
+                defaultValue=""
+              />
             </>
           )}
         </div>
@@ -45,7 +59,7 @@ function ActionForm(props) {
           <Button
             className={styles.button}
             title={"Let's go"}
-            handleClick={createGame()}
+            onClick={onSubmit}
           />
         </div>
       </div>

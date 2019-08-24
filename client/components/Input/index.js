@@ -5,13 +5,13 @@ import TextField from '@material-ui/core/TextField'
 import styles from './Input.module.scss'
 
 function Input(props) {
-  const { onChange, placeholder } = props
+  const { className, onChange, placeholder } = props
   return (
     // <div>
     <TextField
-      className={props.className}
+      className={className}
       placeholder={placeholder}
-      onChange={e => onChange(e)}
+      onChange={() => onChange}
       {...props}
     />
     // </div>

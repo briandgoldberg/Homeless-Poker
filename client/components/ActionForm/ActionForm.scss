@@ -7,6 +7,10 @@
   width: 100%;
   // margin: 0 auto;
   margin-bottom: 10px;
+
+  border: 1px solid black;
+  border-radius: 5px;
+  padding: 20px;
 }
 .title {
   height: 20px;
@@ -35,5 +39,20 @@
   width: 100%;
   .button {
     width: 100%;
+    &:hover {
+      background-color: red !important;
+      color: white !important;
+    }
+  }
+}
+
+.create {
+  border: 1px solid red;
+  .button {
+    border: 1px solid black !important;
+    &:hover {
+      background-color: black !important;
+      color: white !important;
+    }
   }
 }

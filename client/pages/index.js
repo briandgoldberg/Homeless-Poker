@@ -23,12 +23,13 @@ try {
 }
 
 const Index = props => {
+  const { queryAddress, queryCode } = props
   const [account, setAccount] = useState(null)
   const [value, setValue] = useState(null)
   const [username, setUsername] = useState(null)
   const [roomSize, setRoomSize] = useState(null)
-  const [roomCode, setRoomCode] = useState(props.queryCode)
-  const [contractAddress, setContractAddress] = useState(props.queryAddress)
+  const [roomCode, setRoomCode] = useState(queryCode)
+  const [contractAddress, setContractAddress] = useState(queryAddress)
   const [errorMessage, setErrorMessage] = useState(null)
   const [message, setMessage] = useState(null)
   const [, dispatch] = useWeb3()
@@ -150,6 +151,11 @@ const Index = props => {
     )
   }
 
+  const query = {
+    address: queryAddress,
+    roomCode: queryCode
+  }
+
   return (
     <>
       <Container>
@@ -158,13 +164,18 @@ const Index = props => {
           <Input
             className={styles.input_user}
             placeholder="Satoshison"
-            label="Username"
+            label="Enter username"
             type="Username"
             onChange={handleInput('username')}
           />
         </Header>
         {/* TODO: Show error messages here if web3 not found */}
-        <ActionForm type="join" handleInput={handleInput} onSubmit={join} />
+        <ActionForm
+          type="join"
+          handleInput={handleInput}
+          onSubmit={join}
+          query={query}
+        />
         <ActionForm type="create" handleInput={handleInput} onSubmit={start} />
       </Container>
     </>

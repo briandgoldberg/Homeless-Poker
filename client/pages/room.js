@@ -99,9 +99,9 @@ const Room = () => {
     <>
       <Container>
         <p>
-          Please submit who who the tournament. $X will be returned to you if
-          you vote with the consensus. We think this is enough of an incentive
-          to submit accurate results.
+          Drag players in the order of the outcome of the tournament and submit
+          your vote. Your 5% deposit will be refunded to you if you vote with
+          the consensus.
         </p>
         {/* 
            I should create an event that is triggered when the deposit is finished on the contract side:
@@ -109,7 +109,7 @@ const Room = () => {
            */}
         {/* TODO: link to be copied to join this room */}
         <p>
-          {`http://localhost:3000/join?address=${state.contract.address}&code=${
+          {`http://localhost:3000/?address=${state.contract.address}&code=${
             state.contract.code
           }`}
         </p>

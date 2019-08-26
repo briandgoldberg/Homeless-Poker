@@ -1,19 +1,47 @@
+@import '../../styles/config';
+
 .action_container {
-  // background-color: lightblue;
-  border-top: 1px solid black;
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
   width: 100%;
-  // margin: 0 auto;
   margin-bottom: 10px;
 
-  border: 1px solid black;
+  // border: 1px solid black;
   border-radius: 5px;
-  padding: 20px;
+  padding: 0 20px 20px 20px;
+
+  box-shadow: 2px 1px 9px darkgrey;
+  background-color: white;
+}
+
+.title_container {
+  margin: 0;
+  display: grid;
+  grid-template-columns: 80px 1fr;
+  height: 35px;
+  width: 100%;
+  margin-bottom: 10px;
+  .create {
+    background-color: $color-red;
+    color: white;
+  }
+  .join {
+    background-color: black;
+    color: white;
+  }
+}
+.title_box {
+  display: flex;
+  align-items: center;
+  border-bottom-left-radius: 5%;
+  border-bottom-right-radius: 5%;
 }
 .title {
-  height: 20px;
+  // padding-left: 10px;
+  text-align: center;
+  // height: 20px;
+  margin: 0;
   width: 100%;
 }
 
@@ -40,18 +68,18 @@
   .button {
     width: 100%;
     &:hover {
-      background-color: red !important;
+      background-color: black !important;
       color: white !important;
     }
   }
 }
 
 .create {
-  border: 1px solid red;
+  // border: 1px solid $color-red;
   .button {
-    border: 1px solid black !important;
+    border: 1px solid $color-red !important;
     &:hover {
-      background-color: black !important;
+      background-color: $color-red !important;
       color: white !important;
     }
   }

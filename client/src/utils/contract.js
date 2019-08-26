@@ -49,13 +49,22 @@ export default class Contract {
   }
 
   async register(address, msgSender, username, value, roomCode) {
+    // TODO: value is not being used any more, I fetch it in the line below
+    const val = await this.getBuyIn()
+    console.log('value', value)
+    console.log('buyin')
     console.log('address:', address)
     this.contract.options.address = address
     let transactionHash
     let error
+    !username && console.error('username is missing')
     await this.contract.methods
       .register(asciiToHex(username), asciiToHex(roomCode))
-      .send({ from: msgSender, gas: 2000000, value: toWei(value) })
+      .send({
+        from: msgSender,
+        gas: 2000000,
+        value: val.toString()
+      })
       .on('transactionHash', _transactionHash => {
         transactionHash = _transactionHash
         console.log('TransactionHash: ', _transactionHash)

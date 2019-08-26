@@ -6,6 +6,7 @@ import styles from './Input.module.scss'
 
 function Input(props) {
   const { className, onChange, placeholder } = props
+  console.log('this prop', props)
   return (
     // <div>
     <TextField

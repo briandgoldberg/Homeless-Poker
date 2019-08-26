@@ -12,6 +12,28 @@
   .potium {
     grid-area: 1 / 1 / 2 / 2;
   }
+  .potium_slot {
+    padding-bottom: 8px;
+    background-color: white !important;
+    border: solid 1px black !important;
+    // background-color: red !important;
+  }
+
+  .player_slot {
+    .player_slot_text {
+      display: flex;
+      flex-direction: column;
+    }
+    span,
+    p {
+      margin: 0;
+      padding-left: 20px;
+    }
+    p {
+      color: #c5c5c5;
+      font-size: 12px;
+    }
+  }
 
   .players {
     grid-area: 1 / 2 / 2 / 3;

@@ -9,11 +9,16 @@ function ActionForm(props) {
   const createGame = () => {
     console.log('create games')
   }
-  const { children, handleInput, onSubmit, type } = props
+  const { children, handleInput, onSubmit, query, type } = props
+  console.log('koma', query)
   return (
     <>
       <div className={`${styles.action_container} ${styles[type]}`}>
-        <h3 className={styles.title}>{type}</h3>
+        <div className={styles.title_container}>
+          <div className={`${styles.title_box} ${styles[type]}`}>
+            <h3 className={styles.title}>{type}</h3>
+          </div>
+        </div>
         <div className={styles.information_section}>
           <InformationBox>
             <p>Information about this section</p>
@@ -45,12 +50,14 @@ function ActionForm(props) {
                 label="Room Address"
                 onChange={handleInput('address')}
                 placeholder="0xDEADB33F"
+                value={query.address}
               />
               <Input
                 label="Room Code"
                 onChange={handleInput('roomcode')}
                 placeholder="LOVE"
                 defaultValue=""
+                value={query.roomCode}
               />
             </>
           )}
@@ -69,7 +76,15 @@ function ActionForm(props) {
 
 ActionForm.propTypes = {
   children: PropTypes.node.isRequired,
-  type: PropTypes.oneOf(['Create', 'Join']).isRequired
+  query: PropTypes.objectOf(PropTypes.string),
+  type: PropTypes.oneOf(['create', 'join']).isRequired
+}
+
+ActionForm.defaultProps = {
+  query: {
+    address: '',
+    roomCode: ''
+  }
 }
 
 export default ActionForm

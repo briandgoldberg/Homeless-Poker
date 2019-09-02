@@ -5,6 +5,14 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  h1 {
+    transform: rotate(-4deg);
+    font-family: 'Brush Script MT';
+    color: white;
+    text-shadow: 0 0 3px black, 0 0 5px black;
+    line-height: 44px;
+    font-size: 56px;
+  }
   * {
     margin: 0;
   }

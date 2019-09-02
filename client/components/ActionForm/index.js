@@ -19,11 +19,7 @@ function ActionForm(props) {
             <h3 className={styles.title}>{type}</h3>
           </div>
         </div>
-        <div className={styles.information_section}>
-          <InformationBox>
-            <p>Information about this section</p>
-          </InformationBox>
-        </div>
+
         <div className={styles.input_section}>
           {type === 'create' && (
             <>
@@ -61,6 +57,11 @@ function ActionForm(props) {
               />
             </>
           )}
+        </div>
+                <div className={styles.information_section}>
+          <InformationBox>
+            <p>Information about this section</p>
+          </InformationBox>
         </div>
         <div className={styles.button_section}>
           <Button

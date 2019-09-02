@@ -11,7 +11,8 @@
   border-radius: 5px;
   padding: 0 20px 20px 20px;
 
-  box-shadow: 2px 1px 9px darkgrey;
+  // box-shadow: 2px 1px 9px darkgrey;
+  box-shadow: 3px 3px 15px rgba(0, 0, 0, 0.17);
   background-color: white;
 }
 
@@ -21,7 +22,7 @@
   grid-template-columns: 80px 1fr;
   height: 35px;
   width: 100%;
-  margin-bottom: 10px;
+  // margin-bottom: 10px;
   .create {
     background-color: $color-red;
     color: white;
@@ -52,6 +53,8 @@
   flex-direction: column;
 
   min-width: 160px;
+
+  margin-left: 10px;
 }
 
 .input_section {
@@ -60,27 +63,37 @@
   display: flex;
   flex-direction: column;
   min-width: 160px;
+
+  margin-right: 10px;
+  margin-top: 10px;
+  // margin-bottom: 10px;
 }
 
 .button_section {
-  margin-top: 10px;
+  margin-top: 20px;
   width: 100%;
   .button {
     width: 100%;
-    &:hover {
-      background-color: black !important;
-      color: white !important;
-    }
   }
 }
 
+.join {
+  .button {
+    border: 1px solid black !important;
+    background-color: black !important;
+    &:hover {
+      background-color: white !important;
+      color: black !important;
+    }
+  }
+}
 .create {
-  // border: 1px solid $color-red;
   .button {
     border: 1px solid $color-red !important;
+    background-color: $color-red !important;
     &:hover {
-      background-color: $color-red !important;
-      color: white !important;
+      background-color: white !important;
+      color: black !important;
     }
   }
 }

@@ -70,18 +70,21 @@ const Index = props => {
         buyIn: value,
         name: username
       }
-      dispatch({
-        type: 'createRoom',
-        contractInfo,
-        userInfo,
-        transactionHash: output.transactionHash
-      })
-
-      if (!output.error) {
+      dispatch(
+        {
+          type: 'createRoom',
+          contractInfo,
+          userInfo,
+          transactionHash: output.transactionHash
+        },
         Router.push('/room')
-      } else {
-        setErrorMessage(output.error)
-      }
+      )
+
+      // if (!output.error) {
+      //   Router.push('/room')
+      // } else {
+      //   setErrorMessage(output.error)
+      // }
     } catch (error) {
       alert(`Failed to load web3, accounts, or contract.`)
       setErrorMessage(error)
@@ -110,17 +113,20 @@ const Index = props => {
         buyIn: value,
         name: username
       }
-      dispatch({
-        type: 'joinRoom',
-        contractInfo,
-        userInfo,
-        transactionHash: output.transactionHash
-      })
-      if (!output.error) {
+      dispatch(
+        {
+          type: 'joinRoom',
+          contractInfo,
+          userInfo,
+          transactionHash: output.transactionHash
+        },
         Router.push('/room')
-      } else {
-        setErrorMessage(output.error)
-      }
+      )
+      // if (!output.error) {
+      //   Router.push('/room')
+      // } else {
+      //   setErrorMessage(output.error)
+      // }
     } catch (error) {
       alert(`Failed to load web3, accounts, or contract.`)
       setErrorMessage(error)

@@ -50,13 +50,20 @@ const Index = props => {
   }, [])
 
   const start = async () => {
+    if (!username) {
+      setMessage('set username plz')
+      return
+    }
     try {
       contract = new Contract(web3)
+      setMessage('Please accept the transaction in (...Metamask)')
       // TODO: Set a message: Please accept the transaction in (...Metamask), it doesnt always pop up.
       const output = await contract
         .deploy(account, username, value, roomSize)
         .then(
-          setMessage('Please wait for confirmation, should take around 20s')
+          setMessage(
+            'Please accept the transaction in your web3 client, then wait for confirmation, should take around 20s'
+          )
         )
       console.log('Deploy info', output)
 
@@ -93,6 +100,10 @@ const Index = props => {
   }
 
   const join = async () => {
+    if (!username) {
+      setMessage('set username plz')
+      return
+    }
     try {
       contract = new Contract(web3, contractAddress)
       console.log('join from address', account)
@@ -175,6 +186,16 @@ const Index = props => {
             onChange={handleInput('username')}
           />
         </Header>
+        <div
+          style={{
+            fontSize: '16px',
+            color: 'red'
+          }}
+        >
+          {' '}
+          {message}
+          {' '}
+        </div>
         {/* TODO: Show error messages here if web3 not found */}
         <ActionForm
           type="join"

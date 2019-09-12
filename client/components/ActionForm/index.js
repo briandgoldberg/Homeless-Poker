@@ -46,19 +46,18 @@ function ActionForm(props) {
                 label="Room Address"
                 onChange={handleInput('address')}
                 placeholder="0xDEADB33F"
-                value={query.address}
+                defaultValue={query.address}
               />
               <Input
                 label="Room Code"
                 onChange={handleInput('roomcode')}
                 placeholder="LOVE"
-                defaultValue=""
-                value={query.roomCode}
+                defaultValue={query.roomCode}
               />
             </>
           )}
         </div>
-                <div className={styles.information_section}>
+        <div className={styles.information_section}>
           <InformationBox>
             <p>Information about this section</p>
           </InformationBox>
